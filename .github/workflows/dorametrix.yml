@@ -49,29 +49,3 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageLocations: ${{ github.workspace }}/jest-coverage/lcov.info:lcov
-
-  deploy-doc:
-    if: ${{ github.event_name == 'push' }}
-    name: Deploy API documentation on Bump
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: bump-sh/github-action@v1
-        with:
-          doc: dorametrix
-          token: ${{ secrets.BUMP_TOKEN }}
-          file: api/schema.yml
-  api-diff:
-    if: ${{ github.event_name == 'pull_request' }}
-    name: Check API diff on Bump
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: bump-sh/github-action@v1
-        with:
-          doc: dorametrix
-          token: ${{ secrets.BUMP_TOKEN }}
-          file: api/schema.yml
-          command: diff
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
