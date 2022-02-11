@@ -1,0 +1,69 @@
+{
+  "name": "dorametrix",
+  "version": "1.0.0",
+  "description": "Dorametrix is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks",
+  "homepage": "https://github.com/mikaelvesavuori/dorametrix",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikaelvesavuori/dorametrix.git"
+  },
+  "author": "Mikael Vesavuori",
+  "keywords": [
+    "dorametrix",
+    "dora",
+    "dora-metrics",
+    "devops",
+    "software-delivery"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx sls offline",
+    "deploy": "npx sls deploy",
+    "remove": "npx sls remove",
+    "lint": "npx eslint './src/**/*.ts' --quiet --fix",
+    "docs": "npx arkit && npx typedoc --entryPointStrategy expand",
+    "build": "npx sls package",
+    "build:hosting": "npm run docs && cp -r diagrams typedoc-docs",
+    "test": "npm run test:unit",
+    "test:unit": "npx jest tests --collectCoverage",
+    "test:unit:watch": "npx jest --clearCache && npx jest tests --collectCoverage --watch",
+    "test:integration": "npx ts-node tests/integration/index.ts",
+    "licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
+    "licenses:checker": "npx license-compatibility-checker",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8",
+    "@types/jest": "27",
+    "@types/node": "latest",
+    "@types/uuid": "latest",
+    "@typescript-eslint/eslint-plugin": "5",
+    "@typescript-eslint/parser": "5",
+    "arkit": "1",
+    "babel-loader": "8",
+    "eslint": "8",
+    "eslint-config-prettier": "8",
+    "eslint-plugin-prettier": "4",
+    "husky": "7",
+    "jest": "27",
+    "license-compatibility-checker": "latest",
+    "license-compliance": "latest",
+    "serverless": "2",
+    "serverless-iam-roles-per-function": "3",
+    "serverless-offline": "8",
+    "serverless-webpack": "5",
+    "ts-jest": "27",
+    "ts-loader": "9",
+    "ts-node": "latest",
+    "tslib": "latest",
+    "typedoc": "latest",
+    "typescript": "4",
+    "webpack": "5",
+    "webpack-cli": "latest"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3",
+    "uuid": "8"
+  }
+}

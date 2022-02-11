@@ -1,0 +1,77 @@
+name: dorametrix
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  actions: read
+
+jobs:
+  build-unix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
+        node-version: [14.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install dependencies
+        run: |
+          npm ci --ignore-scripts
+          npm audit fix
+          npm install -g
+
+      - name: Test
+        run: npm test
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+
+      - name: Send coverage report with Code Climate
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: ${{ github.workspace }}/jest-coverage/lcov.info:lcov
+
+  deploy-doc:
+    if: ${{ github.event_name == 'push' }}
+    name: Deploy API documentation on Bump
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bump-sh/github-action@v1
+        with:
+          doc: dorametrix
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: api/schema.yml
+  api-diff:
+    if: ${{ github.event_name == 'pull_request' }}
+    name: Check API diff on Bump
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bump-sh/github-action@v1
+        with:
+          doc: dorametrix
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: api/schema.yml
+          command: diff
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,214 @@
+{
+  "comment": {
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1/comments/61768324"
+      },
+      "html": {
+        "href": "https://bitbucket.org/someuser/some-repo/issues/1#comment-61768324"
+      }
+    },
+    "content": {
+      "raw": null,
+      "markup": "markdown",
+      "html": "",
+      "type": "rendered"
+    },
+    "created_on": "2022-01-30T20:27:56.647957+00:00",
+    "user": {
+      "display_name": "Some User",
+      "uuid": "{9e24b78f-93b9-4d5e-b3bf-ee8asj284b5d}",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D"
+        },
+        "html": {
+          "href": "https://bitbucket.org/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D/"
+        },
+        "avatar": {
+          "href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+        }
+      },
+      "type": "user",
+      "nickname": "someuser",
+      "account_id": "123123:124512xd-1732-134h-1r7c-2937849dg"
+    },
+    "updated_on": null,
+    "type": "issue_comment",
+    "id": 61768324
+  },
+  "issue": {
+    "priority": "major",
+    "kind": "bug",
+    "repository": {
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo"
+        },
+        "html": {
+          "href": "https://bitbucket.org/someuser/some-repo"
+        },
+        "avatar": {
+          "href": "https://bytebucket.org/ravatar/%7B00150954-b592-4283-945a-41b4689e6c40%7D?ts=default"
+        }
+      },
+      "type": "repository",
+      "name": "some-repo",
+      "full_name": "someuser/some-repo",
+      "uuid": "{00150954-b592-4283-945a-41b4689e6c40}"
+    },
+    "links": {
+      "attachments": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1/attachments"
+      },
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1"
+      },
+      "watch": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1/watch"
+      },
+      "comments": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1/comments"
+      },
+      "html": {
+        "href": "https://bitbucket.org/someuser/some-repo/issues/1/demo-issue"
+      },
+      "vote": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo/issues/1/vote"
+      }
+    },
+    "reporter": {
+      "display_name": "Some User",
+      "uuid": "{9e24b78f-93b9-4d5e-b3bf-ee8asj284b5d}",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D"
+        },
+        "html": {
+          "href": "https://bitbucket.org/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D/"
+        },
+        "avatar": {
+          "href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+        }
+      },
+      "type": "user",
+      "nickname": "someuser",
+      "account_id": "123123:124512xd-1732-134h-1r7c-2937849dg"
+    },
+    "title": "demo issue",
+    "component": null,
+    "votes": 0,
+    "watches": 1,
+    "content": {
+      "raw": "some description",
+      "markup": "markdown",
+      "html": "<p>some description</p>",
+      "type": "rendered"
+    },
+    "assignee": null,
+    "state": "resolved",
+    "version": null,
+    "edited_on": null,
+    "created_on": "2022-01-30T20:25:08.657085+00:00",
+    "milestone": null,
+    "updated_on": "2022-01-30T20:27:56.607215+00:00",
+    "type": "issue",
+    "id": 1
+  },
+  "changes": {
+    "status": {
+      "new": "resolved",
+      "old": "new"
+    }
+  },
+  "repository": {
+    "scm": "git",
+    "website": null,
+    "uuid": "{00150954-b592-4283-945a-41b4689e6c40}",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/repositories/someuser/some-repo"
+      },
+      "html": {
+        "href": "https://bitbucket.org/someuser/some-repo"
+      },
+      "avatar": {
+        "href": "https://bytebucket.org/ravatar/%7B00150954-b592-4283-945a-41b4689e6c40%7D?ts=default"
+      }
+    },
+    "project": {
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/workspaces/someuser/projects/PROJ"
+        },
+        "html": {
+          "href": "https://bitbucket.org/someuser/workspace/projects/PROJ"
+        },
+        "avatar": {
+          "href": "https://bitbucket.org/account/user/someuser/projects/PROJ/avatar/32?ts=1543688179"
+        }
+      },
+      "type": "project",
+      "name": "Untitled project",
+      "key": "PROJ",
+      "uuid": "{d48e9ee0-ffed-4817-8d05-f38dbc0a0009}"
+    },
+    "full_name": "someuser/some-repo",
+    "owner": {
+      "display_name": "Some User",
+      "uuid": "{9e24b78f-93b9-4d5e-b3bf-ee8asj284b5d}",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/users/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D"
+        },
+        "html": {
+          "href": "https://bitbucket.org/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D/"
+        },
+        "avatar": {
+          "href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+        }
+      },
+      "type": "user",
+      "nickname": "someuser",
+      "account_id": "123123:124512xd-1732-134h-1r7c-2937849dg"
+    },
+    "workspace": {
+      "slug": "someuser",
+      "type": "workspace",
+      "name": "Some User",
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/workspaces/someuser"
+        },
+        "html": {
+          "href": "https://bitbucket.org/someuser/"
+        },
+        "avatar": {
+          "href": "https://bitbucket.org/workspaces/someuser/avatar/?ts=1543688179"
+        }
+      },
+      "uuid": "{9e24b78f-93b9-4d5e-b3bf-ee8asj284b5d}"
+    },
+    "type": "repository",
+    "is_private": true,
+    "name": "some-repo"
+  },
+  "actor": {
+    "display_name": "Some User",
+    "uuid": "{9e24b78f-93b9-4d5e-b3bf-ee8asj284b5d}",
+    "links": {
+      "self": {
+        "href": "https://api.bitbucket.org/2.0/users/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D"
+      },
+      "html": {
+        "href": "https://bitbucket.org/%7B9e2fg18f-9as9-4d5e-b351-ee8a2dhi2184b5d%7D/"
+      },
+      "avatar": {
+        "href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+      }
+    },
+    "type": "user",
+    "nickname": "someuser",
+    "account_id": "123123:124512xd-1732-134h-1r7c-2937849dg"
+  }
+}

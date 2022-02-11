@@ -1,0 +1,159 @@
+service: dorametrix
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'shared'}
+  region: eu-north-1
+  memorySize: 1024
+  timeout: 10
+  logRetentionInDays: 7
+  versionFunctions: true
+  lambdaHashingVersion: 20201221
+  deploymentBucket:
+    blockPublicAccess: true
+    maxPreviousDeploymentArtifacts: 5
+    serverSideEncryption: AES256
+  stackTags:
+    Usage: ${self:service}
+  tags:
+    Usage: ${self:service}
+  apiGateway:
+    minimumCompressionSize: 1024
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTelemetryRecords
+        - xray:PutTraceSegments
+      Resource:
+        - "*"
+  environment:
+    API_KEY: "TODO"
+    DEPLOYMENT_PERIOD_DAYS: 7
+    REGION: ${self:provider.region}
+    TABLE_NAME: ${self:custom.aws.tableName}
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true
+  patterns:
+    - node_modules/aws-sdk/**
+    - node_modules/aws-lambda/**
+
+custom:
+  aws:
+    accountNumber: "123412341234"
+    tableName: "dorametrix"
+    databaseArn: "arn:aws:dynamodb:${self:provider.region}:${self:custom.aws.accountNumber}:table/${self:custom.aws.tableName}"
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true
+    packager: 'npm'
+    excludeFiles: src/**/*.test.js
+
+functions:
+  Authorizer:
+    handler: src/controllers/AuthorizerController.handler
+    description: ${self:service} authorizer
+  MetricsController:
+    handler: src/controllers/MetricsController.handler
+    description: Get all four DORA metrics
+    events:
+      - http:
+          method: GET
+          path: /metrics
+          authorizer:
+            name: Authorizer
+            resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+            identitySource: method.request.header.Authorization
+            type: request
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+        Resource: ${self:custom.aws.databaseArn}
+  EventController:
+    handler: src/controllers/EventController.handler
+    description: Report new event (this will then be automatically also created as a change, deployment, or incident)
+    events:
+      - http:
+          method: POST
+          path: /event
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:Query
+        Resource: ${self:custom.aws.databaseArn}
+  LastDeploymentController:
+    handler: src/controllers/LastDeploymentController.handler
+    description: Get commit ID for last production deployment
+    events:
+      - http:
+          method: GET
+          path: /lastdeployment
+          authorizer:
+            name: Authorizer
+            resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+            identitySource: method.request.header.Authorization
+            type: request
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+        Resource: ${self:custom.aws.databaseArn}
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    AuthFailureExpiredGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    AuthFailureUnauthorizedGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+
+    DorametrixTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.aws.tableName}
+        AttributeDefinitions:
+          - AttributeName: eventType
+            AttributeType: S
+          - AttributeName: timeCreated
+            AttributeType: S
+        KeySchema:
+          - AttributeName: eventType
+            KeyType: HASH
+          - AttributeName: timeCreated
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST

@@ -1,0 +1,183 @@
+{
+  "timestamp": 1643915547195,
+  "webhookEvent": "jira:issue_updated",
+  "issue_event_type_name": "issue_updated",
+  "user": {
+    "self": "https://something.atlassian.net/rest/api/2/user?accountId=12312-123asd-12sdaf3-12512512-odshfih",
+    "accountId": "12312-123asd-12sdaf3-12512512-odshfih",
+    "avatarUrls": {
+      "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+      "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+      "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+      "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+    },
+    "displayName": "Some User",
+    "active": true,
+    "timeZone": "Europe/Stockholm",
+    "accountType": "atlassian"
+  },
+  "issue": {
+    "id": "10004",
+    "self": "https://something.atlassian.net/rest/api/2/10004",
+    "key": "TEST-5",
+    "fields": {
+      "statuscategorychangedate": "2022-02-03T20:04:45.540+0100",
+      "issuetype": {
+        "self": "https://something.atlassian.net/rest/api/2/issuetype/10004",
+        "id": "10004",
+        "description": "A problem or error.",
+        "iconUrl": "https://something.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10303?size=medium",
+        "name": "Bug",
+        "subtask": false,
+        "avatarId": 10303,
+        "hierarchyLevel": 0
+      },
+      "timespent": null,
+      "project": {
+        "self": "https://something.atlassian.net/rest/api/2/project/10001",
+        "id": "10001",
+        "key": "TEST",
+        "name": "testproject",
+        "projectTypeKey": "software",
+        "simplified": false,
+        "avatarUrls": {
+          "48x48": "https://something.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10412",
+          "24x24": "https://something.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10412?size=small",
+          "16x16": "https://something.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10412?size=xsmall",
+          "32x32": "https://something.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10412?size=medium"
+        }
+      },
+      "fixVersions": [],
+      "aggregatetimespent": null,
+      "resolution": null,
+      "customfield_10028": null,
+      "resolutiondate": null,
+      "workratio": -1,
+      "issuerestriction": { "issuerestrictions": {}, "shouldDisplay": false },
+      "lastViewed": "2022-02-03T20:09:06.855+0100",
+      "watches": {
+        "self": "https://something.atlassian.net/rest/api/2/issue/TEST-5/watchers",
+        "watchCount": 1,
+        "isWatching": true
+      },
+      "created": "2022-02-03T20:04:45.243+0100",
+      "customfield_10020": null,
+      "customfield_10021": null,
+      "customfield_10022": null,
+      "customfield_10023": null,
+      "priority": {
+        "self": "https://something.atlassian.net/rest/api/2/priority/3",
+        "iconUrl": "https://something.atlassian.net/images/icons/priorities/medium.svg",
+        "name": "Medium",
+        "id": "3"
+      },
+      "customfield_10024": null,
+      "customfield_10025": null,
+      "labels": [],
+      "customfield_10016": null,
+      "customfield_10017": null,
+      "customfield_10018": {
+        "hasEpicLinkFieldDependency": false,
+        "showField": false,
+        "nonEditableReason": {
+          "reason": "PLUGIN_LICENSE_ERROR",
+          "message": "The Parent Link is only available to Jira Premium users."
+        }
+      },
+      "customfield_10019": "0|i0001b:",
+      "aggregatetimeoriginalestimate": null,
+      "timeestimate": null,
+      "versions": [],
+      "issuelinks": [],
+      "assignee": null,
+      "updated": "2022-02-03T20:12:27.191+0100",
+      "status": {
+        "self": "https://something.atlassian.net/rest/api/2/status/10000",
+        "description": "",
+        "iconUrl": "https://something.atlassian.net/",
+        "name": "Backlog",
+        "id": "10000",
+        "statusCategory": {
+          "self": "https://something.atlassian.net/rest/api/2/statuscategory/2",
+          "id": 2,
+          "key": "new",
+          "colorName": "blue-gray",
+          "name": "New"
+        }
+      },
+      "components": [],
+      "timeoriginalestimate": null,
+      "description": "Some description.",
+      "customfield_10010": null,
+      "customfield_10014": null,
+      "customfield_10015": null,
+      "timetracking": {},
+      "customfield_10005": null,
+      "customfield_10006": null,
+      "security": null,
+      "customfield_10007": null,
+      "customfield_10008": null,
+      "customfield_10009": null,
+      "aggregatetimeestimate": null,
+      "attachment": [],
+      "summary": "Test issue",
+      "creator": {
+        "self": "https://something.atlassian.net/rest/api/2/user?accountId=12312-123asd-12sdaf3-12512512-odshfih",
+        "accountId": "12312-123asd-12sdaf3-12512512-odshfih",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+        },
+        "displayName": "Some User",
+        "active": true,
+        "timeZone": "Europe/Stockholm",
+        "accountType": "atlassian"
+      },
+      "subtasks": [],
+      "reporter": {
+        "self": "https://something.atlassian.net/rest/api/2/user?accountId=12312-123asd-12sdaf3-12512512-odshfih",
+        "accountId": "12312-123asd-12sdaf3-12512512-odshfih",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/XX-1.png"
+        },
+        "displayName": "Some User",
+        "active": true,
+        "timeZone": "Europe/Stockholm",
+        "accountType": "atlassian"
+      },
+      "aggregateprogress": { "progress": 0, "total": 0 },
+      "customfield_10000": "{}",
+      "customfield_10001": null,
+      "customfield_10002": null,
+      "customfield_10003": null,
+      "customfield_10004": null,
+      "environment": null,
+      "duedate": null,
+      "progress": { "progress": 0, "total": 0 },
+      "votes": {
+        "self": "https://something.atlassian.net/rest/api/2/issue/TEST-5/votes",
+        "votes": 0,
+        "hasVoted": false
+      }
+    }
+  },
+  "changelog": {
+    "id": "10012",
+    "items": [
+      {
+        "field": "labels",
+        "fieldtype": "jira",
+        "fieldId": "labels",
+        "from": null,
+        "fromString": "incident",
+        "to": null,
+        "toString": ""
+      }
+    ]
+  }
+}
