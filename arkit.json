@@ -1,0 +1,54 @@
+{
+  "$schema": "https://arkit.js.org/schema.json",
+  "excludePatterns": ["tests/", "testdata/"],
+  "components": [
+    {
+      "type": "Controllers",
+      "patterns": ["src/controllers/*.ts"]
+    },
+    {
+      "type": "Domain entities",
+      "patterns": ["src/domain/entities/*.ts"]
+    },
+    {
+      "type": "Domain value objects",
+      "patterns": ["src/domain/valueObjects/*.ts"]
+    },
+    {
+      "type": "Repositories",
+      "patterns": ["src/repositories/*.ts"]
+    },
+    {
+      "type": "Usecases",
+      "patterns": ["src/usecases/*.ts"]
+    }
+  ],
+  "output": [
+    {
+      "path": "images/arkit.svg",
+      "groups": [
+        {
+          "first": true,
+          "type": "Controllers",
+          "components": ["Controllers"]
+        },
+        {
+          "type": "Domain entities",
+          "components": ["Domain entities"]
+        },
+        {
+          "type": "Domain value objects",
+          "components": ["Domain value objects"]
+        },
+        {
+          "type": "Repositories",
+          "components": ["Repositories"]
+        },
+        {
+          "type": "Usecases",
+          "components": ["Usecases"]
+        }
+      ]
+    }
+  ]
+}
