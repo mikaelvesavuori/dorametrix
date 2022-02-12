@@ -25,7 +25,7 @@
   ],
   "output": [
     {
-      "path": "images/arkit.svg",
+      "path": "diagrams/arkit.svg",
       "groups": [
         {
           "first": true,

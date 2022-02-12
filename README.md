@@ -4,7 +4,7 @@
 
 ## Know if you are running high-performing software development teams by making it clear how individual products (i.e. services, APIs, systems...) line up with the [DORA metrics](https://www.leanix.net/en/wiki/vsm/dora-metrics).
 
-`dorametrix` is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks. It has pre-baked support for GitHub Actions, Bitbucket and Jira, and can be run "as is" as a web service, too.
+`dorametrix` is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks. It has pre-baked support for push and incident events from GitHub Actions, Bitbucket and Jira (only incidents!), and can be run "as is" as a web service, too.
 
 🏖️ It's super easy to get started with, comes pre-packaged and needs just a tiny bit of fiddling with webhooks and settings on your end: Simply put, the easiest way you can start using DORA metrics in a scalable way today!
 
