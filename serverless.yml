@@ -1,5 +1,8 @@
 service: dorametrix
 
+frameworkVersion: '3'
+configValidationMode: error
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -9,7 +12,6 @@ provider:
   timeout: 10
   logRetentionInDays: 7
   versionFunctions: true
-  lambdaHashingVersion: 20201221
   deploymentBucket:
     blockPublicAccess: true
     maxPreviousDeploymentArtifacts: 5
@@ -23,15 +25,17 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - xray:PutTelemetryRecords
-        - xray:PutTraceSegments
-      Resource:
-        - "*"
+  iam:
+    role:
+      statements:
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource:
+          - "*"
   environment:
-    API_KEY: "TODO"
+    API_KEY: "TODO" # EDIT THIS TO YOUR VALUE
     DEPLOYMENT_PERIOD_DAYS: 7
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.aws.tableName}

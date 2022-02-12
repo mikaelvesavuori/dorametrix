@@ -49,7 +49,7 @@
     "jest": "27",
     "license-compatibility-checker": "latest",
     "license-compliance": "latest",
-    "serverless": "2",
+    "serverless": "3",
     "serverless-iam-roles-per-function": "3",
     "serverless-offline": "8",
     "serverless-webpack": "5",
@@ -57,7 +57,7 @@
     "ts-loader": "9",
     "ts-node": "latest",
     "tslib": "latest",
-    "typedoc": "latest",
+    "typedoc": "^0.22.11",
     "typescript": "4",
     "webpack": "5",
     "webpack-cli": "latest"
