@@ -30,9 +30,11 @@ The most basic data type we have is the **Event**. These are internally created 
 
 ### Diagram
 
+_As it stands currently, `dorametrix` is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
+
 !["Dorametrix diagram"](./diagrams/dorametrix-diagram.png)
 
-_As it stands currently, `dorametrix` is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
+Please see the [generated documentation site](https://dorametrix.pages.dev) for more detailed information.
 
 ---
 
