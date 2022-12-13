@@ -3,3 +3,6 @@ node_modules/
 build/
 .webpack/
 .serverless/
+jest-coverage/
+coverage/
+.env
