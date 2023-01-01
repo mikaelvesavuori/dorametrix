@@ -1,5 +1,5 @@
-import { Dorametrix } from '../domain/interfaces/Dorametrix';
-import { Parser } from '../domain/interfaces/Parser';
+import { Dorametrix } from '../interfaces/Dorametrix';
+import { Parser } from '../interfaces/Parser';
 
 import { makeChange } from '../domain/valueObjects/Change';
 import { makeDeployment } from '../domain/valueObjects/Deployment';

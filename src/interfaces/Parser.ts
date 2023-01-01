@@ -1,4 +1,4 @@
-import { EventDto } from '../interfaces/Event';
+import { EventDto } from './Event';
 
 /**
  * @description Parsers interpret incoming events into one the refined event types.

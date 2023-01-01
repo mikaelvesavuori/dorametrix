@@ -1,6 +1,6 @@
-import { sanitizeString } from '../../src/frameworks/sanitizeString';
+import { sanitizeString } from '../../src/infrastructure/frameworks/sanitizeString';
 
-import { MissingStringError } from '../../src/domain/errors/MissingStringError';
+import { MissingStringError } from '../../src/application/errors/MissingStringError';
 
 describe('Failure cases', () => {
   test('It should throw a MissingStringError', async () => {

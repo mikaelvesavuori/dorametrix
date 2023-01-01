@@ -1,8 +1,8 @@
-import { Change } from '../interfaces/Change';
+import { Change } from '../../interfaces/Change';
 
-import { MissingProductValueError } from '../errors/MissingProductValueError';
-import { MissingEventTypeValueError } from '../errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../errors/MissingIdValueError';
+import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
+import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
+import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
 
 /**
  * @description Factory function to make a Change value object.

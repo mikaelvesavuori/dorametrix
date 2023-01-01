@@ -1,12 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { createNewDorametrix } from '../domain/entities/Dorametrix';
-import { createNewDynamoRepository } from '../repositories/DynamoDbRepository';
-import { getMetrics } from '../usecases/getMetrics';
-import { getQueryStringParams } from '../frameworks/getQueryStringParams';
+import { createNewDorametrix } from '../../../domain/services/Dorametrix';
+import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+import { getLastDeployment } from '../../../usecases/getLastDeployment';
+import { getQueryStringParams } from '../../frameworks/getQueryStringParams';
 
 /**
- * @description The controller for our service that gets the DORA metrics.
+ * @description The controller for our service that handles getting the commit ID for the last deployment to production.
  */
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
@@ -15,11 +15,11 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     );
     const repo = createNewDynamoRepository();
     const dorametrix = createNewDorametrix(repo);
-    const data = await getMetrics(dorametrix, queryParams);
+    const lastDeployment = await getLastDeployment(dorametrix, queryParams);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data)
+      body: JSON.stringify(lastDeployment)
     };
   } catch (error: any) {
     return {

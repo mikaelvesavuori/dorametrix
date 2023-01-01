@@ -1,4 +1,4 @@
-import { getQueryStringParams } from '../../src/frameworks/getQueryStringParams';
+import { getQueryStringParams } from '../../src/infrastructure/frameworks/getQueryStringParams';
 
 describe('Success cases', () => {
   test('It should drop unknown values', () => {

@@ -1,13 +1,13 @@
-import { Dorametrix } from '../interfaces/Dorametrix';
-import { Repository } from '../interfaces/Repository';
-import { Change } from '../interfaces/Change';
-import { Event } from '../interfaces/Event';
-import { Deployment } from '../interfaces/Deployment';
-import { Incident } from '../interfaces/Incident';
-import { DeploymentResponse } from '../interfaces/DeploymentResponse';
+import { Dorametrix } from '../../interfaces/Dorametrix';
+import { Repository } from '../../interfaces/Repository';
+import { Change } from '../../interfaces/Change';
+import { Event } from '../../interfaces/Event';
+import { Deployment } from '../../interfaces/Deployment';
+import { Incident } from '../../interfaces/Incident';
+import { DeploymentResponse } from '../../interfaces/DeploymentResponse';
 
-import { prettifyTime } from '../../frameworks/prettifyTime';
-import { getDiffInSeconds } from '../../frameworks/getDiffInSeconds';
+import { prettifyTime } from '../../infrastructure/frameworks/prettifyTime';
+import { getDiffInSeconds } from '../../infrastructure/frameworks/getDiffInSeconds';
 
 import { v4 as uuidv4 } from 'uuid';
 

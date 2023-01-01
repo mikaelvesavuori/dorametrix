@@ -1,6 +1,6 @@
-import { Repository, DataRequest } from '../domain/interfaces/Repository';
+import { Repository, DataRequest } from '../../interfaces/Repository';
 
-import { deployments, changes, incidents } from '../../testdata/TestDatabase';
+import { deployments, changes, incidents } from '../../../testdata/TestDatabase';
 
 /**
  * @description Factory function for local repository.

@@ -1,6 +1,6 @@
-import { DirectParser } from '../../../src/domain/application/DirectParser';
+import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
-import { UnknownEventType } from '../../../src/domain/errors/UnknownEventType';
+import { UnknownEventType } from '../../../src/application/errors/UnknownEventType';
 
 describe('Failure cases', () => {
   test('It should throw an UnknownEventType if event type is unknown', async () => {

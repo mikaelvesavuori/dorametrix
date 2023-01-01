@@ -1,5 +1,5 @@
-import { DoraMetrics } from '../domain/interfaces/DoraMetrics';
-import { Dorametrix } from '../domain/interfaces/Dorametrix';
+import { DoraMetrics } from '../interfaces/DoraMetrics';
+import { Dorametrix } from '../interfaces/Dorametrix';
 
 import { getChangeFailureRate } from './interactors/getChangeFailureRate';
 import { getDeploymentFrequency } from './interactors/getDeploymentFrequency';

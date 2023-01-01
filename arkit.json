@@ -3,12 +3,12 @@
   "excludePatterns": ["tests/", "testdata/"],
   "components": [
     {
-      "type": "Controllers",
-      "patterns": ["src/controllers/*.ts"]
+      "type": "Handlers/adapters",
+      "patterns": ["src/infrastructure/adapters/web/*.ts"]
     },
     {
-      "type": "Domain entities",
-      "patterns": ["src/domain/entities/*.ts"]
+      "type": "Domain services",
+      "patterns": ["src/domain/services/*.ts"]
     },
     {
       "type": "Domain value objects",
@@ -16,7 +16,7 @@
     },
     {
       "type": "Repositories",
-      "patterns": ["src/repositories/*.ts"]
+      "patterns": ["src/infrastructure/repositories/*.ts"]
     },
     {
       "type": "Usecases",
@@ -29,12 +29,12 @@
       "groups": [
         {
           "first": true,
-          "type": "Controllers",
-          "components": ["Controllers"]
+          "type": "Handlers/adapters",
+          "components": ["Handlers/adapters"]
         },
         {
-          "type": "Domain entities",
-          "components": ["Domain entities"]
+          "type": "Domain services",
+          "components": ["Domain services"]
         },
         {
           "type": "Domain value objects",

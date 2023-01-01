@@ -1,9 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { createNewDorametrix } from '../domain/entities/Dorametrix';
-import { getParser } from '../domain/application/getParser';
-import { createNewDynamoRepository } from '../repositories/DynamoDbRepository';
-import { createEvent } from '../usecases/createEvent';
+import { createNewDorametrix } from '../../../domain/services/Dorametrix';
+import { getParser } from '../../../application/getParser';
+import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+import { createEvent } from '../../../usecases/createEvent';
 
 /**
  * @description The controller for our service that handles incoming new events.

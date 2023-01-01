@@ -1,7 +1,7 @@
-import { BitbucketParser } from '../../../src/domain/application/BitbucketParser';
-import { DirectParser } from '../../../src/domain/application/DirectParser';
-import { getParser } from '../../../src/domain/application/getParser';
-import { GitHubParser } from '../../../src/domain/application/GitHubParser';
+import { BitbucketParser } from '../../../src/application/parsers/BitbucketParser';
+import { DirectParser } from '../../../src/application/parsers/DirectParser';
+import { getParser } from '../../../src/application/getParser';
+import { GitHubParser } from '../../../src/application/parsers/GitHubParser';
 
 describe('Success cases', () => {
   test('It should get the GitHub parser', () => {

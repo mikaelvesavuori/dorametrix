@@ -1,8 +1,8 @@
-import { createNewDorametrix } from '../../src/domain/entities/Dorametrix';
+import { createNewDorametrix } from '../../src/domain/services/Dorametrix';
 
 import { getLastDeployment } from '../../src/usecases/getLastDeployment';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
 import { deployments, changes, incidents } from '../../testdata/TestDatabase';
 
 describe('Success cases', () => {

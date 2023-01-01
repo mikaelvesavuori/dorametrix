@@ -1,11 +1,11 @@
-import { EventDto } from '../interfaces/Event';
-import { Parser, EventTypeInput, PayloadInput } from '../interfaces/Parser';
+import { EventDto } from '../../interfaces/Event';
+import { Parser, EventTypeInput, PayloadInput } from '../../interfaces/Parser';
 import { UnknownEventType } from '../errors/UnknownEventType';
 import { MissingEventTimeError } from '../errors/MissingEventTimeError';
 import { MissingEventError } from '../errors/MissingEventError';
 import { MissingIdError } from '../errors/MissingIdError';
 
-import { convertDateToUnixTimestamp } from '../../frameworks/convertDateToUnixTimestamp';
+import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 
 /**
  * @description Parser adapted for GitHub.

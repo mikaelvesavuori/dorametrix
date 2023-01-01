@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { EventDto } from '../interfaces/Event';
-import { EventTypeInput, Parser, PayloadInput } from '../interfaces/Parser';
+import { EventDto } from '../../interfaces/Event';
+import { EventTypeInput, Parser, PayloadInput } from '../../interfaces/Parser';
 import { UnknownEventType } from '../errors/UnknownEventType';
 
 /**

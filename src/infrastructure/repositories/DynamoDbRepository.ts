@@ -1,10 +1,10 @@
 import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 
-import { Repository, DataRequest } from '../domain/interfaces/Repository';
-import { Change } from '../domain/interfaces/Change';
-import { Deployment } from '../domain/interfaces/Deployment';
-import { Event } from '../domain/interfaces/Event';
-import { Incident } from '../domain/interfaces/Incident';
+import { Repository, DataRequest } from '../../interfaces/Repository';
+import { Change } from '../../interfaces/Change';
+import { Deployment } from '../../interfaces/Deployment';
+import { Event } from '../../interfaces/Event';
+import { Incident } from '../../interfaces/Incident';
 
 import { getMilliseconds } from '../frameworks/getMilliseconds';
 
@@ -93,7 +93,9 @@ class DynamoRepository implements Repository {
 
   /**
    * @description Get data from DynamoDB.
+   * @todo
    */
+  /*
   private async getItem(repoName: string, fromDate: string, toDate: string): Promise<DynamoItems> {
     const params = {
       TableName: this.tableName,
@@ -110,9 +112,11 @@ class DynamoRepository implements Repository {
       ? await this.dynamoDb.send(new QueryCommand(params))
       : { Items: testDataItem };
   }
+  */
 
   /**
    * @description Clean up and return items in a normalized format.
+   * @todo Break out into separate function
    */
   private getCleanedItems(items: any[]) {
     const fixedItems: any = [];
@@ -151,8 +155,8 @@ class DynamoRepository implements Repository {
         pk: { S: `EVENT_${product}` },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved },
-        id: { S: id },
-        message: { S: message }
+        message: { S: message },
+        id: { S: id }
       }
     };
 
@@ -169,8 +173,8 @@ class DynamoRepository implements Repository {
       TableName: TABLE_NAME,
       Item: {
         pk: { S: `CHANGE_${product}` },
-        id: { S: id },
-        timeCreated: { S: timeCreated }
+        timeCreated: { S: timeCreated },
+        id: { S: id }
       }
     };
 
@@ -190,9 +194,9 @@ class DynamoRepository implements Repository {
       TableName: TABLE_NAME,
       Item: {
         pk: { S: `DEPLOYMENT_${product}` },
-        id: { S: id },
         timeCreated: { S: isLastDeployedCommit ? 'lastDeployedCommit' : timeCreated },
-        changes: { S: JSON.stringify(changes) }
+        changes: { S: JSON.stringify(changes) },
+        id: { S: id }
       }
     };
 
@@ -209,10 +213,10 @@ class DynamoRepository implements Repository {
       TableName: TABLE_NAME,
       Item: {
         pk: { S: `INCIDENT_${product}` },
-        id: { S: id },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved || '' },
-        title: { S: title }
+        title: { S: title },
+        id: { S: id }
       }
     };
 

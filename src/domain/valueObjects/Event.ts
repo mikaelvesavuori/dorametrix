@@ -1,5 +1,5 @@
-import { Event, EventType } from '../interfaces/Event';
-import { Parser } from '../interfaces/Parser';
+import { Event, EventType } from '../../interfaces/Event';
+import { Parser } from '../../interfaces/Parser';
 
 /**
  * @description Create the main type of event, the titular `Event` which

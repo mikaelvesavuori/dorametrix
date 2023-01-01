@@ -1,11 +1,11 @@
 import { makeDeployment } from '../../../src/domain/valueObjects/Deployment';
 import { makeEvent } from '../../../src/domain/valueObjects/Event';
 
-import { DirectParser } from '../../../src/domain/application/DirectParser';
+import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
-import { MissingProductValueError } from '../../../src/domain/errors/MissingProductValueError';
-import { MissingEventTypeValueError } from '../../../src/domain/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../../src/domain/errors/MissingIdValueError';
+import { MissingProductValueError } from '../../../src/application/errors/MissingProductValueError';
+import { MissingEventTypeValueError } from '../../../src/application/errors/MissingEventTypeValueError';
+import { MissingIdValueError } from '../../../src/application/errors/MissingIdValueError';
 
 describe('Failure cases', () => {
   test('It should throw a MissingProductValueError if missing the "product" property', () => {

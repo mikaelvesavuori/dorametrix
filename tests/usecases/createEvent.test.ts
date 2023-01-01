@@ -1,9 +1,9 @@
-import { createNewDorametrix } from '../../src/domain/entities/Dorametrix';
-import { DirectParser } from '../../src/domain/application/DirectParser';
+import { createNewDorametrix } from '../../src/domain/services/Dorametrix';
+import { DirectParser } from '../../src/application/parsers/DirectParser';
 
 import { createEvent } from '../../src/usecases/createEvent';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
 
 describe('Success cases', () => {
   test('It should create a change', async () => {

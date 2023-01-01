@@ -1,13 +1,13 @@
 import { makeIncident } from '../../../src/domain/valueObjects/Incident';
 import { makeEvent } from '../../../src/domain/valueObjects/Event';
 
-import { BitbucketParser } from '../../../src/domain/application/BitbucketParser';
-import { GitHubParser } from '../../../src/domain/application/GitHubParser';
-import { DirectParser } from '../../../src/domain/application/DirectParser';
+import { BitbucketParser } from '../../../src/application/parsers/BitbucketParser';
+import { GitHubParser } from '../../../src/application/parsers/GitHubParser';
+import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
-import { MissingProductValueError } from '../../../src/domain/errors/MissingProductValueError';
-import { MissingEventTypeValueError } from '../../../src/domain/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../../src/domain/errors/MissingIdValueError';
+import { MissingProductValueError } from '../../../src/application/errors/MissingProductValueError';
+import { MissingEventTypeValueError } from '../../../src/application/errors/MissingEventTypeValueError';
+import { MissingIdValueError } from '../../../src/application/errors/MissingIdValueError';
 
 import bitbucketIssueCreated from '../../../testdata/webhook-events/bitbucket/issue-created.json';
 import bitbucketIssueUpdatedResolved from '../../../testdata/webhook-events/bitbucket/issue-updated-resolved.json';

@@ -1,8 +1,8 @@
-import { createNewDorametrix } from '../../src/domain/entities/Dorametrix';
+import { createNewDorametrix } from '../../src/domain/services/Dorametrix';
 
 import { getMetrics } from '../../src/usecases/getMetrics';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
 
 describe('Success cases', () => {
   // Setup for checking warning messages

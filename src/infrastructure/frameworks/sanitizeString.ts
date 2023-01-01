@@ -1,4 +1,4 @@
-import { MissingStringError } from '../domain/errors/MissingStringError';
+import { MissingStringError } from '../../application/errors/MissingStringError';
 
 /**
  * @description String sanitizer utility to cap length and allow only certain characters.

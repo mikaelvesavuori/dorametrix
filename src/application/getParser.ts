@@ -1,7 +1,7 @@
-import { BitbucketParser } from './BitbucketParser';
-import { DirectParser } from './DirectParser';
-import { GitHubParser } from './GitHubParser';
-import { JiraParser } from './JiraParser';
+import { BitbucketParser } from './parsers/BitbucketParser';
+import { DirectParser } from './parsers/DirectParser';
+import { GitHubParser } from './parsers/GitHubParser';
+import { JiraParser } from './parsers/JiraParser';
 
 import { Parser } from '../interfaces/Parser';
 

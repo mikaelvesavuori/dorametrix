@@ -1,5 +1,5 @@
-import { Dorametrix } from '../domain/interfaces/Dorametrix';
-import { DeploymentResponse } from '../domain/interfaces/DeploymentResponse';
+import { Dorametrix } from '../interfaces/Dorametrix';
+import { DeploymentResponse } from '../interfaces/DeploymentResponse';
 
 /**
  * @description The use-case for getting the commit ID for the last production deployment.

@@ -1,9 +1,9 @@
-import { GitHubParser } from '../../../src/domain/application/GitHubParser';
+import { GitHubParser } from '../../../src/application/parsers/GitHubParser';
 
-import { UnknownEventType } from '../../../src/domain/errors/UnknownEventType';
-import { MissingEventError } from '../../../src/domain/errors/MissingEventError';
-import { MissingEventTimeError } from '../../../src/domain/errors/MissingEventTimeError';
-import { MissingIdError } from '../../../src/domain/errors/MissingIdError';
+import { UnknownEventType } from '../../../src/application/errors/UnknownEventType';
+import { MissingEventError } from '../../../src/application/errors/MissingEventError';
+import { MissingEventTimeError } from '../../../src/application/errors/MissingEventTimeError';
+import { MissingIdError } from '../../../src/application/errors/MissingIdError';
 
 describe('Failure cases', () => {
   describe('General', () => {

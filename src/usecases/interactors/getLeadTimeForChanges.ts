@@ -1,4 +1,4 @@
-import { Dorametrix } from '../../domain/interfaces/Dorametrix';
+import { Dorametrix } from '../../interfaces/Dorametrix';
 
 /**
  * @description The use-case interactor for getting the lead time for changes.

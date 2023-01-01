@@ -1,4 +1,4 @@
-import { getDiffInSeconds } from '../../src/frameworks/getDiffInSeconds';
+import { getDiffInSeconds } from '../../src/infrastructure/frameworks/getDiffInSeconds';
 
 describe('Success cases', () => {
   test('Given inputs as strings, it should return positive numbers from them', async () => {

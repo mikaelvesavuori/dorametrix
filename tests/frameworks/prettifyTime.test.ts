@@ -1,4 +1,4 @@
-import { prettifyTime } from '../../src/frameworks/prettifyTime';
+import { prettifyTime } from '../../src/infrastructure/frameworks/prettifyTime';
 
 describe('Success cases', () => {
   test('It should prettify a small number', async () => {
