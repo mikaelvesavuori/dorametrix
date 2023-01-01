@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import { createNewDorametrix } from '../domain/entities/Dorametrix';
-import { createNewDynamoRepository } from '../repositories/DynamoDbRepo';
+import { createNewDynamoRepository } from '../repositories/DynamoDbRepository';
 import { getLastDeployment } from '../usecases/getLastDeployment';
 import { getQueryStringParams } from '../frameworks/getQueryStringParams';
 

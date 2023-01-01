@@ -3,9 +3,9 @@
  */
 export interface Repository {
   /**
-   * @description Get data from source system.
+   * @description Get metrics from source system.
    */
-  getData(dataRequest: DataRequest): Promise<any>;
+  getMetrics(dataRequest: DataRequest): Promise<any>;
   /**
    * @description Add (create/update) an Event in the source database.
    */

@@ -32,9 +32,9 @@ class LocalRepo implements Repository {
   }
 
   /**
-   * @description Get data from source system.
+   * @description Get metrics for a given repository and a period of time.
    */
-  async getData(dataRequest: DataRequest): Promise<any> {
+  async getMetrics(dataRequest: DataRequest): Promise<any> {
     const { key, onlyGetCount } = dataRequest;
 
     const data = (() => {

@@ -81,10 +81,11 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the commit ID for the last deployment to production.
    */
   public async getLastDeployment(): Promise<DeploymentResponse> {
-    const lastDeployment = await this.repo.getData({
-      key: `deployment#${this.product}`,
+    const lastDeployment = await this.repo.getMetrics({
+      key: `DEPLOYMENT_${this.product}`,
       getLastDeployedCommit: true
     });
+
     if (lastDeployment[0]?.changes) {
       const changes = JSON.parse(lastDeployment[0]?.changes);
 
@@ -109,6 +110,7 @@ class DorametrixConcrete implements Dorametrix {
         };
       }
     }
+
     return {
       id: '',
       timeCreated: ''
@@ -119,11 +121,12 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the averaged deployment frequency for a period of time (default: 7 days).
    */
   public async getDeploymentFrequency(): Promise<string> {
-    const deploymentCount = await this.repo.getData({
-      key: `deployment#${this.product}`,
+    const deploymentCount = await this.repo.getMetrics({
+      key: `DEPLOYMENT_${this.product}`,
       onlyGetCount: true,
       days: 7
     });
+
     return (deploymentCount / this.deploymentPeriodDays).toFixed(2).toString();
   }
 
@@ -131,8 +134,8 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the averaged lead time for a change getting into production (deployment).
    */
   public async getLeadTimeForChanges(): Promise<string> {
-    const changesData = await this.repo.getData({ key: `change#${this.product}` });
-    const deploymentsData = await this.repo.getData({ key: `deployment#${this.product}` });
+    const changesData = await this.repo.getMetrics({ key: `CHANGE_${this.product}` });
+    const deploymentsData = await this.repo.getMetrics({ key: `DEPLOYMENT_${this.product}` });
     if (deploymentsData.length === 0) return '00:00:00:00';
 
     let accumulatedTime = 0;
@@ -162,7 +165,7 @@ class DorametrixConcrete implements Dorametrix {
 
         if (firstMatch && timeCreated && firstMatch > timeCreated) {
           console.warn(
-            `Weird deployment data: firstMatch field is later than timeCreated...Skipping it.\n--> timeCreated: ${firstMatch} firstMatch: ${firstMatch}`
+            `Unexpected deployment data: firstMatch field is later than timeCreated...Skipping it.\n--> timeCreated: ${firstMatch} firstMatch: ${firstMatch}`
           );
           return;
         }
@@ -178,15 +181,18 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get a change failure rate as an averaged number for a period of time (default: 30 days).
    */
   public async getChangeFailureRate(): Promise<string> {
-    const deploymentCount = await this.repo.getData({
-      key: `deployment#${this.product}`,
+    const deploymentCount = await this.repo.getMetrics({
+      key: `DEPLOYMENT_${this.product}`,
       onlyGetCount: true
     });
-    const incidentCount = await this.repo.getData({
-      key: `incident#${this.product}`,
+
+    const incidentCount = await this.repo.getMetrics({
+      key: `INCIDENT_${this.product}`,
       onlyGetCount: true
     });
+
     if (incidentCount === 0 || deploymentCount === 0) return '0.00';
+
     return (parseInt(incidentCount) / parseInt(deploymentCount)).toFixed(2).toString();
   }
 
@@ -194,7 +200,7 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the time to restore service as an averaged value.
    */
   public async getTimeToRestoreServices(): Promise<string> {
-    const incidents = await this.repo.getData({ key: `incident#${this.product}` });
+    const incidents = await this.repo.getMetrics({ key: `INCIDENT_${this.product}` });
     if (incidents.length === 0) return '00:00:00:00';
 
     let accumulatedTime = 0;
@@ -208,7 +214,7 @@ class DorametrixConcrete implements Dorametrix {
 
       if (timeCreated && timeResolved && timeCreated > timeResolved) {
         console.warn(
-          `Weird incident data: timeCreated field is later than timeResolved...Skipping it.\n--> timeCreated: ${timeCreated} timeResolved: ${timeResolved}`
+          `Unexpected incident data: timeCreated field is later than timeResolved...Skipping it.\n--> timeCreated: ${timeCreated} timeResolved: ${timeResolved}`
         );
         return;
       }

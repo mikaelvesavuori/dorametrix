@@ -6,6 +6,8 @@ import { Deployment } from '../domain/interfaces/Deployment';
 import { Event } from '../domain/interfaces/Event';
 import { Incident } from '../domain/interfaces/Incident';
 
+import { getMilliseconds } from '../frameworks/getMilliseconds';
+
 const docClient = new DynamoDBClient({
   region: process.env.REGION || 'eu-north-1'
 });
@@ -42,41 +44,33 @@ class DynamoRepository implements Repository {
   }
 
   /**
-   * @description Get data from source system.
+   * @description Get metrics for a given repository and a period of time.
    */
-  public async getData(dataRequest: DataRequest): Promise<any> {
+  public async getMetrics(dataRequest: DataRequest): Promise<any> {
     const { key, onlyGetCount, getLastDeployedCommit, days } = dataRequest;
 
     // Check cache first
     const cachedData = this.getCachedData(key);
     if (cachedData) return onlyGetCount ? cachedData.length : cachedData;
 
-    const milliseconds = (() => {
-      const millisSingleDay = 24 * 60 * 60 * 1000; // hours x minutes x seconds x milliseconds per second
-
-      /**
-       * Data was not cached, so go and get fresh data
-       * For practical reasons, so tests won't get stale over time, get broader range if this is a test.
-       */
-      if (process.env.IS_TEST) return millisSingleDay * 1000;
-
-      return millisSingleDay * (days || 30); // Normally, just get the last 30 days
-    })();
+    const milliseconds = getMilliseconds(days);
 
     /**
      * Only fetch days within our time window (30 days).
-     * Use a project expression to cut back on unnecessary data transfer.
+     * Use a projection expression to cut back on unnecessary data transfer.
      * Fetch even less data if "onlyGetCount" is true.
      * Get by "lastDeployedCommit" value if "getLastDeployedCommit" is true.
      */
     const params = {
       TableName: TABLE_NAME,
-      KeyConditionExpression: 'eventType = :eventType AND timeCreated >= :timeCreated',
+      KeyConditionExpression: 'pk = :pk AND timeCreated >= :timeCreated',
+      // KeyConditionExpression: 'pk = :pk AND sk BETWEEN :from AND :to', // TODO Gitmetrix
       ProjectionExpression: onlyGetCount
-        ? 'eventType, timeCreated'
-        : 'eventType, timeCreated, timeResolved, id, changes',
+        ? 'pk, timeCreated'
+        : 'pk, timeCreated, timeResolved, id, changes',
       ExpressionAttributeValues: {
-        ':eventType': { S: key },
+        //':pk': { S: `METRICS_${repoName}` }, // TODO Gitmetrix
+        ':pk': { S: key },
         ':timeCreated': {
           S: getLastDeployedCommit ? 'lastDeployedCommit' : (Date.now() - milliseconds).toString()
         }
@@ -95,6 +89,26 @@ class DynamoRepository implements Repository {
     this.cache[key] = JSON.stringify(items);
 
     return items;
+  }
+
+  /**
+   * @description Get data from DynamoDB.
+   */
+  private async getItem(repoName: string, fromDate: string, toDate: string): Promise<DynamoItems> {
+    const params = {
+      TableName: this.tableName,
+      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':pk': { S: `METRICS_${repoName}` },
+        ':from': { S: fromDate },
+        ':to': { S: toDate }
+      }
+    };
+
+    // @ts-ignore
+    return process.env.NODE_ENV !== 'test'
+      ? await this.dynamoDb.send(new QueryCommand(params))
+      : { Items: testDataItem };
   }
 
   /**
@@ -134,7 +148,7 @@ class DynamoRepository implements Repository {
     const params = {
       TableName: TABLE_NAME,
       Item: {
-        eventType: { S: `event#${product}` },
+        pk: { S: `EVENT_${product}` },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved },
         id: { S: id },
@@ -154,7 +168,7 @@ class DynamoRepository implements Repository {
     const params = {
       TableName: TABLE_NAME,
       Item: {
-        eventType: { S: `change#${product}` },
+        pk: { S: `CHANGE_${product}` },
         id: { S: id },
         timeCreated: { S: timeCreated }
       }
@@ -175,7 +189,7 @@ class DynamoRepository implements Repository {
     const params = {
       TableName: TABLE_NAME,
       Item: {
-        eventType: { S: `deployment#${product}` },
+        pk: { S: `DEPLOYMENT_${product}` },
         id: { S: id },
         timeCreated: { S: isLastDeployedCommit ? 'lastDeployedCommit' : timeCreated },
         changes: { S: JSON.stringify(changes) }
@@ -194,7 +208,7 @@ class DynamoRepository implements Repository {
     const params = {
       TableName: TABLE_NAME,
       Item: {
-        eventType: { S: `incident#${product}` },
+        pk: { S: `INCIDENT_${product}` },
         id: { S: id },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved || '' },

@@ -2,7 +2,7 @@ import { createNewDorametrix } from '../../src/domain/entities/Dorametrix';
 
 import { getMetrics } from '../../src/usecases/getMetrics';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepo';
+import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
 
 describe('Success cases', () => {
   // Setup for checking warning messages
@@ -81,7 +81,7 @@ describe('Success cases', () => {
       expect(console.warn).toHaveBeenCalled();
       // @ts-ignore
       const message = console.warn.mock.calls[0][0];
-      const hasWarningText = message.startsWith('Weird deployment data');
+      const hasWarningText = message.startsWith('Unexpected deployment data');
       expect(hasWarningText).toBe(true);
     });
   });
@@ -125,7 +125,7 @@ describe('Success cases', () => {
     expect(console.warn).toHaveBeenCalled();
     // @ts-ignore
     const message = console.warn.mock.calls[0][0];
-    const hasWarningText = message.startsWith('Weird incident data');
+    const hasWarningText = message.startsWith('Unexpected incident data');
     expect(hasWarningText).toBe(true);
   });
 });

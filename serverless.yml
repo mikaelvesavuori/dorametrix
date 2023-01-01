@@ -148,12 +148,12 @@ resources:
       Properties:
         TableName: ${self:custom.aws.tableName}
         AttributeDefinitions:
-          - AttributeName: eventType
+          - AttributeName: pk
             AttributeType: S
           - AttributeName: timeCreated
             AttributeType: S
         KeySchema:
-          - AttributeName: eventType
+          - AttributeName: pk
             KeyType: HASH
           - AttributeName: timeCreated
             KeyType: RANGE

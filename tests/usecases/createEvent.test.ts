@@ -3,7 +3,7 @@ import { DirectParser } from '../../src/domain/application/DirectParser';
 
 import { createEvent } from '../../src/usecases/createEvent';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepo';
+import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
 
 describe('Success cases', () => {
   test('It should create a change', async () => {

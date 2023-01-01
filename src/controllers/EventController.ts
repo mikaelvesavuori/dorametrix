@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import { createNewDorametrix } from '../domain/entities/Dorametrix';
 import { getParser } from '../domain/application/getParser';
-import { createNewDynamoRepository } from '../repositories/DynamoDbRepo';
+import { createNewDynamoRepository } from '../repositories/DynamoDbRepository';
 import { createEvent } from '../usecases/createEvent';
 
 /**

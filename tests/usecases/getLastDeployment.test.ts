@@ -2,7 +2,7 @@ import { createNewDorametrix } from '../../src/domain/entities/Dorametrix';
 
 import { getLastDeployment } from '../../src/usecases/getLastDeployment';
 
-import { createNewLocalRepository } from '../../src/repositories/LocalRepo';
+import { createNewLocalRepository } from '../../src/repositories/LocalRepository';
 import { deployments, changes, incidents } from '../../testdata/TestDatabase';
 
 describe('Success cases', () => {
