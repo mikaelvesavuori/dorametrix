@@ -22,7 +22,7 @@ export interface Event {
   id: string;
 
   /**
-   * @description Optional. Array of changes. Applicable if
+   * @description Array of changes. Applicable if
    * `eventType` is `deployment`. Will stay empty otherwise.
    */
   changes: string[];
@@ -38,14 +38,14 @@ export interface Event {
   timeCreated: string;
 
   /**
-   * @description Optional. Unix timestamp when an incident is
+   * @description Unix timestamp when an incident is
    * handled. Only applicable if `eventType` is `incident`.
    * Will stay empty otherwise.
    */
   timeResolved: string;
 
   /**
-   * @description Optional. Used for incident titles.
+   * @description Used for incident titles.
    */
   title: string;
 
@@ -53,6 +53,11 @@ export interface Event {
    * @description The input body serialized to a string.
    */
   message: string;
+
+  /**
+   * @description TODO
+   */
+  date: string;
 }
 
 /**

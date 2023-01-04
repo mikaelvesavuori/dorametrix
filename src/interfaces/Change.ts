@@ -6,4 +6,5 @@ export type Change = {
   product: string;
   timeCreated: string;
   id: string;
+  date: string;
 };

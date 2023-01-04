@@ -1,7 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import { createNewDorametrix } from '../../../domain/services/Dorametrix';
-import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
 import { getLastDeployment } from '../../../usecases/getLastDeployment';
 import { getQueryStringParams } from '../../frameworks/getQueryStringParams';
 
@@ -13,8 +12,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const queryParams = getQueryStringParams(
       event?.queryStringParameters as unknown as Record<string, string>
     );
-    const repo = createNewDynamoRepository();
-    const dorametrix = createNewDorametrix(repo);
+    const dorametrix = createNewDorametrix();
     const lastDeployment = await getLastDeployment(dorametrix, queryParams);
 
     return {

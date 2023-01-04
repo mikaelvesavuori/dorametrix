@@ -351,6 +351,53 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 }
 ```
 
+### Get all metrics (raw) TODO
+
+#### Request
+
+`GET {{BASE_URL}}/metrics?product=myproduct`
+
+#### Example response
+
+```json
+{
+  // Dynamically set by the response
+  "repo": "SOMEORG/SOMEREPO",
+  "period": {
+    "from": "20221228",
+    "to": "20221229"
+  },
+  // Retrieved metrics
+  "total": {
+    "incidents": "2",
+    "deployments": "13",
+    "leadTimeForChanges": "00:01:00:00",
+    "timeToRestoreServices": "00:01:23:11"
+  },
+  "average": {
+    "changeFailureRate": "0.00",
+    "deploymentFrequency": "0.00",
+    "leadTimeForChanges": "00:00:00:00",
+    "timeToRestoreServices": "00:00:23:11"
+  },
+  "daily": {
+    // For all days...
+    "20221228": {
+      "changeFailureRate": "0.00",
+      "deploymentFrequency": "0.00",
+      "leadTimeForChanges": "00:00:00:00",
+      "timeToRestoreServices": "00:00:23:11"
+    },
+    "20221229": {
+      "changeFailureRate": "0.00",
+      "deploymentFrequency": "0.00",
+      "leadTimeForChanges": "00:00:00:00",
+      "timeToRestoreServices": "00:00:23:11"
+    }
+  }
+}
+```
+
 ### Get specific metric (changeFailureRate)
 
 #### Request
@@ -403,6 +450,21 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 ```json
 {
+  "timeToRestoreServices": "00:00:23:11"
+}
+```
+
+### Get multiple specific metrics
+
+#### Request example
+
+`GET {{BASE_URL}}/metrics?timeToRestoreServices&leadTimeForChanges&product=myproduct`
+
+#### Response
+
+```json
+{
+  "leadTimeForChanges": "00:00:00:00",
   "timeToRestoreServices": "00:00:23:11"
 }
 ```

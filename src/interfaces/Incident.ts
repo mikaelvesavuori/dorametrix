@@ -8,4 +8,5 @@ export type Incident = {
   id: string;
   timeResolved: string;
   title: string;
+  date: string;
 };

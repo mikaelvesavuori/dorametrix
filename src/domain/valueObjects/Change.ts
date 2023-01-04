@@ -1,5 +1,7 @@
 import { Change } from '../../interfaces/Change';
 
+import { getCurrentDate } from '../../infrastructure/frameworks/date';
+
 import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
@@ -17,6 +19,7 @@ class ChangeConcrete {
   eventType: string;
   id: string;
   timeCreated: string;
+  date: string;
 
   constructor(change: any) {
     const { product, eventType, id } = change;
@@ -36,6 +39,7 @@ class ChangeConcrete {
     this.eventType = eventType;
     this.id = id;
     this.timeCreated = Date.now().toString();
+    this.date = getCurrentDate(true);
   }
 
   public getData() {
@@ -43,7 +47,8 @@ class ChangeConcrete {
       product: this.product,
       eventType: this.eventType,
       id: this.id,
-      timeCreated: this.timeCreated
+      timeCreated: this.timeCreated,
+      date: this.date
     };
   }
 }

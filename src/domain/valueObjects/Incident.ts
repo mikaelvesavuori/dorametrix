@@ -1,5 +1,7 @@
 import { Incident } from '../../interfaces/Incident';
 
+import { getCurrentDate } from '../../infrastructure/frameworks/date';
+
 import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
@@ -14,6 +16,7 @@ export function makeIncident(incident: any): Incident {
 
 class IncidentConcrete implements Incident {
   product: string;
+  date: string;
   eventType: string;
   id: string;
   timeCreated: string;
@@ -35,6 +38,7 @@ class IncidentConcrete implements Incident {
       throw new MissingIdValueError('Missing "id" when trying to create an Incident value object!');
 
     this.product = product;
+    this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
     this.timeCreated = timeCreated.toString();
@@ -45,6 +49,7 @@ class IncidentConcrete implements Incident {
   public getData() {
     return {
       product: this.product,
+      date: this.date,
       eventType: this.eventType,
       id: this.id,
       timeCreated: this.timeCreated,

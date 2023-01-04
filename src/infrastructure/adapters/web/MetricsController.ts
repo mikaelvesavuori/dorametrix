@@ -1,8 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { createNewDorametrix } from '../../../domain/services/Dorametrix';
-import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
 import { getMetrics } from '../../../usecases/getMetrics';
+
+import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+
 import { getQueryStringParams } from '../../frameworks/getQueryStringParams';
 
 /**
@@ -14,12 +15,11 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       event?.queryStringParameters as unknown as Record<string, string>
     );
     const repo = createNewDynamoRepository();
-    const dorametrix = createNewDorametrix(repo);
-    const data = await getMetrics(dorametrix, queryParams);
+    const metrics = await getMetrics(repo, queryParams);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data)
+      body: JSON.stringify(metrics)
     };
   } catch (error: any) {
     return {

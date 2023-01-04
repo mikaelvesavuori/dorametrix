@@ -1,9 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { createNewDorametrix } from '../../../domain/services/Dorametrix';
+import { makeEvent } from '../../../domain/valueObjects/Event';
+
 import { getParser } from '../../../application/getParser';
-import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+
 import { createEvent } from '../../../usecases/createEvent';
+
+import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
 
 /**
  * @description The controller for our service that handles incoming new events.
@@ -14,10 +17,10 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const headers = event.headers;
 
     const repo = createNewDynamoRepository();
-    const dorametrix = createNewDorametrix(repo);
     const parser = getParser(headers);
+    const metricEvent = makeEvent(parser, body, headers);
 
-    await createEvent(dorametrix, parser, body, headers);
+    await createEvent(repo, metricEvent);
 
     return {
       statusCode: 204,

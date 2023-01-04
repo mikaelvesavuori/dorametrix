@@ -1,5 +1,7 @@
 import { Deployment } from '../../interfaces/Deployment';
 
+import { getCurrentDate } from '../../infrastructure/frameworks/date';
+
 import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
@@ -14,6 +16,7 @@ export function makeDeployment(deployment: any): Deployment {
 
 class DeploymentConcrete {
   product: string;
+  date: string;
   eventType: string;
   id: string;
   changes: string[];
@@ -36,6 +39,7 @@ class DeploymentConcrete {
       );
 
     this.product = product;
+    this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
     this.changes = changes || [];
@@ -45,6 +49,7 @@ class DeploymentConcrete {
   public getData() {
     return {
       product: this.product,
+      date: this.date,
       eventType: this.eventType,
       id: this.id,
       changes: this.changes,

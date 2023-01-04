@@ -1,6 +1,8 @@
 import { Event, EventType } from '../../interfaces/Event';
 import { Parser } from '../../interfaces/Parser';
 
+import { getCurrentDate } from '../../infrastructure/frameworks/date';
+
 /**
  * @description Create the main type of event, the titular `Event` which
  * can be reassembled to other, more specific types/"value objects" later.
@@ -11,8 +13,9 @@ export function makeEvent(parser: Parser, body: any, headers: any): Event {
 }
 
 class EventConcrete {
-  eventType: string;
   product: string;
+  date: string;
+  eventType: string;
   id: string;
   changes: string[];
   eventTime: string;
@@ -29,8 +32,9 @@ class EventConcrete {
     });
     const product = parser.getProductName(body);
 
-    this.eventType = eventType;
     this.product = product;
+    this.date = getCurrentDate(true);
+    this.eventType = eventType;
     this.id = id;
     this.changes = body.changes || [];
     this.eventTime = eventTime.toString();
@@ -43,6 +47,7 @@ class EventConcrete {
   public getData(): Event {
     return {
       product: this.product,
+      date: this.date,
       eventType: this.eventType as EventType,
       id: this.id,
       changes: this.changes,

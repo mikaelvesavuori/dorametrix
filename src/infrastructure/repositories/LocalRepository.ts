@@ -1,4 +1,8 @@
 import { Repository, DataRequest } from '../../interfaces/Repository';
+import { Change } from '../../interfaces/Change';
+import { Deployment } from '../../interfaces/Deployment';
+import { Event } from '../../interfaces/Event';
+import { Incident } from '../../interfaces/Incident';
 
 import { deployments, changes, incidents } from '../../../testdata/TestDatabase';
 
@@ -46,6 +50,34 @@ class LocalRepo implements Repository {
     if (data && onlyGetCount) return data.length;
     return data;
   }
+
+  // TODO
+
+  public handleEvent(event: Event): Promise<any> {
+    console.log(event);
+    // @ts-ignore
+    return;
+  }
+
+  public handleChange(change: Change): Promise<any> {
+    console.log(change);
+    // @ts-ignore
+    return;
+  }
+
+  public handleDeployment(deployment: Deployment): Promise<any> {
+    console.log(deployment);
+    // @ts-ignore
+    return;
+  }
+
+  public handleIncident(incident: Incident): Promise<any> {
+    console.log(incident);
+    // @ts-ignore
+    return;
+  }
+
+  // TODO: Remove?
 
   /**
    * @description Add (create/update) an Event in the source database.

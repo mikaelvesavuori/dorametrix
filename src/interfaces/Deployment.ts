@@ -7,4 +7,5 @@ export type Deployment = {
   timeCreated: string;
   id: string;
   changes: string[];
+  date: string;
 };

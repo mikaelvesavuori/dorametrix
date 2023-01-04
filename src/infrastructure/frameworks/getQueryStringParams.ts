@@ -11,7 +11,9 @@ export function getQueryStringParams(
     'deploymentFrequency',
     'leadTimeForChanges',
     'timeToRestoreServices',
-    'product'
+    'product',
+    'from',
+    'to'
   ];
 
   const validatedQueryStrings: any = {};
@@ -31,4 +33,6 @@ type ValidatedQueryStrings = {
   leadTimeForChanges?: string;
   timeToRestoreServices?: string;
   product?: string;
+  from?: string;
+  to?: string;
 };

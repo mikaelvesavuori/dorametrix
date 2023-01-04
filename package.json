@@ -18,7 +18,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "start": "npx sls offline",
+    "start": "npx sls offline --reloadHandler",
     "deploy": "npx sls deploy",
     "remove": "npx sls remove",
     "lint": "npx eslint './src/**/*.ts' --quiet --fix",
