@@ -33,52 +33,89 @@ class DynamoRepository implements Repository {
   }
 
   /**
-   * @description Handle (create/update) an event in the repository.
+   * @description Add (create/update) an Event in the repository.
+   *
    * Events need to be uniquely identifiable, so overwrite the ID here.
    * To keep individual records, we'll use the event time as the timeCreated
    * so they don't stack on the same record.
    */
   public async handleEvent(event: Event): Promise<void> {
-    await this.addEventItem({
-      ...event,
-      timeCreated: event.eventTime,
-      id: uuidv4()
-    });
+    const { product, timeCreated, timeResolved, message, eventTime } = event;
+
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `EVENT_${product}` },
+        sk: { S: timeCreated },
+        timeResolved: { S: timeResolved },
+        message: { S: message },
+        timeCreated: { S: eventTime },
+        id: { S: uuidv4() }
+      }
+    };
+
+    await dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
-   * @description Handle (create/update) a change in the repository.
+   * @description Add (create/update) a Change in the repository.
    */
   public async handleChange(change: Change): Promise<void> {
-    await this.addChangeItem(change);
+    const { product, id, timeCreated } = change;
+
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `CHANGE_${product}` },
+        sk: { S: timeCreated },
+        id: { S: id }
+      }
+    };
+
+    await dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
-   * @description Handle (create/update) a deployment in the repository.
+   * @description Handle (create/update) a Deployment in the repository.
    */
   public async handleDeployment(deployment: Deployment): Promise<void> {
-    await this.addDeploymentItem(deployment);
-    await this.addDeploymentItem(deployment, true);
+    const { product, id, changes, timeCreated } = deployment;
+
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `DEPLOYMENT_${product}` },
+        sk: { S: timeCreated },
+        changes: { S: JSON.stringify(changes) },
+        id: { S: id }
+      }
+    };
+
+    await dynamoDb.send(new PutItemCommand(command));
+
+    // Update the special "last deployed" item in the database
+    command['Item']['sk']['S'] = 'lastDeployedCommit';
+    await dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
-   * @description Handle (create/update) an incident in the repository.
+   * @description Handle (create/update) an Incident in the repository.
    */
   public async handleIncident(incident: Incident): Promise<void> {
-    await this.updateIncidentItem(incident);
-  }
+    const { product, id, timeCreated, timeResolved, title } = incident;
 
-  /**
-   * @description Get data from local cache.
-   */
-  public getCachedData(key: string): Record<string, unknown> | undefined {
-    if (1 > 2) console.log(key);
-    const cachedData = false; // TODO
-    if (cachedData) {
-      console.log('Returning cached data...');
-      return JSON.parse(cachedData);
-    }
-    return undefined;
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `INCIDENT_${product}` },
+        sk: { S: timeCreated },
+        timeResolved: { S: timeResolved || '' },
+        title: { S: title },
+        id: { S: id }
+      }
+    };
+
+    await dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -89,7 +126,7 @@ class DynamoRepository implements Repository {
 
     // Check cache first - TODO rewrite
     const cachedData = this.getCachedData(key);
-    if (cachedData) return cachedData;
+    if (cachedData && Object.keys(cachedData).length !== 0) return cachedData;
 
     const data = await this.getItem(dataRequest);
 
@@ -100,13 +137,24 @@ class DynamoRepository implements Repository {
   }
 
   /**
+   * @description Get data from local cache.
+   */
+  private getCachedData(key: string): Record<string, unknown> {
+    if (1 > 2) console.log(key);
+    const cachedData = false; // TODO
+    if (cachedData) {
+      console.log('Returning cached data...');
+      return JSON.parse(cachedData);
+    }
+    return {};
+  }
+
+  /**
    * @description Get data from DynamoDB.
    * @todo
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
-    // repoName: string, fromDate: string, toDate: string
-    // DynamoItems
-    const { fromDate, toDate, key, getLastDeployedCommit } = dataRequest; // ,days
+    const { key, fromDate, toDate, getLastDeployedCommit } = dataRequest;
 
     /**
      * @todo Revise text
@@ -132,94 +180,16 @@ class DynamoRepository implements Repository {
       ? await dynamoDb.send(new QueryCommand(command))
       : { Items: testDataItem };
   }
-
-  /**
-   * @description Add (create/update) an Event in the source database.
-   */
-  private async addEventItem(event: Event): Promise<void> {
-    const { product, id, timeCreated, timeResolved, message } = event;
-
-    const command = {
-      TableName: this.tableName,
-      Item: {
-        pk: { S: `EVENT_${product}` },
-        sk: { S: timeCreated },
-        timeResolved: { S: timeResolved },
-        message: { S: message },
-        id: { S: id }
-      }
-    };
-
-    await dynamoDb.send(new PutItemCommand(command));
-  }
-
-  /**
-   * @description Add (create/update) a Change in the source database.
-   */
-  private async addChangeItem(change: Change): Promise<void> {
-    const { product, id, timeCreated } = change;
-
-    const command = {
-      TableName: this.tableName,
-      Item: {
-        pk: { S: `CHANGE_${product}` },
-        sk: { S: timeCreated },
-        id: { S: id }
-      }
-    };
-
-    await dynamoDb.send(new PutItemCommand(command));
-  }
-
-  /**
-   * @description Add (create/update) a Deployment in the source database.
-   */
-  private async addDeploymentItem(
-    deployment: Deployment,
-    isLastDeployedCommit = false
-  ): Promise<void> {
-    const { product, id, changes, timeCreated } = deployment;
-
-    const command = {
-      TableName: this.tableName,
-      Item: {
-        pk: { S: `DEPLOYMENT_${product}` },
-        sk: { S: isLastDeployedCommit ? 'lastDeployedCommit' : timeCreated },
-        changes: { S: JSON.stringify(changes) },
-        id: { S: id }
-      }
-    };
-
-    await dynamoDb.send(new PutItemCommand(command));
-  }
-
-  /**
-   * @description Update (or create) an Incident in the source database.
-   */
-  private async updateIncidentItem(incident: Incident): Promise<void> {
-    const { product, id, timeCreated, timeResolved, title } = incident;
-
-    const command = {
-      TableName: this.tableName,
-      Item: {
-        pk: { S: `INCIDENT_${product}` },
-        sk: { S: timeCreated },
-        timeResolved: { S: timeResolved || '' },
-        title: { S: title },
-        id: { S: id }
-      }
-    };
-
-    await dynamoDb.send(new PutItemCommand(command));
-  }
 }
 
 /**
  * @description Dummy data for testing purposes.
- * @todo
+ * @todo Use actual data shape
  */
 const testDataItem = [
   {
+    pk: { S: 'SOMEORG/SOMEREPO' },
+    sk: { S: '1669870800' },
     chf: { N: '67' },
     rt: { N: '5313' },
     d: { N: '50' },
@@ -231,8 +201,6 @@ const testDataItem = [
     chr: { N: '60' },
     o: { N: '58' },
     p: { N: '23' },
-    ap: { N: '22' },
-    sk: { S: '20221115' },
-    pk: { S: 'METRICS_SOMEORG/SOMEREPO' }
+    ap: { N: '22' }
   }
 ];

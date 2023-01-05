@@ -1,6 +1,6 @@
-import { getMetrics } from '../../src/usecases/getMetrics';
+import { getMetrics } from '../../../src/usecases/getMetrics';
 
-import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
 
 describe('Success cases', () => {
   const repo = createNewLocalRepository();

@@ -1,36 +1,60 @@
-import { makeDeployment } from '../../../src/domain/valueObjects/Deployment';
-import { makeEvent } from '../../../src/domain/valueObjects/Event';
+import { makeDeployment } from '../../../../src/domain/valueObjects/Deployment';
+import { makeEvent } from '../../../../src/domain/valueObjects/Event';
 
-import { DirectParser } from '../../../src/application/parsers/DirectParser';
+import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 
-import { MissingProductValueError } from '../../../src/application/errors/MissingProductValueError';
-import { MissingEventTypeValueError } from '../../../src/application/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../../src/application/errors/MissingIdValueError';
+import { MissingProductValueError } from '../../../../src/application/errors/MissingProductValueError';
+import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
+import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
 
 describe('Failure cases', () => {
   test('It should throw a MissingProductValueError if missing the "product" property', () => {
     expect(() =>
+      // @ts-ignore
       makeDeployment({
-        eventType: 'something',
-        id: 'something'
+        eventType: 'deployment',
+        id: 'something',
+        changes: [''],
+        eventTime: '',
+        timeCreated: '',
+        timeResolved: '',
+        title: '',
+        message: '',
+        date: ''
       })
     ).toThrowError(MissingProductValueError);
   });
 
   test('It should throw a MissingEventTypeValueError if missing the "eventType" property', () => {
     expect(() =>
+      // @ts-ignore
       makeDeployment({
         product: 'something',
-        id: 'something'
+        id: 'something',
+        changes: [''],
+        eventTime: '',
+        timeCreated: '',
+        timeResolved: '',
+        title: '',
+        message: '',
+        date: ''
       })
     ).toThrowError(MissingEventTypeValueError);
   });
 
   test('It should throw a MissingIdValueError if missing the "id" property', () => {
     expect(() =>
+      // @ts-ignore
       makeDeployment({
         product: 'something',
-        eventType: 'something'
+        eventType: 'deployment',
+        changes: [''],
+        eventTime: '',
+        timeCreated: '',
+        timeResolved: '',
+        title: '',
+        message: '',
+        date: ''
       })
     ).toThrowError(MissingIdValueError);
   });

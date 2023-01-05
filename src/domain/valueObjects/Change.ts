@@ -1,4 +1,5 @@
 import { Change } from '../../interfaces/Change';
+import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
@@ -9,8 +10,8 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
 /**
  * @description Factory function to make a Change value object.
  */
-export function makeChange(change: any): Change {
-  const changeConcrete = new ChangeConcrete(change);
+export function makeChange(changeEvent: Event): Change {
+  const changeConcrete = new ChangeConcrete(changeEvent);
   return changeConcrete.getData();
 }
 
@@ -21,8 +22,8 @@ class ChangeConcrete {
   timeCreated: string;
   date: string;
 
-  constructor(change: any) {
-    const { product, eventType, id } = change;
+  constructor(changeEvent: any) {
+    const { product, eventType, id } = changeEvent;
 
     if (!product)
       throw new MissingProductValueError(

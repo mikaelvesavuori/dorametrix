@@ -1,8 +1,8 @@
-import { getLastDeployment } from '../../src/usecases/getLastDeployment';
+import { getLastDeployment } from '../../../src/usecases/getLastDeployment';
 
-import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
 
-import { deployments, changes, incidents } from '../../testdata/TestDatabase';
+import { deployments, changes, incidents } from '../../../testdata/TestDatabase';
 
 describe('Success cases', () => {
   const repo = createNewLocalRepository({ deployments, changes, incidents });

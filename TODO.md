@@ -6,9 +6,11 @@
 
 ## Fix
 
-- Tester
+- Tests
+- Type coverage
 - TODOs
-- Städa
-- Uppdatera dokumentation
-- Använd getUTC istället i datum-metoder
+- Cleanup
+- Update dokumentation
+- Use getUTC instead
 - Create test data
+- Update "product" to "repo"

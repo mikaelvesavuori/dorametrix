@@ -33,22 +33,23 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
 // TODO: Could this be simplified by using Events instead of the specific types?
 async function getMetricsFromDatabase(repository: Repository, input: RequestDTO) {
   const { repo, from, to } = input;
+  const request = {
+    fromDate: from,
+    toDate: to
+  };
 
   const changes = await repository.getMetrics({
-    fromDate: from,
-    toDate: to,
+    ...request,
     key: `CHANGE_${repo}`
   });
 
   const deployments = await repository.getMetrics({
-    fromDate: from,
-    toDate: to,
+    ...request,
     key: `DEPLOYMENT_${repo}`
   });
 
   const incidents = await repository.getMetrics({
-    fromDate: from,
-    toDate: to,
+    ...request,
     key: `INCIDENT_${repo}`
   });
 

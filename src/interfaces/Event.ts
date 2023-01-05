@@ -9,7 +9,6 @@ export interface Event {
   eventType: EventType;
 
   /**
-  /**
    * @description The product name, such as the name of the API
    * or Git repository that we are measuring metrics for.
    */

@@ -1,4 +1,5 @@
 import { Deployment } from '../../interfaces/Deployment';
+import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
@@ -9,8 +10,8 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
 /**
  * @description Factory function to make a Deployment value object.
  */
-export function makeDeployment(deployment: any): Deployment {
-  const deploymentConcrete = new DeploymentConcrete(deployment);
+export function makeDeployment(deploymentEvent: Event): Deployment {
+  const deploymentConcrete = new DeploymentConcrete(deploymentEvent);
   return deploymentConcrete.getData();
 }
 
@@ -22,8 +23,8 @@ class DeploymentConcrete {
   changes: string[];
   timeCreated: string;
 
-  constructor(deployment: any) {
-    const { product, id, eventType, timeCreated, changes } = deployment;
+  constructor(deploymentEvent: any) {
+    const { product, id, eventType, timeCreated, changes } = deploymentEvent;
 
     if (!product)
       throw new MissingProductValueError(

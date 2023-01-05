@@ -1,10 +1,10 @@
-import { makeEvent } from '../../src/domain/valueObjects/Event';
+import { makeEvent } from '../../../src/domain/valueObjects/Event';
 
-import { DirectParser } from '../../src/application/parsers/DirectParser';
+import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
-import { createEvent } from '../../src/usecases/createEvent';
+import { createEvent } from '../../../src/usecases/createEvent';
 
-import { createNewLocalRepository } from '../../src/infrastructure/repositories/LocalRepository';
+import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
 
 describe('Success cases', () => {
   const repo = createNewLocalRepository();

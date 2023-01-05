@@ -1,5 +1,6 @@
-import { getRequestDTO } from '../../src/application/getRequestDTO';
-import { getCurrentDate } from '../../src/infrastructure/frameworks/date';
+import { getRequestDTO } from '../../../src/application/getRequestDTO';
+
+import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
 
 describe('Success cases', () => {
   describe('Static set period', () => {

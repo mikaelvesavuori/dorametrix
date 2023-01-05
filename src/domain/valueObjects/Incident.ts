@@ -1,4 +1,5 @@
 import { Incident } from '../../interfaces/Incident';
+import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
@@ -9,8 +10,8 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
 /**
  * @description Factory function to make an Incident value object.
  */
-export function makeIncident(incident: any): Incident {
-  const incidentConcrete = new IncidentConcrete(incident);
+export function makeIncident(incidentEvent: Event): Incident {
+  const incidentConcrete = new IncidentConcrete(incidentEvent);
   return incidentConcrete.getData();
 }
 
@@ -23,8 +24,8 @@ class IncidentConcrete implements Incident {
   timeResolved: string;
   title: string;
 
-  constructor(incident: any) {
-    const { product, eventType, id, timeCreated, timeResolved, title } = incident;
+  constructor(incidentEvent: Event) {
+    const { product, eventType, id, timeCreated, timeResolved, title } = incidentEvent;
 
     if (!product)
       throw new MissingProductValueError(
