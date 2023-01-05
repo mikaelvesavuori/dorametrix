@@ -5,7 +5,7 @@ import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
 /**
  * @description Create the main type of event, the titular `Event` which
- * can be reassembled to other, more specific types/"value objects" later.
+ * can be reassembled to other, more specific types or "value objects" later.
  */
 export function makeEvent(parser: Parser, body: any, headers: any): Event {
   const eventConcrete = new EventConcrete(parser, body, headers);

@@ -39,7 +39,7 @@ class LocalRepo implements Repository {
    * @description Get metrics for a given repository and a period of time.
    */
   async getMetrics(dataRequest: DataRequest): Promise<any> {
-    const { key, onlyGetCount } = dataRequest;
+    const { key } = dataRequest;
 
     const data = (() => {
       if (key.toLowerCase().startsWith('change')) return this.changes || [];
@@ -47,7 +47,6 @@ class LocalRepo implements Repository {
       if (key.toLowerCase().startsWith('incident')) return this.incidents || [];
     })();
 
-    if (data && onlyGetCount) return data.length;
     return data;
   }
 

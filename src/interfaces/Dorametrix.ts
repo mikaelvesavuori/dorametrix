@@ -6,11 +6,6 @@ import { DeploymentResponse } from './DeploymentResponse';
  */
 export interface Dorametrix {
   /**
-   * @description Set the product name.
-   */
-  setProductName(productName: string): void;
-
-  /**
    * @description Get the commit ID for the last deployment to production.
    */
   getLastDeployment(lastDeployment: any): DeploymentResponse;

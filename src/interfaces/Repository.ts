@@ -38,11 +38,11 @@ export interface Repository {
   */
 }
 
+// TODO: Check
 export type DataRequest = {
   key: string;
   fromDate: string;
   toDate: string;
-  onlyGetCount?: boolean;
   getLastDeployedCommit?: boolean;
   days?: number;
 };

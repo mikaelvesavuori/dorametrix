@@ -1,19 +1,19 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { createNewDorametrix } from '../../../domain/services/Dorametrix';
 import { getLastDeployment } from '../../../usecases/getLastDeployment';
-import { getQueryStringParams } from '../../frameworks/getQueryStringParams';
+
+import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+
+import { getRequestDTO } from '../../../application/getRequestDTO';
 
 /**
  * @description The controller for our service that handles getting the commit ID for the last deployment to production.
  */
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
-    const queryParams = getQueryStringParams(
-      event?.queryStringParameters as unknown as Record<string, string>
-    );
-    const dorametrix = createNewDorametrix();
-    const lastDeployment = await getLastDeployment(dorametrix, queryParams);
+    const input = getRequestDTO(event?.queryStringParameters as unknown as Record<string, string>);
+    const repo = createNewDynamoRepository();
+    const lastDeployment = await getLastDeployment(repo, input);
 
     return {
       statusCode: 200,

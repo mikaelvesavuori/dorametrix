@@ -10,8 +10,8 @@ import { getDiffInSeconds } from '../../infrastructure/frameworks/getDiffInSecon
 /**
  * @description Factory function to create new Dorametrix instance.
  */
-export function createNewDorametrix(): Dorametrix {
-  return new DorametrixConcrete();
+export function createNewDorametrix(repoName: string): Dorametrix {
+  return new DorametrixConcrete(repoName);
 }
 
 /**
@@ -19,20 +19,13 @@ export function createNewDorametrix(): Dorametrix {
  */
 class DorametrixConcrete implements Dorametrix {
   deploymentPeriodDays: number;
-  product: string;
+  repoName: string;
 
-  constructor() {
+  constructor(repoName: string) {
     this.deploymentPeriodDays = process.env.DEPLOYMENT_PERIOD_DAYS
       ? parseInt(process.env.DEPLOYMENT_PERIOD_DAYS)
       : 7;
-    this.product = '';
-  }
-
-  /**
-   * @description Set the product name.
-   */
-  public setProductName(productName: string) {
-    this.product = productName;
+    this.repoName = repoName;
   }
 
   /**
@@ -40,13 +33,6 @@ class DorametrixConcrete implements Dorametrix {
    * @todo Fix real type
    */
   public getLastDeployment(lastDeployment: any): DeploymentResponse {
-    /*
-    const lastDeployment = await this.repository.getMetrics({
-      key: `DEPLOYMENT_${this.product}`,
-      getLastDeployedCommit: true
-    });
-    */
-
     if (lastDeployment[0]?.changes) {
       const changes = JSON.parse(lastDeployment[0]?.changes);
 
@@ -82,14 +68,6 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the averaged or total deployment frequency for a period of time (default: 7 days).
    */
   public getDeploymentFrequency(deploymentCount: number): string {
-    /*
-    const deploymentCount = await this.repository.getMetrics({
-      key: `DEPLOYMENT_${this.product}`,
-      onlyGetCount: true,
-      days: this.deploymentPeriodDays
-    });
-    */
-
     return (deploymentCount / this.deploymentPeriodDays).toFixed(2).toString();
   }
 
@@ -150,24 +128,6 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get a change failure rate as an averaged or total number for a period of time (default: 30 days).
    */
   public getChangeFailureRate(incidentCount: number, deploymentCount: number): string {
-    //const { fromDate, toDate, useTotal } = input;
-
-    /*
-    const deploymentCount = await this.repository.getMetrics({
-      fromDate,
-      toDate,
-      key: `DEPLOYMENT_${this.product}`,
-      onlyGetCount: true
-    });
-
-    const incidentCount = await this.repository.getMetrics({
-      fromDate,
-      toDate,
-      key: `INCIDENT_${this.product}`,
-      onlyGetCount: true
-    });
-    */
-
     if (incidentCount === 0 || deploymentCount === 0) return '0.00';
 
     return (incidentCount / deploymentCount).toFixed(2).toString();
@@ -177,7 +137,6 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the time to restore service as an averaged or total value.
    */
   public getTimeToRestoreServices(incidents: any[]): string {
-    //const incidents = await this.repository.getMetrics({ key: `INCIDENT_${this.product}` });
     if (incidents.length === 0) return '00:00:00:00';
 
     let accumulatedTime = 0;

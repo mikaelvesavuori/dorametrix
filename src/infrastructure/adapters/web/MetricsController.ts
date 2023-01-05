@@ -4,14 +4,14 @@ import { getMetrics } from '../../../usecases/getMetrics';
 
 import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
 
-import { getQueryStringParams } from '../../frameworks/getQueryStringParams';
+import { getRequestDTO } from '../../../application/getRequestDTO';
 
 /**
  * @description The controller for our service that gets the DORA metrics.
  */
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
-    const queryParams = getQueryStringParams(
+    const queryParams = getRequestDTO(
       event?.queryStringParameters as unknown as Record<string, string>
     );
     const repo = createNewDynamoRepository();

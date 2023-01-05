@@ -8,7 +8,7 @@ import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
 import { Incident } from '../../interfaces/Incident';
 
-//import { getMilliseconds } from '../frameworks/getMilliseconds';
+import { getCleanedItems } from '../frameworks/getCleanedItems';
 
 const dynamoDb = new DynamoDBClient({
   region: process.env.REGION || 'eu-north-1'
@@ -85,16 +85,13 @@ class DynamoRepository implements Repository {
    * @description Get metrics for a given repository and a period of time.
    */
   public async getMetrics(dataRequest: DataRequest): Promise<any> {
-    const { key, onlyGetCount } = dataRequest;
+    const { key } = dataRequest;
 
     // Check cache first - TODO rewrite
     const cachedData = this.getCachedData(key);
-    if (cachedData) return onlyGetCount ? cachedData.length : cachedData;
+    if (cachedData) return cachedData;
 
     const data = await this.getItem(dataRequest);
-
-    // Return item count if that's the only thing user wants
-    if (onlyGetCount) return data?.Count || 0;
 
     // Clean up data objects
     const items = getCleanedItems(data?.Items as any);
@@ -109,31 +106,24 @@ class DynamoRepository implements Repository {
   private async getItem(dataRequest: DataRequest): Promise<any> {
     // repoName: string, fromDate: string, toDate: string
     // DynamoItems
-    const { key, onlyGetCount } = dataRequest; // getLastDeployedCommit,days
-    //const milliseconds = getMilliseconds(days);
-
-    // TODO
-    const fromDate = '1600000000000';
-    const toDate = '2600000000000';
+    const { fromDate, toDate, key, getLastDeployedCommit } = dataRequest; // ,days
 
     /**
+     * @todo Revise text
      * Only fetch days within our time window (30 days).
      * Use a projection expression to cut back on unnecessary data transfer.
-     * Fetch even less data if "onlyGetCount" is true.
      * Get by "lastDeployedCommit" value if "getLastDeployedCommit" is true.
      */
     const command = {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :toDate',
-      ProjectionExpression: onlyGetCount ? 'pk, sk' : 'pk, sk, toDate, timeResolved, id, changes',
+      ProjectionExpression: 'pk, sk, toDate, timeResolved, id, changes',
       ExpressionAttributeValues: {
         ':pk': { S: key },
-        ':sk': { S: fromDate },
+        ':sk': {
+          S: getLastDeployedCommit ? 'lastDeployedCommit' : fromDate
+        },
         ':toDate': { S: toDate }
-        //
-        //':timeCreated': {
-        //  S: getLastDeployedCommit ? 'lastDeployedCommit' : (Date.now() - milliseconds).toString()
-        //}
       }
     };
 
@@ -246,34 +236,3 @@ const testDataItem = [
     pk: { S: 'METRICS_SOMEORG/SOMEREPO' }
   }
 ];
-
-/**
- * @description Clean up and return items in a normalized format.
- * @todo Break out into separate function
- */
-function getCleanedItems(items: any[]) {
-  const fixedItems: any = [];
-
-  if (items && typeof items === 'object' && items.length > 0) {
-    try {
-      items.forEach((item: any) => {
-        const cleanedItem: Record<string, any> = {};
-
-        Object.entries(item).forEach((entry: any) => {
-          const [key, value] = entry;
-          if (key === 'pk') return;
-          if (key === 'sk') {
-            cleanedItem['timeCreated'] = Object.values(value)[0];
-          } else cleanedItem[key] = Object.values(value)[0];
-        });
-
-        fixedItems.push(cleanedItem);
-      });
-    } catch (error: any) {
-      console.error(error);
-      throw new Error(error);
-    }
-  }
-
-  return fixedItems;
-}

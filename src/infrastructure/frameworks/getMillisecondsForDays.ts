@@ -1,9 +1,7 @@
 /**
  * @description Returns the number of milliseconds for a count of days.
- *
- * Default to fetching last 30 days.
  */
-export function getMilliseconds(days = 30) {
+export function getMillisecondsForDays(days: number) {
   const millisSingleDay = 24 * 60 * 60 * 1000; // hours x minutes x seconds x milliseconds per second
 
   /**
