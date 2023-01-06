@@ -27,6 +27,8 @@ class IncidentConcrete implements Incident {
   constructor(incidentEvent: Event) {
     const { product, eventType, id, timeCreated, timeResolved, title } = incidentEvent;
 
+    console.log('xxx', incidentEvent);
+
     if (!product)
       throw new MissingProductValueError(
         'Missing "product" when trying to create an Incident value object!'

@@ -1,11 +1,11 @@
 import { BitbucketParser } from '../../../src/application/parsers/BitbucketParser';
 
-import { UnknownEventType } from '../../../src/application/errors/UnknownEventType';
+import { UnknownEventTypeError } from '../../../src/application/errors/UnknownEventTypeError';
 import { MissingEventTimeError } from '../../../src/application/errors/MissingEventTimeError';
 
 describe('Failure cases', () => {
   describe('Event types', () => {
-    test('It should throw an UnknownEventType if event type is unknown', async () => {
+    test('It should throw an UnknownEventTypeError if event type is unknown', async () => {
       const parser = new BitbucketParser();
       expect(() =>
         parser.getEventType({
@@ -13,7 +13,7 @@ describe('Failure cases', () => {
             asdf: '12345'
           }
         })
-      ).toThrowError(UnknownEventType);
+      ).toThrowError(UnknownEventTypeError);
     });
   });
 
@@ -267,9 +267,7 @@ describe('Success cases', () => {
       const parser = new BitbucketParser();
       const productName = parser.getProductName({
         repository: {
-          project: {
-            name: 'my-project'
-          }
+          full_name: 'my-project'
         }
       });
       expect(productName).toBe('my-project');

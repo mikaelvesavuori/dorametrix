@@ -1,13 +1,13 @@
 import { GitHubParser } from '../../../src/application/parsers/GitHubParser';
 
-import { UnknownEventType } from '../../../src/application/errors/UnknownEventType';
+import { UnknownEventTypeError } from '../../../src/application/errors/UnknownEventTypeError';
 import { MissingEventError } from '../../../src/application/errors/MissingEventError';
 import { MissingEventTimeError } from '../../../src/application/errors/MissingEventTimeError';
 import { MissingIdError } from '../../../src/application/errors/MissingIdError';
 
 describe('Failure cases', () => {
   describe('General', () => {
-    test('It should throw an UnknownEventType if event type is unknown', async () => {
+    test('It should throw an UnknownEventTypeError if event type is unknown', async () => {
       const parser = new GitHubParser();
       expect(() =>
         parser.getEventType({
@@ -15,7 +15,7 @@ describe('Failure cases', () => {
             'X-GitHub-Event': '12345'
           }
         })
-      ).toThrowError(UnknownEventType);
+      ).toThrowError(UnknownEventTypeError);
     });
 
     test('It should throw a MissingEventError if no event is detected in headers', () => {
@@ -453,7 +453,7 @@ describe('Success cases', () => {
       const parser = new GitHubParser();
       const productName = parser.getProductName({
         repository: {
-          name: 'my-project'
+          full_name: 'my-project'
         }
       });
       expect(productName).toBe('my-project');

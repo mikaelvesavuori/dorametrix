@@ -22,7 +22,7 @@ export async function getLastDeployment(
 
   const lastDeployment = await repository.getMetrics({
     fromDate: '0',
-    toDate: '2600000000000',
+    toDate: '3000000000000',
     key: `DEPLOYMENT_${repo}`,
     getLastDeployedCommit: true
   });

@@ -1,10 +1,10 @@
 /**
  * @description Used when an unknown event type is encountered.
  */
-export class UnknownEventType extends Error {
+export class UnknownEventTypeError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'UnknownEventType';
+    this.name = 'UnknownEventTypeError';
     console.error(message);
   }
 }

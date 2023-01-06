@@ -278,6 +278,9 @@ describe('Success cases', () => {
     test('It should take in a typical Jira event and return the product name', () => {
       const parser = new JiraParser();
       const productName = parser.getProductName({
+        user: {
+          self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
+        },
         issue: {
           id: '10004',
           fields: {
@@ -288,7 +291,7 @@ describe('Success cases', () => {
           }
         }
       });
-      expect(productName).toBe('my-project');
+      expect(productName).toBe('something/my-project');
     });
 
     test('It should take in a typical Jira event and return an empty string if it is missing', () => {

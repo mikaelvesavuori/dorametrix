@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-
 import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 
 import { Repository, DataRequest } from '../../interfaces/Repository';

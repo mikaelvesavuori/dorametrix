@@ -28,7 +28,7 @@ export class JiraParser implements Parser {
       const eventType = body?.['issue_event_type_name'] || body?.['webhookEvent'];
       if (eventType === 'issue_created') return 'opened';
       if (eventType === 'issue_generic') {
-        const resolved = body.changelog.items.filter(
+        const resolved = body?.changelog.items.filter(
           (item: any) => item.field === 'resolution' && item.toString === 'Done'
         );
         if (resolved.length > 0) return 'closed';
@@ -119,6 +119,9 @@ export class JiraParser implements Parser {
    * @description Get the product name.
    */
   public getProductName(body: any): string {
-    return (body && body?.['issue']?.['fields']?.['project']?.['name']) || '';
+    const domain = body?.['user']?.['self'].split('https://')[1].split('.atlassian.net')[0];
+    const project = body?.['issue']?.['fields']?.['project']?.['name'];
+    if (domain && project) return `${domain}/${project}`;
+    return '';
   }
 }

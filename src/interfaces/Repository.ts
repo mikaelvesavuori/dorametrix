@@ -28,14 +28,6 @@ export interface Repository {
    * @description Get metrics from source system.
    */
   getMetrics(dataRequest: DataRequest): Promise<any>;
-
-  // TODO: Make "private"
-  /*
-  private addEventItem(data: any): Promise<void>;
-  private addChangeItem(data: any): Promise<void>;
-  private addDeploymentItem(data: any, isLastDeployedCommit?: boolean): Promise<void>;
-  private updateIncidentItem(data: any): Promise<void>;
-  */
 }
 
 // TODO: Check

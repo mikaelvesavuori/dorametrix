@@ -1,9 +1,9 @@
 import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
-import { UnknownEventType } from '../../../src/application/errors/UnknownEventType';
+import { UnknownEventTypeError } from '../../../src/application/errors/UnknownEventTypeError';
 
 describe('Failure cases', () => {
-  test('It should throw an UnknownEventType if event type is unknown', async () => {
+  test('It should throw an UnknownEventTypeError if event type is unknown', async () => {
     const parser = new DirectParser();
     expect(() =>
       parser.getEventType({
@@ -11,7 +11,7 @@ describe('Failure cases', () => {
           asdf: '1234'
         }
       })
-    ).toThrowError(UnknownEventType);
+    ).toThrowError(UnknownEventTypeError);
   });
 });
 

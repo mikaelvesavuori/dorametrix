@@ -7,7 +7,11 @@ import { getCurrentDate } from '../../infrastructure/frameworks/date';
  * @description Create the main type of event, the titular `Event` which
  * can be reassembled to other, more specific types or "value objects" later.
  */
-export function makeEvent(parser: Parser, body: any, headers: any): Event {
+export function makeEvent(
+  parser: Parser,
+  body: Record<string, any>,
+  headers: Record<string, any>
+): Event {
   const eventConcrete = new EventConcrete(parser, body, headers);
   return eventConcrete.getData();
 }
@@ -24,7 +28,7 @@ class EventConcrete {
   title: string;
   message: string;
 
-  constructor(parser: Parser, body: any, headers: any) {
+  constructor(parser: Parser, body: Record<string, any>, headers: Record<string, any>) {
     const eventType = parser.getEventType({ body, headers });
     const { id, eventTime, timeCreated, timeResolved, title, message } = parser.getPayload({
       body,

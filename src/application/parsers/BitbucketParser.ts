@@ -4,7 +4,7 @@ import { Parser, EventTypeInput, PayloadInput } from '../../interfaces/Parser';
 import { MissingEventTimeError } from '../errors/MissingEventTimeError';
 import { MissingEventError } from '../errors/MissingEventError';
 import { MissingIdError } from '../errors/MissingIdError';
-import { UnknownEventType } from '../errors/UnknownEventType';
+import { UnknownEventTypeError } from '../errors/UnknownEventTypeError';
 
 import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 
@@ -18,10 +18,10 @@ export class BitbucketParser implements Parser {
    */
   public getEventType(eventTypeInput: EventTypeInput): string {
     const { headers } = eventTypeInput;
-    const eventType = headers['X-Event-Key'] || headers['x-event-key'];
+    const eventType = headers?.['X-Event-Key'] || headers?.['x-event-key'];
     if (eventType === 'repo:push') return 'change';
     if (eventType && eventType.startsWith('issue:')) return 'incident';
-    throw new UnknownEventType('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
   }
 
   /**
@@ -31,7 +31,7 @@ export class BitbucketParser implements Parser {
     const { body, headers } = payloadInput;
 
     const event = (() => {
-      const eventKeyHeader = headers['X-Event-Key'] || headers['x-event-key'];
+      const eventKeyHeader = headers?.['X-Event-Key'] || headers?.['x-event-key'];
       if (eventKeyHeader === 'issue:created') return 'opened';
       if (eventKeyHeader === 'issue:updated') {
         if (body?.['changes']?.['status']?.['new'] === 'resolved') return 'closed';
@@ -137,6 +137,6 @@ export class BitbucketParser implements Parser {
    * @description Get the product name.
    */
   public getProductName(body: any): string {
-    return (body && body?.['repository']?.['project']?.['name']) || '';
+    return (body && body?.['repository']?.['full_name']) || '';
   }
 }

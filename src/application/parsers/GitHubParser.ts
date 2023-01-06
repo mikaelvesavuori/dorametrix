@@ -1,6 +1,6 @@
 import { EventDto } from '../../interfaces/Event';
 import { Parser, EventTypeInput, PayloadInput } from '../../interfaces/Parser';
-import { UnknownEventType } from '../errors/UnknownEventType';
+import { UnknownEventTypeError } from '../errors/UnknownEventTypeError';
 import { MissingEventTimeError } from '../errors/MissingEventTimeError';
 import { MissingEventError } from '../errors/MissingEventError';
 import { MissingIdError } from '../errors/MissingIdError';
@@ -18,12 +18,12 @@ export class GitHubParser implements Parser {
   // @ts-ignore
   public getEventType(eventTypeInput: EventTypeInput): string {
     const { headers } = eventTypeInput;
-    const eventType = headers['X-GitHub-Event'] || headers['x-github-event'];
+    const eventType = headers?.['X-GitHub-Event'] || headers?.['x-github-event'];
 
     if (eventType === 'push') return 'change';
     if (eventType === 'issues') return 'incident';
 
-    throw new UnknownEventType('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
   }
 
   /**
@@ -33,8 +33,8 @@ export class GitHubParser implements Parser {
     const { body, headers } = payloadInput;
     const event = (() => {
       // `body.action` will contain any specifics, so if it exists that's the one we want to use
-      if (body.action) return body.action;
-      return headers['X-GitHub-Event'] || headers['x-github-event'];
+      if (body?.action) return body.action;
+      return headers?.['X-GitHub-Event'] || headers?.['x-github-event'];
     })();
     if (!event) throw new MissingEventError('Missing event in headers, in "getPayload()"!');
 
@@ -148,6 +148,6 @@ export class GitHubParser implements Parser {
    * @description Get the product name.
    */
   public getProductName(body: any): string {
-    return (body && body?.['repository']?.['name']) || '';
+    return (body && body?.['repository']?.['full_name']) || '';
   }
 }

@@ -16,3 +16,4 @@
 - Create test data
 - Update "product" to "repo"
 - New output format
+- Clean up errors so they have baked-in error messages

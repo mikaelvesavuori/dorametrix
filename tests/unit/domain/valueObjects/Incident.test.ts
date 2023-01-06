@@ -82,10 +82,11 @@ describe('Success cases', () => {
 
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
+      console.log('-->', incident);
 
+      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
-      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('timeCreated');
       expect(incident).toHaveProperty('timeResolved');
       expect(incident).toHaveProperty('title');
@@ -101,9 +102,9 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
+      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
-      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('timeCreated');
       expect(incident).toHaveProperty('timeResolved');
       expect(incident).toHaveProperty('title');
@@ -117,9 +118,9 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
+      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
-      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('timeCreated');
       expect(incident).toHaveProperty('timeResolved');
       expect(incident).toHaveProperty('title');
@@ -131,7 +132,7 @@ describe('Success cases', () => {
       const parser = new GitHubParser();
       const body = {
         repository: {
-          name: 'somerepo'
+          full_name: 'somesomeuser/somereporepo'
         }
       };
       const headers = githubIncidentHeaders;
@@ -139,9 +140,9 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
+      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
-      expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('timeCreated');
       expect(incident).toHaveProperty('timeResolved');
       expect(incident).toHaveProperty('title');

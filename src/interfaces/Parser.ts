@@ -22,8 +22,8 @@ export interface Parser {
 }
 
 export type EventTypeInput = {
-  body?: any;
-  headers?: any;
+  body?: Record<string, any>;
+  headers?: Record<string, any>;
 };
 
 export type PayloadInput = EventTypeInput;

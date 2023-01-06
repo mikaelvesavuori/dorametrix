@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 
 import { EventDto } from '../../interfaces/Event';
 import { EventTypeInput, Parser, PayloadInput } from '../../interfaces/Parser';
-import { UnknownEventType } from '../errors/UnknownEventType';
+import { UnknownEventTypeError } from '../errors/UnknownEventTypeError';
 
 /**
  * @description Parser adapted for "direct call" use cases, when not using a CI system or similar.
@@ -17,7 +17,7 @@ export class DirectParser implements Parser {
     const eventType = body && body.eventType;
     if (eventType === 'change' || eventType === 'deployment' || eventType === 'incident')
       return eventType;
-    throw new UnknownEventType('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
   }
 
   /**
