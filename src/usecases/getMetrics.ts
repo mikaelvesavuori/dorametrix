@@ -17,7 +17,7 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
   const incidentCount = incidents.length;
 
   const dorametrix = createNewDorametrix(repo);
-  const deploymentFrequency = dorametrix.getDeploymentFrequency(deploymentCount);
+  const deploymentFrequency = dorametrix.getDeploymentFrequency(deploymentCount, from, to);
   const leadTimeForChanges = dorametrix.getLeadTimeForChanges(changes, deployments);
   const changeFailureRate = dorametrix.getChangeFailureRate(incidentCount, deploymentCount);
   const timeToRestoreServices = dorametrix.getTimeToRestoreServices(incidents);
@@ -41,7 +41,6 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
   };
 }
 
-// TODO: Could this be simplified by using Events instead of the specific types?
 async function getMetricsFromDatabase(repository: Repository, input: RequestDTO) {
   const { repo, from, to } = input;
   const request = {

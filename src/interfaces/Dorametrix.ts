@@ -11,9 +11,13 @@ export interface Dorametrix {
   getLastDeployment(lastDeployment: any): DeploymentResponse;
 
   /**
-   * @description Get the averaged deployment frequency for a period of time (default: 7 days).
+   * @description Get the averaged deployment frequency for a period of time.
    */
-  getDeploymentFrequency(deploymentCount: number): string;
+  getDeploymentFrequency(
+    deploymentCount: number,
+    fromTimestamp: string,
+    toTimestamp: string
+  ): string;
 
   /**
    * @description Get the averaged lead time for a change getting into production (deployment).

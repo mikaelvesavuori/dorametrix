@@ -28,7 +28,7 @@ class DynamoRepository implements Repository {
   tableName: string;
 
   constructor() {
-    this.tableName = process.env.TABLE_NAME || 'dorametrix';
+    this.tableName = process.env.TABLE_NAME || 'dorametrix'; // TODO: Add error if not set
   }
 
   /**
@@ -38,7 +38,7 @@ class DynamoRepository implements Repository {
    * To keep individual records, we'll use the event time as the timeCreated
    * so they don't stack on the same record.
    */
-  public async handleEvent(event: Event): Promise<void> {
+  public async addEvent(event: Event): Promise<void> {
     const { product, timeCreated, timeResolved, message, eventTime } = event;
 
     const command = {
@@ -59,7 +59,7 @@ class DynamoRepository implements Repository {
   /**
    * @description Add (create/update) a Change in the repository.
    */
-  public async handleChange(change: Change): Promise<void> {
+  public async addChange(change: Change): Promise<void> {
     const { product, id, timeCreated } = change;
 
     const command = {
@@ -77,7 +77,7 @@ class DynamoRepository implements Repository {
   /**
    * @description Handle (create/update) a Deployment in the repository.
    */
-  public async handleDeployment(deployment: Deployment): Promise<void> {
+  public async addDeployment(deployment: Deployment): Promise<void> {
     const { product, id, changes, timeCreated } = deployment;
 
     const command = {
@@ -100,7 +100,7 @@ class DynamoRepository implements Repository {
   /**
    * @description Handle (create/update) an Incident in the repository.
    */
-  public async handleIncident(incident: Incident): Promise<void> {
+  public async addIncident(incident: Incident): Promise<void> {
     const { product, id, timeCreated, timeResolved, title } = incident;
 
     const command = {
@@ -136,13 +136,12 @@ class DynamoRepository implements Repository {
   }
 
   /**
-   * @description Get data from local cache.
+   * @description Get data from cache.
    */
   private getCachedData(key: string): Record<string, unknown> {
-    if (1 > 2) console.log(key);
     const cachedData = false; // TODO
     if (cachedData) {
-      console.log('Returning cached data...');
+      console.log('Returning cached data...', key);
       return JSON.parse(cachedData);
     }
     return {};

@@ -11,26 +11,30 @@ describe('Success cases', () => {
   afterAll(() => (console.warn = warn));
 
   describe('Get all metrics', () => {
-    test('It should get all metrics when given no query string parameters', async () => {
+    test('It should get all metrics', async () => {
       const expected = {
+        repo: 'SOMEORG/SOMEREPO',
         period: {
-          from: '',
-          to: ''
+          from: '20220101',
+          to: '20231231'
         },
-        repo: '',
         total: {
           deploymentCount: 1,
           incidentCount: 1
         },
         metrics: {
           changeFailureRate: '1.00',
-          deploymentFrequency: '0.14',
+          deploymentFrequency: '1.00',
           leadTimeForChanges: '00:01:25:00',
           timeToRestoreServices: '01:03:05:10'
         }
       };
 
-      const result = await getMetrics(repo, { repo: '', from: '', to: '' });
+      const result = await getMetrics(repo, {
+        repo: 'SOMEORG/SOMEREPO',
+        from: '20220101',
+        to: '20231231'
+      });
 
       expect(result).toMatchObject(expected);
     });

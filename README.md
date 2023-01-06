@@ -76,7 +76,6 @@ You can set certain values in `serverless.yml`.
 
 #### Optional
 
-- `DEPLOYMENT_PERIOD_DAYS`: Number of days to include in deployment window when calculating "deployment frequency" metric (default: `7`)
 - `REGION`: The AWS region you want to use (default: `eu-north-1`)
 - `TABLE_NAME`: The DynamoDB table name you want to use (default: `dorametrix`)
 
@@ -217,7 +216,7 @@ The period that is taken into account is 30 days in most cases, or 7 days for de
 
 #### Calculation
 
-`{number of deployments} / 7` is the standard (i.e. number of deployments in the last week).
+`{number of deployments} / 7` is the standard (i.e. number of deployments in the last week). (TODO: This is no longer the case)
 
 ### Lead Time for Changes
 

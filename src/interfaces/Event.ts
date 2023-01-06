@@ -1,3 +1,5 @@
+import { Change } from './Change';
+
 /**
  * @description The Event is the primitive, raw event type.
  */
@@ -25,7 +27,7 @@ export interface Event {
    * @description Array of changes. Applicable if
    * `eventType` is `deployment`. Will stay empty otherwise.
    */
-  changes: string[];
+  changes: Change[];
 
   /**
    * @description Unix timestamp of event time.

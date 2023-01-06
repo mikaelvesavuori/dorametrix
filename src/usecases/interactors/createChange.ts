@@ -8,5 +8,5 @@ import { Event } from '../../interfaces/Event';
  */
 export async function createChange(repository: Repository, event: Event): Promise<void> {
   const change = makeChange(event);
-  await repository.handleChange(change);
+  await repository.addChange(change);
 }

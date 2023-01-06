@@ -22,7 +22,7 @@ describe('Failure cases', () => {
       makeChange({
         eventType: 'deployment',
         id: 'something',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -39,7 +39,7 @@ describe('Failure cases', () => {
       makeChange({
         product: 'something',
         id: 'something',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -56,7 +56,7 @@ describe('Failure cases', () => {
       makeChange({
         product: 'something',
         eventType: 'deployment',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',

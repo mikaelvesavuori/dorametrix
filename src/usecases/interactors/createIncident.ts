@@ -8,5 +8,5 @@ import { Event } from '../../interfaces/Event';
  */
 export async function createIncident(repository: Repository, event: Event): Promise<void> {
   const incident = makeIncident(event);
-  await repository.handleIncident(incident);
+  await repository.addIncident(incident);
 }

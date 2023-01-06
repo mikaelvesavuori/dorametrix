@@ -8,5 +8,5 @@ import { Event } from '../../interfaces/Event';
  */
 export async function createDeployment(repository: Repository, event: Event): Promise<void> {
   const deployment = makeDeployment(event);
-  await repository.handleDeployment(deployment);
+  await repository.addDeployment(deployment);
 }

@@ -15,7 +15,7 @@ export async function createEvent(repository: Repository, event: Event): Promise
   if (!event.id) return;
 
   // First, add event for record keeping
-  await repository.handleEvent(event);
+  await repository.addEvent(event);
 
   // Next, create a customized type for the specific variant (Change, Deployment, Incident)
   if (eventType === 'change') await createChange(repository, event);

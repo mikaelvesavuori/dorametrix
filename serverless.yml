@@ -21,7 +21,6 @@ provider:
     minimumCompressionSize: 1024
   environment:
     API_KEY: "TODO" # EDIT THIS TO YOUR VALUE
-    DEPLOYMENT_PERIOD_DAYS: 7
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.config.tableName}
 

@@ -18,13 +18,9 @@ export function createNewDorametrix(repoName: string): Dorametrix {
  * @description Concrete implementation of Dorametrix.
  */
 class DorametrixConcrete implements Dorametrix {
-  deploymentPeriodDays: number;
   repoName: string;
 
   constructor(repoName: string) {
-    this.deploymentPeriodDays = process.env.DEPLOYMENT_PERIOD_DAYS
-      ? parseInt(process.env.DEPLOYMENT_PERIOD_DAYS)
-      : 7;
     this.repoName = repoName;
   }
 
@@ -34,7 +30,7 @@ class DorametrixConcrete implements Dorametrix {
    */
   public getLastDeployment(lastDeployment: any): DeploymentResponse {
     if (lastDeployment[0]?.changes) {
-      const changes = JSON.parse(lastDeployment[0]?.changes);
+      const changes = lastDeployment[0]?.changes;
 
       // Get latest deployment
       const deploymentTimes = changes
@@ -65,14 +61,28 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description Get the averaged or total deployment frequency for a period of time (default: 7 days).
+   * @description Get the averaged deployment frequency for a period of time.
    */
-  public getDeploymentFrequency(deploymentCount: number): string {
-    return (deploymentCount / this.deploymentPeriodDays).toFixed(2).toString();
+  public getDeploymentFrequency(
+    deploymentCount: number,
+    fromTimestamp: string,
+    toTimestamp: string
+  ): string {
+    return (deploymentCount / this.calculateDaysInScope(fromTimestamp, toTimestamp))
+      .toFixed(2)
+      .toString();
   }
 
   /**
-   * @description Get the averaged or total lead time for a change getting into production (deployment).
+   * @description TODO
+   */
+  private calculateDaysInScope(fromTimestamp: string, toTimestamp: string) {
+    const diff = getDiffInSeconds(fromTimestamp, toTimestamp) * 1000; // Add milliseconds
+    return Math.ceil(diff / 86400); // If 0 round up to one
+  }
+
+  /**
+   * @description Get the averaged lead time for a change getting into production (deployment).
    * @todo useTotal test
    */
   public getLeadTimeForChanges(changes: any[], deployments: any[]): string {
@@ -91,18 +101,15 @@ class DorametrixConcrete implements Dorametrix {
    */
   private calculateLeadTime(deployment: Deployment, allChanges: any[]): number {
     const { changes, timeCreated } = deployment;
-    // @ts-ignore
-    const parsedChanges = JSON.parse(changes);
+    const _changes: any = changes;
 
     /**
      * Each change might lead to one or more deployments, so go and get each one.
      */
-    const changesDataIds = parsedChanges.map((change: Change) => change.id);
+    const changesDataIds = _changes.map((change: Change) => change.id);
     const matches = allChanges
       .filter((change: Change) => changesDataIds.includes(change.id))
-      .map((change: Change) => {
-        return change.timeCreated;
-      })
+      .map((change: Change) => change.timeCreated)
       .sort((a: any, b: any) => a - b);
 
     /**
@@ -125,7 +132,7 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description Get a change failure rate as an averaged or total number for a period of time (default: 30 days).
+   * @description Get a change failure rate as an averaged number for a period of time (default: 30 days).
    */
   public getChangeFailureRate(incidentCount: number, deploymentCount: number): string {
     if (incidentCount === 0 || deploymentCount === 0) return '0.00';
@@ -134,7 +141,7 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description Get the time to restore service as an averaged or total value.
+   * @description Get the time to restore service as an averaged value.
    */
   public getTimeToRestoreServices(incidents: any[]): string {
     if (incidents.length === 0) return '00:00:00:00';

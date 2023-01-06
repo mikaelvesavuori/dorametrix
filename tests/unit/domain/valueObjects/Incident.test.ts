@@ -24,7 +24,7 @@ describe('Failure cases', () => {
       makeIncident({
         eventType: 'deployment',
         id: 'something',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -41,7 +41,7 @@ describe('Failure cases', () => {
       makeIncident({
         product: 'something',
         id: 'something',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -58,7 +58,7 @@ describe('Failure cases', () => {
       makeIncident({
         product: 'something',
         eventType: 'deployment',
-        changes: [''],
+        changes: [],
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -82,7 +82,6 @@ describe('Success cases', () => {
 
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
-      console.log('-->', incident);
 
       expect(incident).toHaveProperty('product');
       expect(incident).toHaveProperty('eventType');

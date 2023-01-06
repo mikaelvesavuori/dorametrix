@@ -6,6 +6,11 @@ export type Deployment = {
   product: string;
   timeCreated: string;
   id: string;
-  changes: string[];
+  changes: Change[];
   date: string;
+};
+
+export type Change = {
+  id: string;
+  timeCreated: string;
 };

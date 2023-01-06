@@ -1,4 +1,5 @@
 import { Deployment } from '../../interfaces/Deployment';
+import { Change } from '../../interfaces/Change';
 import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
@@ -20,10 +21,10 @@ class DeploymentConcrete {
   date: string;
   eventType: string;
   id: string;
-  changes: string[];
+  changes: Change[];
   timeCreated: string;
 
-  constructor(deploymentEvent: any) {
+  constructor(deploymentEvent: Event) {
     const { product, id, eventType, timeCreated, changes } = deploymentEvent;
 
     if (!product)

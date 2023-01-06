@@ -8,21 +8,24 @@ import { Incident } from './Incident';
  */
 export interface Repository {
   /**
-   * @description Add (create/update) an Event in the source database.
+   * @description Add (create/update) an Event in the repository.
    */
-  handleEvent(event: Event): Promise<any>;
+  addEvent(event: Event): Promise<any>;
+
   /**
-   * @description Add (create/update) a Change in the source database.
+   * @description Add (create/update) a Change in the repository.
    */
-  handleChange(change: Change): Promise<any>;
+  addChange(change: Change): Promise<any>;
+
   /**
-   * @description Add (create/update) a Deployment in the source database.
+   * @description Add (create/update) a Deployment in the repository.
    */
-  handleDeployment(deployment: Deployment): Promise<any>;
+  addDeployment(deployment: Deployment): Promise<any>;
+
   /**
-   * @description Update (or create) an Incident in the source database.
+   * @description Update (or create) an Incident in the repository.
    */
-  handleIncident(incident: Incident): Promise<any>;
+  addIncident(incident: Incident): Promise<any>;
 
   /**
    * @description Get metrics from source system.

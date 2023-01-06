@@ -1,4 +1,5 @@
 import { Event, EventType } from '../../interfaces/Event';
+import { Change } from '../../interfaces/Change';
 import { Parser } from '../../interfaces/Parser';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
@@ -21,7 +22,7 @@ class EventConcrete {
   date: string;
   eventType: string;
   id: string;
-  changes: string[];
+  changes: Change[];
   eventTime: string;
   timeCreated: string;
   timeResolved: string;
