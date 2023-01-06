@@ -23,6 +23,7 @@ provider:
     API_KEY: "TODO" # EDIT THIS TO YOUR VALUE
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.config.tableName}
+    MAX_DATE_RANGE: 365
 
 plugins:
   - serverless-webpack
@@ -39,7 +40,7 @@ custom:
   config:
     authToken: 'something' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
     accountNumber: '123412341234'
-    tableName: gitmetrix # TODO change to dorametrix
+    tableName: dorametrix
   aws:
     databaseArn: "arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}"
   webpack:

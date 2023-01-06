@@ -11,7 +11,7 @@ export interface Dorametrix {
   /**
    * @description Get the commit ID for the last deployment to production.
    */
-  getLastDeployment(lastDeployment: any): DeploymentResponse;
+  getLastDeployment(lastDeployment: Deployment): DeploymentResponse;
 
   /**
    * @description Get the averaged deployment frequency for a period of time.

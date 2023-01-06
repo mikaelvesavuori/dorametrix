@@ -27,9 +27,9 @@ class DorametrixConcrete implements Dorametrix {
   /**
    * @description Get the commit ID for the last deployment to production.
    */
-  public getLastDeployment(lastDeployment: any): DeploymentResponse {
-    if (lastDeployment[0]?.changes) {
-      const changes: DeploymentChange[] = lastDeployment[0]?.changes;
+  public getLastDeployment(lastDeployment: Deployment): DeploymentResponse {
+    if (lastDeployment?.changes) {
+      const changes: DeploymentChange[] = lastDeployment?.changes;
 
       // Get latest deployment
       const deploymentTimes = changes
@@ -42,6 +42,7 @@ class DorametrixConcrete implements Dorametrix {
       const matchingChange = changes.filter(
         (change: DeploymentChange) => change.timeCreated === latestTime
       );
+
       if (matchingChange && matchingChange.length > 0) {
         const { id } = matchingChange[0];
 

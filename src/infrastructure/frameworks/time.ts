@@ -1,5 +1,5 @@
-import { getDateBefore } from './date';
-import { getMillisecondsForDays } from './getMillisecondsForDays';
+import { getCurrentDate, getDateBefore } from './date';
+import { getSecondsForDays } from './getSecondsForDays';
 
 import { InvalidIsoDateConversionError } from '../../application/errors/InvalidIsoDateConversionError';
 import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError';
@@ -12,7 +12,7 @@ import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError'
 export function getTimestampsForPeriod(lastNumDays: number, offsetInHours = 0) {
   const toTime = getTimestampForInputDate(getDateBefore(true), offsetInHours, true);
   const fromTimeUTCString: any = `${toTime}999`;
-  const fromTime = new Date(fromTimeUTCString - getMillisecondsForDays(lastNumDays) + 1).getTime();
+  const fromTime = new Date(fromTimeUTCString - getSecondsForDays(lastNumDays) + 1).getTime();
 
   return {
     from: `${fromTime}`.substring(0, 10),
@@ -97,6 +97,15 @@ function createTimezoneConvertedDateString(
   const time = lastPossibleTime ? 'T23:59:59.999' : 'T00:00:00.000';
 
   return `${formattedDate}${time}${offsetMarker}${leadingZero}${numericOffset}:00`;
+}
+
+/**
+ * @description Get maximum historical/past timestamp at midnight X number of days ago.
+ */
+export function getMaxTimestampFromDate(maxDateRange: number, offset: number) {
+  const date = new Date(getCurrentDate());
+  date.setUTCDate(date.getUTCDate() - maxDateRange);
+  return getTimestampForInputDate(date.toISOString().substring(0, 10).replaceAll('-', ''), offset);
 }
 
 /**

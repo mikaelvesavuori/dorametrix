@@ -32,6 +32,7 @@ type Period = {
  * @description Numeric metrics for the total time period.
  */
 type TotalMetrics = {
+  changesCount: number;
   deploymentCount: number;
   incidentCount: number;
 };

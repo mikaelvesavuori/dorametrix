@@ -128,7 +128,7 @@ class DynamoRepository implements Repository {
     const { key } = dataRequest;
 
     // Check cache first - TODO rewrite
-    const cachedData = this.getCachedData(key);
+    const cachedData: any = this.getCachedData(key);
     if (cachedData && Object.keys(cachedData).length !== 0) return cachedData;
 
     const data = await this.getItem(dataRequest);

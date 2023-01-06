@@ -15,6 +15,7 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
 
   const metrics = await getMetricsFromDatabase(repository, input);
   const { changes, deployments, incidents } = metrics;
+  const changesCount = changes.length;
   const deploymentCount = deployments.length;
   const incidentCount = incidents.length;
 
@@ -31,6 +32,7 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
       to
     },
     total: {
+      changesCount,
       deploymentCount,
       incidentCount
     },

@@ -1,6 +1,7 @@
 import { RequestDTO } from '../interfaces/Input';
 
 import {
+  getMaxTimestampFromDate,
   getTimestampForInputDate,
   getTimestampsForPeriod
 } from '../infrastructure/frameworks/time';
@@ -38,7 +39,7 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
     requestDto['to'] = toDate;
   }
 
-  validateDateRange(requestDto['to'], offset);
+  validateDateRange(requestDto['to'], requestDto['from'], offset);
 
   return requestDto as RequestDTO;
 }
@@ -55,9 +56,16 @@ function validateRequestInput(repo: string, to: string, from: string, lastNumDay
 /**
  * @description Validate the final date range (timestamps).
  */
-function validateDateRange(toDate: string, offset: number) {
-  const maxDate = getTimestampForInputDate(getCurrentDate(true), offset);
-  if (parseInt(toDate) >= parseInt(maxDate)) throw new OutOfRangeQueryError();
+function validateDateRange(toDate: string, fromDate: string, offset: number) {
+  const MAX_DATE_RANGE = parseInt(process.env.MAX_DATE_RANGE || '') || 365;
+
+  // Set max "to" stop at today
+  const maxToDate = getTimestampForInputDate(getCurrentDate(true), offset);
+  // Set max "from" stop at midnight X number of days ago
+  const maxFromDate = getMaxTimestampFromDate(MAX_DATE_RANGE, offset);
+
+  if (parseInt(toDate) >= parseInt(maxToDate)) throw new OutOfRangeQueryError();
+  if (parseInt(fromDate) < parseInt(maxFromDate)) throw new OutOfRangeQueryError();
 }
 
 /**
