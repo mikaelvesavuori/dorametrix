@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 
 import { Repository, DataRequest } from '../../interfaces/Repository';
+import { CleanedItem } from '../../interfaces/CleanedItem';
 import { Change } from '../../interfaces/Change';
 import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
@@ -46,9 +47,9 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `EVENT_${repo}` },
         sk: { S: timeCreated },
+        timeCreated: { S: eventTime },
         timeResolved: { S: timeResolved },
         message: { S: message },
-        timeCreated: { S: eventTime },
         id: { S: randomUUID() }
       }
     };
@@ -86,6 +87,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `DEPLOYMENT_${repo}` },
         sk: { S: timeCreated },
+        timeCreated: { S: timeCreated },
         changes: { S: JSON.stringify(changes) },
         id: { S: id }
       }
@@ -122,7 +124,7 @@ class DynamoRepository implements Repository {
   /**
    * @description Get metrics for a given repository and a period of time.
    */
-  public async getMetrics(dataRequest: DataRequest): Promise<any> {
+  public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
     const { key } = dataRequest;
 
     // Check cache first - TODO rewrite

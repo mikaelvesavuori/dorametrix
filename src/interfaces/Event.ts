@@ -27,6 +27,7 @@ export interface Event {
   /**
    * @description Array of changes. Applicable if
    * `eventType` is `deployment`. Will stay empty otherwise.
+   * @note Only for deployments.
    */
   changes: Change[];
 
@@ -49,6 +50,7 @@ export interface Event {
 
   /**
    * @description Used for incident titles.
+   * @note Only for incidents.
    */
   title: string;
 
@@ -58,7 +60,7 @@ export interface Event {
   message: string;
 
   /**
-   * @description TODO
+   * @description Date of event.
    */
   date: string;
 }

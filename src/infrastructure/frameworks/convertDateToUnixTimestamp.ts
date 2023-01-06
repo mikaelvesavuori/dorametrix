@@ -5,5 +5,5 @@ import { MissingTimeError } from '../../application/errors/MissingTimeError';
  */
 export function convertDateToUnixTimestamp(time: Date | string): string {
   if (!time) throw new MissingTimeError();
-  return Math.floor(new Date(time).getTime()).toString();
+  return new Date(time).getTime().toString();
 }

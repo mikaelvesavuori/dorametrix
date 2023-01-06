@@ -1,6 +1,6 @@
 import { Dorametrix } from '../../interfaces/Dorametrix';
 import { Change } from '../../interfaces/Change';
-import { Deployment } from '../../interfaces/Deployment';
+import { Deployment, DeploymentChange } from '../../interfaces/Deployment';
 import { Incident } from '../../interfaces/Incident';
 import { DeploymentResponse } from '../../interfaces/DeploymentResponse';
 
@@ -26,11 +26,10 @@ class DorametrixConcrete implements Dorametrix {
 
   /**
    * @description Get the commit ID for the last deployment to production.
-   * @todo Fix real type
    */
   public getLastDeployment(lastDeployment: any): DeploymentResponse {
     if (lastDeployment[0]?.changes) {
-      const changes = lastDeployment[0]?.changes;
+      const changes: DeploymentChange[] = lastDeployment[0]?.changes;
 
       // Get latest deployment
       const deploymentTimes = changes
@@ -40,7 +39,9 @@ class DorametrixConcrete implements Dorametrix {
       const latestTime = deploymentTimes[0];
 
       // Get the ID of the latest deployment
-      const matchingChange = changes.filter((change: any) => change.timeCreated === latestTime);
+      const matchingChange = changes.filter(
+        (change: DeploymentChange) => change.timeCreated === latestTime
+      );
       if (matchingChange && matchingChange.length > 0) {
         const { id } = matchingChange[0];
 
@@ -74,7 +75,7 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description TODO
+   * @description Calculates number of days within scope of two timestamps. Minimum is 1.
    */
   private calculateDaysInScope(fromTimestamp: string, toTimestamp: string) {
     const diff = getDiffInSeconds(fromTimestamp, toTimestamp) * 1000; // Add milliseconds
@@ -83,9 +84,8 @@ class DorametrixConcrete implements Dorametrix {
 
   /**
    * @description Get the averaged lead time for a change getting into production (deployment).
-   * @todo useTotal test
    */
-  public getLeadTimeForChanges(changes: any[], deployments: any[]): string {
+  public getLeadTimeForChanges(changes: Change[], deployments: Deployment[]): string {
     if (deployments.length === 0) return '00:00:00:00';
 
     let accumulatedTime = 0;
@@ -101,15 +101,14 @@ class DorametrixConcrete implements Dorametrix {
    */
   private calculateLeadTime(deployment: Deployment, allChanges: Change[]): number {
     const { changes, timeCreated } = deployment;
-    const _changes: any[] = changes;
 
     /**
      * Each change might lead to one or more deployments, so go and get each one.
      */
-    const changeIds = _changes.map((change: Change) => change.id);
+    const changeIds = changes.map((change: DeploymentChange) => change.id);
     const matches = allChanges
-      .filter((change: Change) => changeIds.includes(change.id))
-      .map((change: Change) => change.timeCreated)
+      .filter((change: DeploymentChange) => changeIds.includes(change.id))
+      .map((change: DeploymentChange) => change.timeCreated)
       .sort((a: any, b: any) => a.timeCreated - b.timeCreated);
 
     /**

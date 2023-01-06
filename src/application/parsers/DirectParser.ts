@@ -17,7 +17,7 @@ export class DirectParser implements Parser {
     const eventType = body && body.eventType;
     if (eventType === 'change' || eventType === 'deployment' || eventType === 'incident')
       return eventType;
-    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError();
   }
 
   /**
@@ -42,7 +42,7 @@ export class DirectParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: any): string {
+  public getRepoName(body: Record<string, any>): string {
     return (body && body?.['repo']) || '';
   }
 }

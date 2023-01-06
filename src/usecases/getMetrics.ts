@@ -3,10 +3,12 @@ import { createNewDorametrix } from '../domain/services/Dorametrix';
 import { Metrics } from '../interfaces/Metrics';
 import { RequestDTO } from '../interfaces/Input';
 import { Repository } from '../interfaces/Repository';
+import { Change } from '../interfaces/Change';
+import { Deployment } from '../interfaces/Deployment';
+import { Incident } from '../interfaces/Incident';
 
 /**
  * @description The use-case for getting our DORA metrics, using interactors for each sub-case.
- * @todo Improve this so we have a new, clearer shape and less of the optionals in the type?
  */
 export async function getMetrics(repository: Repository, input: RequestDTO): Promise<Metrics> {
   const { repo, from, to } = input;
@@ -64,8 +66,8 @@ async function getMetricsFromDatabase(repository: Repository, input: RequestDTO)
   });
 
   return {
-    changes,
-    deployments,
-    incidents
+    changes: changes as Change[],
+    deployments: deployments as Deployment[],
+    incidents: incidents as Incident[]
   };
 }

@@ -1,6 +1,9 @@
 import { getDateBefore } from './date';
 import { getMillisecondsForDays } from './getMillisecondsForDays';
 
+import { InvalidIsoDateConversionError } from '../../application/errors/InvalidIsoDateConversionError';
+import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError';
+
 /**
  * @description Calculates `from` and `to` timestamps for a provided period in days.
  *
@@ -18,10 +21,12 @@ export function getTimestampsForPeriod(lastNumDays: number, offsetInHours = 0) {
 }
 
 /**
- * @description TODO
+ * @description Gets a corresponding Unix timestamp for a `YYYYMMDD` date.
  *
  * @param date Date in YYYYMMDD format
  * @param offsetInHours Optional timezone offset in hours, using the format `0` (UTC; default), `-4` (behind UTC), or `7` (before UTC)
+ *
+ * @example `1672531200`
  */
 export function getTimestampForInputDate(
   date: string,
@@ -35,11 +40,11 @@ export function getTimestampForInputDate(
 }
 
 /**
- * @description TODO
+ * @description Converts a `YYYYMMDD` date string to ISO format.
  * @example `20230101`
  */
 function convertToIsoDate(input: string) {
-  if (!input || input.length !== 8) throw new Error('TODO 1');
+  if (!input || input.length !== 8) throw new InvalidIsoDateConversionError();
 
   const year = input.substring(0, 4);
   const month = input.substring(4, 6);
@@ -49,7 +54,7 @@ function convertToIsoDate(input: string) {
 }
 
 /**
- * @description TODO
+ * @description Retrieve timestamp for an ISO date such as `2023-01-01`.
  *
  * @param formattedDate Date in the ISO format of `2023-01-01`
  * @param offsetInHours Optional timezone offset in hours, using the format `0` (UTC; default), `-4` (behind UTC), or `7` (before UTC)
@@ -61,7 +66,7 @@ function getTimestampForISODate(
   offsetInHours = 0,
   lastPossibleTime = false
 ) {
-  if (offsetInHours < -12 || offsetInHours > 12) throw new Error('TODO 2');
+  if (offsetInHours < -12 || offsetInHours > 12) throw new InvalidOffsetError();
 
   const date = new Date(
     createTimezoneConvertedDateString(formattedDate, offsetInHours, lastPossibleTime)
@@ -70,7 +75,7 @@ function getTimestampForISODate(
 }
 
 /**
- * @description TODO
+ * @description Returns a long timezone-converted date string from a formatted date such as `2023-01-01`.
  * @example `2023-01-01T00:00:00.000+05:00`
  */
 function createTimezoneConvertedDateString(

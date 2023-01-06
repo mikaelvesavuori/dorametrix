@@ -23,20 +23,22 @@ export class GitHubParser implements Parser {
     if (eventType === 'push') return 'change';
     if (eventType === 'issues') return 'incident';
 
-    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError();
   }
 
   /**
    * @description Get payload fields from the right places.
    */
   public getPayload(payloadInput: PayloadInput): EventDto {
-    const { body, headers } = payloadInput;
+    const { headers } = payloadInput;
+    const body = payloadInput.body || {};
+
     const event = (() => {
       // `body.action` will contain any specifics, so if it exists that's the one we want to use
       if (body?.action) return body.action;
       return headers?.['X-GitHub-Event'] || headers?.['x-github-event'];
     })();
-    if (!event) throw new MissingEventError('Missing event in headers, in "getPayload()"!');
+    if (!event) throw new MissingEventError();
 
     switch (event) {
       case 'push':
@@ -61,7 +63,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Utility to create a change.
    */
-  private handlePush(body: any) {
+  private handlePush(body: Record<string, any>) {
     const timeCreated = body?.['head_commit']?.['timestamp'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handlePush()!');
@@ -79,7 +81,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Utility to create an incident.
    */
-  private handleOpenedLabeled(body: any) {
+  private handleOpenedLabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['created_at'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleOpenedLabeled()!');
@@ -92,7 +94,9 @@ export class GitHubParser implements Parser {
     // Check for incident label
     const labels = body?.['issue']?.['labels'];
     if (labels && labels.length > 0) {
-      const incidentLabels = labels.filter((label: any) => label.name === 'incident');
+      const incidentLabels = labels.filter(
+        (label: Record<string, any>) => label.name === 'incident'
+      );
       if (incidentLabels.length > 0)
         return {
           eventTime: Date.now().toString(),
@@ -118,7 +122,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Utility to resolve an incident.
    */
-  private handleClosedUnlabeled(body: any) {
+  private handleClosedUnlabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['created_at'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleClosedUnlabeled()!');
@@ -147,7 +151,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: any): string {
+  public getRepoName(body: Record<string, any>): string {
     return (body && body?.['repository']?.['full_name']) || '';
   }
 }

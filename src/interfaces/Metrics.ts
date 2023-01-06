@@ -1,5 +1,5 @@
 /**
- * @description TODO
+ * @description Final metrics output object.
  */
 export type Metrics = {
   repo: RepoName;
@@ -9,26 +9,27 @@ export type Metrics = {
 };
 
 /**
- * @description TODO
+ * @description Repository name.
+ * @example `SOMEORG/SOMEREPO`
  */
 type RepoName = string;
 
 /**
- * @description TODO
+ * @description Time period object.
  */
 type Period = {
   /**
-   * @example 20221201
+   * @example `20221201`
    */
   from: string;
   /**
-   * @example 20221231
+   * @example `20221231`
    */
   to: string;
 };
 
 /**
- * @description TODO
+ * @description Numeric metrics for the total time period.
  */
 type TotalMetrics = {
   deploymentCount: number;

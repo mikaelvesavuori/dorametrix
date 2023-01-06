@@ -3,6 +3,12 @@ import { getRequestDTO } from '../../../src/application/getRequestDTO';
 import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
 import { getTimestampsForPeriod } from '../../../src/infrastructure/frameworks/time';
 
+import { MissingRepoNameError } from '../../../src/application/errors/MissingRepoNameError';
+import { MissingRequiredInputParamsError } from '../../../src/application/errors/MissingRequiredInputParamsError';
+import { OutOfRangeQueryError } from '../../../src/application/errors/OutOfRangeQueryError';
+import { TooManyInputParamsError } from '../../../src/application/errors/TooManyInputParamsError';
+import { InvalidIsoDateConversionError } from '../../../src/application/errors/InvalidIsoDateConversionError';
+
 const getRandomInteger = () => Math.floor(Math.random() * 15) + 1;
 
 describe('Success cases', () => {
@@ -93,57 +99,73 @@ describe('Success cases', () => {
 });
 
 describe('Failure cases', () => {
-  test('It should throw a TODO error if no repo name is present', () => {
+  test('It should throw a MissingRepoNameError error if no repo name is present', () => {
     expect(() => {
       getRequestDTO({
         from: '20221201',
         to: '20221231'
       });
-    }).toThrow();
+    }).toThrowError(MissingRepoNameError);
   });
 
-  test('It should throw a TODO error if no "to" date is present', () => {
+  test('It should throw a MissingRequiredInputParamsError error if no "to" date is present', () => {
     expect(() => {
       getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
         from: '20221201'
       });
-    }).toThrow();
+    }).toThrowError(MissingRequiredInputParamsError);
   });
 
-  test('It should throw a TODO error if no "from" date is present', () => {
+  test('It should throw a MissingRequiredInputParamsError error if no "from" date is present', () => {
     expect(() => {
       getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
         to: '20221201'
       });
-    }).toThrow();
+    }).toThrowError(MissingRequiredInputParamsError);
   });
 
-  test('It should throw a TODO error if the "to" date is today', () => {
+  test('It should throw a OutOfRangeQueryError error if the "to" date is beyond the maximum date range', () => {
     expect(() => {
       getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
+        from: '20221201',
+        to: '20991231'
+      });
+    }).toThrowError(OutOfRangeQueryError);
+  });
+
+  // TODO?
+  test('It should throw a InvalidIsoDateConversionError error if the "to" date is today', () => {
+    expect(() => {
+      getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
         from: '20221201',
         to: getCurrentDate()
       });
-    }).toThrow();
+    }).toThrowError(InvalidIsoDateConversionError);
   });
 
-  test('It should throw a TODO error if the "from" date is today', () => {
+  // TODO?
+  test('It should throw a OutOfRangeQueryError error if the "from" date is today', () => {
     expect(() => {
       getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
         from: getCurrentDate(),
         to: '20221201'
       });
-    }).toThrow();
+    }).toThrowError(InvalidIsoDateConversionError);
   });
 
-  test('It should throw a TODO error if using both "from" + "to" and "last" parameters', () => {
+  test('It should throw a TooManyInputParamsError error if using both "from" + "to" and "last" parameters', () => {
     expect(() => {
       getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
         from: '20221201',
         to: '20221231',
-        repo: 'SOMEORG/SOMEREPO',
         last: '7'
       });
-    }).toThrow();
+    }).toThrowError(TooManyInputParamsError);
   });
 });

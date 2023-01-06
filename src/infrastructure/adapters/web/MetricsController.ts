@@ -11,9 +11,7 @@ import { getRequestDTO } from '../../../application/getRequestDTO';
  */
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
-    const queryParams = getRequestDTO(
-      event?.queryStringParameters as unknown as Record<string, string>
-    );
+    const queryParams = getRequestDTO(event.queryStringParameters || {});
     const repo = createNewDynamoRepository();
     const metrics = await getMetrics(repo, queryParams);
 

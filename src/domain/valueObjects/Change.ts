@@ -22,7 +22,7 @@ class ChangeConcrete {
   timeCreated: string;
   date: string;
 
-  constructor(changeEvent: any) {
+  constructor(changeEvent: Event) {
     const { repo, eventType, id } = changeEvent;
 
     if (!repo)

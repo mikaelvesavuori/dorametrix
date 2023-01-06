@@ -6,11 +6,14 @@ export type Deployment = {
   repo: string;
   timeCreated: string;
   id: string;
-  changes: Change[];
+  changes: DeploymentChange[];
   date: string;
 };
 
-export type Change = {
+/**
+ * @description Representation of a change inside the Deployment.
+ */
+export type DeploymentChange = {
   id: string;
   timeCreated: string;
 };

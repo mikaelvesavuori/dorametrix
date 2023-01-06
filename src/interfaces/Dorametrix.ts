@@ -1,4 +1,7 @@
+import { Change } from './Change';
+import { Deployment } from './Deployment';
 import { DeploymentResponse } from './DeploymentResponse';
+import { Incident } from './Incident';
 
 /**
  * @description Dorametrix creates and gets events in our expected DORA metrics
@@ -22,7 +25,7 @@ export interface Dorametrix {
   /**
    * @description Get the averaged lead time for a change getting into production (deployment).
    */
-  getLeadTimeForChanges(deployments: any[], changes: any[]): string;
+  getLeadTimeForChanges(changes: Change[], deployments: Deployment[]): string;
 
   /**
    * @description Get a change failure rate as an averaged number for a period of time (default: 30 days).
@@ -32,5 +35,5 @@ export interface Dorametrix {
   /**
    * @description Get the time to restore service as an averaged value.
    */
-  getTimeToRestoreServices(incidents: any[]): string;
+  getTimeToRestoreServices(incidents: Incident[]): string;
 }

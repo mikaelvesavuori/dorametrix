@@ -6,14 +6,11 @@
 
 ## Fix
 
-- Tests
-- Type coverage
+- Clean up and add more tests
+- Higher type coverage
 - TODOs
 - Cleanup
-- Update dokumentation
-- Use getUTC instead
+- Update documentation
 - Create test data
-- New output format
-- Clean up errors so they have baked-in error messages
 - Make sure authorizer checks product/repo name so they can only affect their own org
 - Write `date` field on DB items?

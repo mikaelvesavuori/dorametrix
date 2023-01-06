@@ -18,7 +18,7 @@ export interface Parser {
   /**
    * @description Get the repository name.
    */
-  getRepoName(body?: any): string;
+  getRepoName(body?: Record<string, any>): string;
 }
 
 export type EventTypeInput = {

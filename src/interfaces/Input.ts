@@ -1,5 +1,5 @@
 /**
- * @description TODO
+ * @description Valid request data transfer object.
  */
 export type RequestDTO = {
   /**

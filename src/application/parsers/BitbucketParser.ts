@@ -21,14 +21,15 @@ export class BitbucketParser implements Parser {
     const eventType = headers?.['X-Event-Key'] || headers?.['x-event-key'];
     if (eventType === 'repo:push') return 'change';
     if (eventType && eventType.startsWith('issue:')) return 'incident';
-    throw new UnknownEventTypeError('Unknown event type seen in "getEventType()"!');
+    throw new UnknownEventTypeError();
   }
 
   /**
    * @description Get payload fields from the right places.
    */
   public getPayload(payloadInput: PayloadInput): EventDto {
-    const { body, headers } = payloadInput;
+    const { headers } = payloadInput;
+    const body = payloadInput.body || {};
 
     const event = (() => {
       const eventKeyHeader = headers?.['X-Event-Key'] || headers?.['x-event-key'];
@@ -41,7 +42,7 @@ export class BitbucketParser implements Parser {
       return eventKeyHeader;
     })();
 
-    if (!event) throw new MissingEventError('Missing event in headers, in "getPayload()"!');
+    if (!event) throw new MissingEventError();
 
     switch (event) {
       case 'repo:push':
@@ -65,7 +66,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Utility to create a change.
    */
-  private handlePush(body: any) {
+  private handlePush(body: Record<string, any>) {
     const timeCreated = body?.['push']?.['changes']?.[0]?.['old']?.['target']?.['date'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handlePush()!');
@@ -84,7 +85,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Utility to create an incident.
    */
-  private handleOpenedLabeled(body: any) {
+  private handleOpenedLabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['created_on'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleOpenedLabeled()!');
@@ -107,7 +108,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Utility to resolve an incident.
    */
-  private handleClosedUnlabeled(body: any) {
+  private handleClosedUnlabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['created_on'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleClosedUnlabeled()!');
@@ -136,7 +137,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: any): string {
+  public getRepoName(body: Record<string, any>): string {
     return (body && body?.['repository']?.['full_name']) || '';
   }
 }

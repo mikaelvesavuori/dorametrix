@@ -1,3 +1,4 @@
+import { CleanedItem } from './CleanedItem';
 import { Change } from './Change';
 import { Deployment } from './Deployment';
 import { Event } from './Event';
@@ -30,10 +31,13 @@ export interface Repository {
   /**
    * @description Get metrics from source system.
    */
-  getMetrics(dataRequest: DataRequest): Promise<any>;
+  getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]>;
 }
 
-// TODO: Check
+/**
+ * @description TODO
+ * @todo Check
+ */
 export type DataRequest = {
   key: string;
   fromDate: string;

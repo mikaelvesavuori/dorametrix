@@ -3,7 +3,7 @@ import { APIGatewayProxyResult } from 'aws-lambda';
 /**
  * @description The authorizer controller.
  */
-export async function handler(event: any): Promise<APIGatewayProxyResult> {
+export async function handler(event: Record<string, any>): Promise<APIGatewayProxyResult> {
   if (event && event.httpMethod === 'OPTIONS') return handleCors();
 
   // Additionally, you could also verify the IP if you want to accept requests only from your own networks or similar
@@ -43,7 +43,7 @@ const generatePolicy = (principalId: any, effect: string, resource: string, data
   };
 
   if (effect && resource) {
-    const policyDocument: any = {
+    const policyDocument: Record<string, any> = {
       Version: '2012-10-17',
       Statement: []
     };

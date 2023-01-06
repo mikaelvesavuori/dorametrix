@@ -22,7 +22,7 @@ export class JiraParser implements Parser {
    * @description Get payload fields from the right places.
    */
   public getPayload(payloadInput: PayloadInput): EventDto {
-    const { body } = payloadInput;
+    const body = payloadInput.body || {};
 
     const event = (() => {
       const eventType = body?.['issue_event_type_name'] || body?.['webhookEvent'];
@@ -42,7 +42,7 @@ export class JiraParser implements Parser {
       return eventType;
     })();
 
-    if (!event) throw new MissingEventError('Missing event in "getPayload()"!');
+    if (!event) throw new MissingEventError();
 
     switch (event) {
       case 'opened':
@@ -65,7 +65,7 @@ export class JiraParser implements Parser {
   /**
    * @description Utility to create an incident.
    */
-  private handleOpenedLabeled(body: any) {
+  private handleOpenedLabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['fields']?.['created'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleOpenedLabeled()!');
@@ -88,7 +88,7 @@ export class JiraParser implements Parser {
   /**
    * @description Utility to resolve an incident.
    */
-  private handleClosedUnlabeled(body: any) {
+  private handleClosedUnlabeled(body: Record<string, any>) {
     const timeCreated = body?.['issue']?.['fields']?.['created'];
     if (!timeCreated)
       throw new MissingEventTimeError('Missing expected timestamp in handleClosedUnlabeled()!');
@@ -118,9 +118,10 @@ export class JiraParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: any): string {
+  public getRepoName(body: Record<string, any>): string {
     const domain = body?.['user']?.['self'].split('https://')[1].split('.atlassian.net')[0];
     const project = body?.['issue']?.['fields']?.['project']?.['name'];
+
     if (domain && project) return `${domain}/${project}`;
     return '';
   }

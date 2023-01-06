@@ -1,9 +1,12 @@
+import { CleanedItem } from '../../interfaces/CleanedItem';
+
+import { CleanedItemsError } from '../../application/errors/CleanedItemsError';
+
 /**
  * @description Clean up and return items from DynamoDB in a normalized format.
- * @todo Break out into separate function
  */
-export function getCleanedItems(items: any[]) {
-  const fixedItems: any = [];
+export function getCleanedItems(items: Record<string, any>[]): CleanedItem[] {
+  const fixedItems: CleanedItem[] = [];
 
   if (items && typeof items === 'object' && items.length > 0) {
     try {
@@ -21,11 +24,10 @@ export function getCleanedItems(items: any[]) {
           } else cleanedItem[key] = Object.values(value)[0];
         });
 
-        fixedItems.push(cleanedItem);
+        fixedItems.push(cleanedItem as CleanedItem);
       });
     } catch (error: any) {
-      console.error(error);
-      throw new Error(error);
+      throw new CleanedItemsError();
     }
   }
 

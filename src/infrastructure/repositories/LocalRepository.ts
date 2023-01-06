@@ -64,7 +64,7 @@ class LocalRepo implements Repository {
   }
 
   /**
-   * @description TODO
+   * @description Get data from local repository.
    */
   private getItem(dataRequest: DataRequest): any[] {
     const { key } = dataRequest;
