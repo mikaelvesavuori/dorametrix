@@ -12,7 +12,7 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
  */
 export function makeChange(changeEvent: Event): Change {
   const changeConcrete = new ChangeConcrete(changeEvent);
-  return changeConcrete.getData();
+  return changeConcrete.getDTO();
 }
 
 class ChangeConcrete {
@@ -43,7 +43,7 @@ class ChangeConcrete {
     this.date = getCurrentDate(true);
   }
 
-  public getData() {
+  public getDTO(): Change {
     return {
       product: this.product,
       eventType: this.eventType,

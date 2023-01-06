@@ -12,7 +12,7 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
  */
 export function makeIncident(incidentEvent: Event): Incident {
   const incidentConcrete = new IncidentConcrete(incidentEvent);
-  return incidentConcrete.getData();
+  return incidentConcrete.getDTO();
 }
 
 class IncidentConcrete implements Incident {
@@ -47,7 +47,7 @@ class IncidentConcrete implements Incident {
     this.title = title;
   }
 
-  public getData() {
+  public getDTO(): Incident {
     return {
       product: this.product,
       date: this.date,

@@ -14,7 +14,7 @@ export function makeEvent(
   headers: Record<string, any>
 ): Event {
   const eventConcrete = new EventConcrete(parser, body, headers);
-  return eventConcrete.getData();
+  return eventConcrete.getDTO();
 }
 
 class EventConcrete {
@@ -49,7 +49,7 @@ class EventConcrete {
     this.message = message || '';
   }
 
-  public getData(): Event {
+  public getDTO(): Event {
     return {
       product: this.product,
       date: this.date,

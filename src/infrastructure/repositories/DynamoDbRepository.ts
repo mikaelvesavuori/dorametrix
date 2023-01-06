@@ -67,6 +67,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `CHANGE_${product}` },
         sk: { S: timeCreated },
+        timeCreated: { S: timeCreated },
         id: { S: id }
       }
     };
@@ -108,6 +109,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `INCIDENT_${product}` },
         sk: { S: timeCreated },
+        timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved || '' },
         title: { S: title },
         id: { S: id }

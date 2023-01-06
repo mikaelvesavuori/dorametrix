@@ -30,6 +30,7 @@ export function getTimestampForInputDate(
 ) {
   const formatted = convertToIsoDate(date);
   const timestamp = getTimestampForISODate(formatted, offsetInHours, lastPossibleTime);
+
   return `${timestamp}`;
 }
 

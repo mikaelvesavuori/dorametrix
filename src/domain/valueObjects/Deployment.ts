@@ -13,7 +13,7 @@ import { MissingIdValueError } from '../../application/errors/MissingIdValueErro
  */
 export function makeDeployment(deploymentEvent: Event): Deployment {
   const deploymentConcrete = new DeploymentConcrete(deploymentEvent);
-  return deploymentConcrete.getData();
+  return deploymentConcrete.getDTO();
 }
 
 class DeploymentConcrete {
@@ -48,7 +48,7 @@ class DeploymentConcrete {
     this.timeCreated = timeCreated.toString();
   }
 
-  public getData() {
+  public getDTO(): Deployment {
     return {
       product: this.product,
       date: this.date,

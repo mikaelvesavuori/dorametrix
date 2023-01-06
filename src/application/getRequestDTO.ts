@@ -33,6 +33,9 @@ export function getRequestDTO(queryStringParameters: Record<string, string>): Re
     requestDto['to'] = toDate;
   }
 
+  const maxDate = getTimestampForInputDate(getCurrentDate(true), offset);
+  if (parseInt(requestDto['to']) >= parseInt(maxDate)) throw new Error('TODO');
+
   return requestDto as RequestDTO;
 }
 

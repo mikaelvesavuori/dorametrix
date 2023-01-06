@@ -8,7 +8,7 @@ const getRandomInteger = () => Math.floor(Math.random() * 15) + 1;
 describe('Success cases', () => {
   describe('Static set period', () => {
     test('It should create a request DTO for a set period', () => {
-      const expected = { from: '1669852800', repo: 'SOMEORG/SOMEREPO', to: '1672531199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669852800', to: '1672531199' };
 
       const result = getRequestDTO({
         from: '20221201',
@@ -20,7 +20,7 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a set period with a negative offset', () => {
-      const expected = { from: '1669834800', repo: 'SOMEORG/SOMEREPO', to: '1672513199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669834800', to: '1672513199' };
 
       const result = getRequestDTO({
         from: '20221201',
@@ -33,7 +33,7 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a set period with a positive offset', () => {
-      const expected = { from: '1669870800', repo: 'SOMEORG/SOMEREPO', to: '1672549199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669870800', to: '1672549199' };
 
       const result = getRequestDTO({
         from: '20221201',
@@ -50,7 +50,7 @@ describe('Success cases', () => {
     test('It should create a request DTO for a dynamic period', () => {
       const days = getRandomInteger();
       const time = getTimestampsForPeriod(days);
-      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
 
       const result = getRequestDTO({
         last: `${days}`,
@@ -64,7 +64,7 @@ describe('Success cases', () => {
       const days = getRandomInteger();
       const offset = -5;
       const time = getTimestampsForPeriod(days, offset);
-      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
 
       const result = getRequestDTO({
         last: `${days}`,
@@ -79,7 +79,7 @@ describe('Success cases', () => {
       const days = getRandomInteger();
       const offset = 5;
       const time = getTimestampsForPeriod(days, offset);
-      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
 
       const result = getRequestDTO({
         last: `${days}`,
