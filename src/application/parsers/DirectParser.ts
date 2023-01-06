@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomBytes } from 'crypto';
 
 import { EventDto } from '../../interfaces/Event';
 import { EventTypeInput, Parser, PayloadInput } from '../../interfaces/Parser';
@@ -25,10 +25,16 @@ export class DirectParser implements Parser {
    */
   public getPayload(payloadInput?: PayloadInput): EventDto {
     const body = payloadInput ? payloadInput.body : undefined;
+    const date = Date.now().toString();
+
     return {
-      eventTime: Date.now().toString(),
-      timeCreated: Date.now().toString(),
-      id: uuidv4(),
+      eventTime: date,
+      timeCreated: date,
+      /**
+       * Create a 40-character string similar to SHA1 to
+       * replicate the appearance of a Git commit ID.
+       */
+      id: randomBytes(20).toString('hex'),
       message: body ? JSON.stringify(body) : ''
     };
   }

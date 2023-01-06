@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 
@@ -50,7 +50,7 @@ class DynamoRepository implements Repository {
         timeResolved: { S: timeResolved },
         message: { S: message },
         timeCreated: { S: eventTime },
-        id: { S: uuidv4() }
+        id: { S: randomUUID() }
       }
     };
 

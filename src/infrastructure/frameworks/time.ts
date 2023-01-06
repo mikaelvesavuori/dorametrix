@@ -4,7 +4,7 @@ import { getMillisecondsForDays } from './getMillisecondsForDays';
 /**
  * @description Calculates `from` and `to` timestamps for a provided period in days.
  *
- * Using `last` means getting specified range excluding current day.
+ * Using `lastNumDays` means getting specified range excluding current day.
  */
 export function getTimestampsForPeriod(lastNumDays: number, offsetInHours = 0) {
   const toTime = getTimestampForInputDate(getDateBefore(true), offsetInHours, true);

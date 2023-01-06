@@ -1,6 +1,9 @@
 import { getRequestDTO } from '../../../src/application/getRequestDTO';
 
 import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
+import { getTimestampsForPeriod } from '../../../src/infrastructure/frameworks/time';
+
+const getRandomInteger = () => Math.floor(Math.random() * 15) + 1;
 
 describe('Success cases', () => {
   describe('Static set period', () => {
@@ -45,10 +48,12 @@ describe('Success cases', () => {
 
   describe('Dynamic period', () => {
     test('It should create a request DTO for a dynamic period', () => {
-      const expected = { from: '1586476800', repo: 'SOMEORG/SOMEREPO', to: '1672876799' };
+      const days = getRandomInteger();
+      const time = getTimestampsForPeriod(days);
+      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
 
       const result = getRequestDTO({
-        last: '7',
+        last: `${days}`,
         repo: 'SOMEORG/SOMEREPO'
       });
 
@@ -56,11 +61,14 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a dynamic period with a negative offset', () => {
-      const expected = { from: '1586458800', repo: 'SOMEORG/SOMEREPO', to: '1672858799' };
+      const days = getRandomInteger();
+      const offset = -5;
+      const time = getTimestampsForPeriod(days, offset);
+      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
 
       const result = getRequestDTO({
-        last: '7',
-        offset: '-5',
+        last: `${days}`,
+        offset: `${offset}`,
         repo: 'SOMEORG/SOMEREPO'
       });
 
@@ -68,11 +76,14 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a dynamic period with a positive offset', () => {
-      const expected = { from: '1586494800', repo: 'SOMEORG/SOMEREPO', to: '1672894799' };
+      const days = getRandomInteger();
+      const offset = 5;
+      const time = getTimestampsForPeriod(days, offset);
+      const expected = { from: time.from, repo: 'SOMEORG/SOMEREPO', to: time.to };
 
       const result = getRequestDTO({
-        last: '7',
-        offset: '5',
+        last: `${days}`,
+        offset: `${offset}`,
         repo: 'SOMEORG/SOMEREPO'
       });
 

@@ -37,7 +37,6 @@
     "@types/aws-lambda": "8",
     "@types/jest": "29",
     "@types/node": "latest",
-    "@types/uuid": "latest",
     "@typescript-eslint/eslint-plugin": "5",
     "@typescript-eslint/parser": "5",
     "arkit": "1",
@@ -63,7 +62,6 @@
     "webpack-cli": "latest"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3",
-    "uuid": "9"
+    "@aws-sdk/client-dynamodb": "3"
   }
 }

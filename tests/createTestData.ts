@@ -9,22 +9,20 @@ const DEFAULT_COUNT = process.env.DEFAULT_COUNT || 365;
 /**
  * @description Outputs a valid metric object.
  */
-function createDemoMetric(date: string) {
+function createDemoMetric() {
   return {
-    [date]: {
-      additions: randomInteger(),
-      approved: randomInteger(),
-      changedFiles: randomInteger(),
-      changesRequested: randomInteger(),
-      closed: randomInteger(),
-      comments: randomInteger(),
-      deletions: randomInteger(),
-      merged: randomInteger(),
-      opened: randomInteger(),
-      pickupTime: randomTime(),
-      pushed: randomInteger(),
-      reviewTime: randomTime()
-    }
+    additions: randomInteger(),
+    approved: randomInteger(),
+    changedFiles: randomInteger(),
+    changesRequested: randomInteger(),
+    closed: randomInteger(),
+    comments: randomInteger(),
+    deletions: randomInteger(),
+    merged: randomInteger(),
+    opened: randomInteger(),
+    pickupTime: randomTime(),
+    pushed: randomInteger(),
+    reviewTime: randomTime()
   };
 }
 
@@ -55,9 +53,7 @@ function randomTime() {
 async function writeMetrics(metrics: Record<string, any>[]) {
   const ddb = new TestDataRepository(REPO_NAME, TABLE_NAME, REGION);
 
-  const promises = metrics.map(async (metric: Record<string, any>) => {
-    await ddb.updateItem(metric);
-  });
+  const promises = metrics.map(async (metric: Record<string, any>) => await ddb.updateItem(metric));
 
   await Promise.all(promises);
 }
@@ -67,11 +63,11 @@ async function writeMetrics(metrics: Record<string, any>[]) {
  */
 async function createTestDataController(dataCount = DEFAULT_COUNT) {
   const demoData: any = [];
+
   for (let index = 0; index < dataCount; index++) {
     const date = new Date('2022-01-01');
     date.setDate(date.getDate() + index);
-    const formattedDate = date.toISOString().split('T')[0].replaceAll('-', '');
-    demoData.push(createDemoMetric(formattedDate));
+    demoData.push(createDemoMetric);
   }
 
   await writeMetrics(demoData);

@@ -15,8 +15,9 @@ export interface Event {
   product: string;
 
   /**
-   * @description The underlying event ID, such as the event
-   * ID from GitHub.
+   * @description The underlying ID taken from the main/head commit ID
+   * which is a 40-character SHA1 string.
+   * @example `387aa161993865e33b2e687ce199c25dde76a805`
    */
   id: string;
 

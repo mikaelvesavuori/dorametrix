@@ -1,6 +1,6 @@
 import { createNewDorametrix } from '../domain/services/Dorametrix';
 
-import { DoraMetrics } from '../interfaces/DoraMetrics';
+import { Metrics } from '../interfaces/Metrics';
 import { RequestDTO } from '../interfaces/Input';
 import { Repository } from '../interfaces/Repository';
 
@@ -8,8 +8,8 @@ import { Repository } from '../interfaces/Repository';
  * @description The use-case for getting our DORA metrics, using interactors for each sub-case.
  * @todo Improve this so we have a new, clearer shape and less of the optionals in the type?
  */
-export async function getMetrics(repository: Repository, input: RequestDTO): Promise<DoraMetrics> {
-  const { repo } = input;
+export async function getMetrics(repository: Repository, input: RequestDTO): Promise<Metrics> {
+  const { repo, from, to } = input;
 
   const metrics = await getMetricsFromDatabase(repository, input);
   const { changes, deployments, incidents } = metrics;
@@ -23,11 +23,22 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
   const timeToRestoreServices = dorametrix.getTimeToRestoreServices(incidents);
 
   return {
-    deploymentFrequency,
-    leadTimeForChanges,
-    changeFailureRate,
-    timeToRestoreServices
-  } as unknown as DoraMetrics;
+    repo,
+    period: {
+      from,
+      to
+    },
+    total: {
+      deploymentCount,
+      incidentCount
+    },
+    metrics: {
+      changeFailureRate,
+      deploymentFrequency,
+      leadTimeForChanges,
+      timeToRestoreServices
+    }
+  };
 }
 
 // TODO: Could this be simplified by using Events instead of the specific types?
