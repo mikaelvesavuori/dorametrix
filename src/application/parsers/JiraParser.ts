@@ -116,9 +116,9 @@ export class JiraParser implements Parser {
   }
 
   /**
-   * @description Get the product name.
+   * @description Get the repository name.
    */
-  public getProductName(body: any): string {
+  public getRepoName(body: any): string {
     const domain = body?.['user']?.['self'].split('https://')[1].split('.atlassian.net')[0];
     const project = body?.['issue']?.['fields']?.['project']?.['name'];
     if (domain && project) return `${domain}/${project}`;

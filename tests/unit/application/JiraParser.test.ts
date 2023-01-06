@@ -274,10 +274,10 @@ describe('Success cases', () => {
     });
   });
 
-  describe('Product name', () => {
-    test('It should take in a typical Jira event and return the product name', () => {
+  describe('Repository name', () => {
+    test('It should take in a typical Jira event and return the repository name', () => {
       const parser = new JiraParser();
-      const productName = parser.getProductName({
+      const repoName = parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -286,25 +286,25 @@ describe('Success cases', () => {
           fields: {
             created: '2022-02-03T20:04:45.243+0100',
             project: {
-              name: 'my-project'
+              name: 'SOMEORG/SOMEREPO'
             }
           }
         }
       });
-      expect(productName).toBe('something/my-project');
+      expect(repoName).toBe('something/SOMEORG/SOMEREPO');
     });
 
     test('It should take in a typical Jira event and return an empty string if it is missing', () => {
       const parser = new JiraParser();
-      const productName = parser.getProductName({});
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName({});
+      expect(repoName).toBe('');
     });
 
     test('It should take in a typical Jira event and return an empty string even if no input is provided', () => {
       const parser = new JiraParser();
       // @ts-ignore
-      const productName = parser.getProductName();
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName();
+      expect(repoName).toBe('');
     });
   });
 });

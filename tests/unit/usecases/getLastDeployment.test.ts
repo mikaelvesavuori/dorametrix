@@ -6,7 +6,7 @@ describe('Success cases', () => {
   const repo = createNewLocalRepository();
   const input = { repo: 'SOMEORG/SOMEREPO', from: '20000101', to: '20991231' };
 
-  test('Given a product, it should get the last deployment data', async () => {
+  test('Given a repository name, it should get the last deployment data', async () => {
     const result = await getLastDeployment(repo, input);
 
     expect(result).toMatchObject({

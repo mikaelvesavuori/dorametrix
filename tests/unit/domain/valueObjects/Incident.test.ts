@@ -5,7 +5,7 @@ import { BitbucketParser } from '../../../../src/application/parsers/BitbucketPa
 import { GitHubParser } from '../../../../src/application/parsers/GitHubParser';
 import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 
-import { MissingProductValueError } from '../../../../src/application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../../../src/application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
 
@@ -18,7 +18,7 @@ import {
 import { githubIncidentHeaders } from '../../../../testdata/headers/github';
 
 describe('Failure cases', () => {
-  test('It should throw a MissingProductValueError if missing the "product" property', () => {
+  test('It should throw a MissingRepoNameError if missing the "repo" property', () => {
     expect(() =>
       // @ts-ignore
       makeIncident({
@@ -32,14 +32,14 @@ describe('Failure cases', () => {
         message: '',
         date: ''
       })
-    ).toThrowError(MissingProductValueError);
+    ).toThrowError(MissingRepoNameError);
   });
 
   test('It should throw a MissingEventTypeValueError if missing the "eventType" property', () => {
     expect(() =>
       // @ts-ignore
       makeIncident({
-        product: 'something',
+        repo: 'something',
         id: 'something',
         changes: [],
         eventTime: '',
@@ -56,7 +56,7 @@ describe('Failure cases', () => {
     expect(() =>
       // @ts-ignore
       makeIncident({
-        product: 'something',
+        repo: 'something',
         eventType: 'deployment',
         changes: [],
         eventTime: '',
@@ -76,14 +76,14 @@ describe('Success cases', () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'incident',
-        product: 'demo'
+        repo: 'demo'
       };
       const headers = {};
 
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
-      expect(incident).toHaveProperty('product');
+      expect(incident).toHaveProperty('repo');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
       expect(incident).toHaveProperty('timeCreated');
@@ -101,7 +101,7 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
-      expect(incident).toHaveProperty('product');
+      expect(incident).toHaveProperty('repo');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
       expect(incident).toHaveProperty('timeCreated');
@@ -117,7 +117,7 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
-      expect(incident).toHaveProperty('product');
+      expect(incident).toHaveProperty('repo');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
       expect(incident).toHaveProperty('timeCreated');
@@ -139,7 +139,7 @@ describe('Success cases', () => {
       const event = makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
-      expect(incident).toHaveProperty('product');
+      expect(incident).toHaveProperty('repo');
       expect(incident).toHaveProperty('eventType');
       expect(incident).toHaveProperty('id');
       expect(incident).toHaveProperty('timeCreated');

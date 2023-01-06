@@ -15,7 +15,7 @@ describe('Success cases', () => {
       parser,
       {
         eventType: 'change',
-        product: 'demo'
+        repo: 'demo'
       },
       {}
     );
@@ -28,7 +28,7 @@ describe('Success cases', () => {
       parser,
       {
         eventType: 'change',
-        product: 'demo'
+        repo: 'demo'
       },
       {}
     );
@@ -41,7 +41,7 @@ describe('Success cases', () => {
       parser,
       {
         eventType: 'change',
-        product: 'demo'
+        repo: 'demo'
       },
       {}
     );

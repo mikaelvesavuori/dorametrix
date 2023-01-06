@@ -99,23 +99,23 @@ class DorametrixConcrete implements Dorametrix {
   /**
    * @description Calculate the lead time of a change for an individual deployment.
    */
-  private calculateLeadTime(deployment: Deployment, allChanges: any[]): number {
+  private calculateLeadTime(deployment: Deployment, allChanges: Change[]): number {
     const { changes, timeCreated } = deployment;
-    const _changes: any = changes;
+    const _changes: any[] = changes;
 
     /**
      * Each change might lead to one or more deployments, so go and get each one.
      */
-    const changesDataIds = _changes.map((change: Change) => change.id);
+    const changeIds = _changes.map((change: Change) => change.id);
     const matches = allChanges
-      .filter((change: Change) => changesDataIds.includes(change.id))
+      .filter((change: Change) => changeIds.includes(change.id))
       .map((change: Change) => change.timeCreated)
-      .sort((a: any, b: any) => a - b);
+      .sort((a: any, b: any) => a.timeCreated - b.timeCreated);
 
     /**
      * Calculate diff between earliest commit timestamp (`firstMatch`) and deployment timestamp (`timeCreated`).
      */
-    if (matches && matches.length > 0) {
+    if (matches?.length > 0) {
       const firstMatch = matches[0];
 
       if (firstMatch && timeCreated && firstMatch > timeCreated) {
@@ -163,8 +163,8 @@ class DorametrixConcrete implements Dorametrix {
       }
 
       accumulatedTime += timeResolved
-        ? (parseFloat(timeResolved) - parseFloat(timeCreated)) / 1000
-        : (parseFloat(Date.now().toString()) - parseFloat(timeCreated)) / 1000;
+        ? (parseInt(timeResolved) - parseInt(timeCreated)) / 1000
+        : (parseInt(Date.now().toString()) - parseInt(timeCreated)) / 1000;
 
       incidentCount++;
     });

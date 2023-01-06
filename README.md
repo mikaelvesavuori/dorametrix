@@ -337,7 +337,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?product=myproduct`
+`GET {{BASE_URL}}/metrics?repo=myproduct`
 
 #### Example response
 
@@ -354,7 +354,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?product=myproduct`
+`GET {{BASE_URL}}/metrics?repo=myproduct`
 
 #### Example response
 
@@ -401,7 +401,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?changeFailureRate&product=myproduct`
+`GET {{BASE_URL}}/metrics?changeFailureRate&repo=myproduct`
 
 #### Example response
 
@@ -415,7 +415,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?deploymentFrequency&product=myproduct`
+`GET {{BASE_URL}}/metrics?deploymentFrequency&repo=myproduct`
 
 #### Example response
 
@@ -429,7 +429,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?leadTimeForChanges&product=myproduct`
+`GET {{BASE_URL}}/metrics?leadTimeForChanges&repo=myproduct`
 
 #### Example response
 
@@ -443,7 +443,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?timeToRestoreServices&product=myproduct`
+`GET {{BASE_URL}}/metrics?timeToRestoreServices&repo=myproduct`
 
 #### Response
 
@@ -457,7 +457,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request example
 
-`GET {{BASE_URL}}/metrics?timeToRestoreServices&leadTimeForChanges&product=myproduct`
+`GET {{BASE_URL}}/metrics?timeToRestoreServices&leadTimeForChanges&repo=myproduct`
 
 #### Response
 
@@ -472,7 +472,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`GET {{BASE_URL}}/lastdeployment?product=myproduct`
+`GET {{BASE_URL}}/lastdeployment?repo=myproduct`
 
 #### Response
 

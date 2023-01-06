@@ -3,7 +3,7 @@
  */
 export type Incident = {
   eventType: string;
-  product: string;
+  repo: string;
   timeCreated: string;
   id: string;
   timeResolved: string;

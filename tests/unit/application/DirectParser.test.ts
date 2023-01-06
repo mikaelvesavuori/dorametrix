@@ -37,26 +37,26 @@ describe('Success cases', () => {
     });
   });
 
-  describe('Product name', () => {
-    test('It should take in a typical "direct call" event and return the product name', () => {
+  describe('Repository name', () => {
+    test('It should take in a typical "direct call" event and return the repository name', () => {
       const parser = new DirectParser();
-      const productName = parser.getProductName({
-        product: 'my-project'
+      const repoName = parser.getRepoName({
+        repo: 'SOMEORG/SOMEREPO'
       });
-      expect(productName).toBe('my-project');
+      expect(repoName).toBe('SOMEORG/SOMEREPO');
     });
 
     test('It should take in a typical "direct call" event and return an empty string if it is missing', () => {
       const parser = new DirectParser();
-      const productName = parser.getProductName({});
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName({});
+      expect(repoName).toBe('');
     });
 
     test('It should take in a typical "direct call" event and return an empty string even if no input is provided', () => {
       const parser = new DirectParser();
       // @ts-ignore
-      const productName = parser.getProductName();
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName();
+      expect(repoName).toBe('');
     });
   });
 });

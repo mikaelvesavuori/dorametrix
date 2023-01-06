@@ -40,9 +40,9 @@ export class DirectParser implements Parser {
   }
 
   /**
-   * @description Get the product name.
+   * @description Get the repository name.
    */
-  public getProductName(body: any): string {
-    return (body && body?.['product']) || '';
+  public getRepoName(body: any): string {
+    return (body && body?.['repo']) || '';
   }
 }

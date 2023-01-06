@@ -262,28 +262,28 @@ describe('Success cases', () => {
     });
   });
 
-  describe('Product name', () => {
-    test('It should take in a typical Bitbucket event and return the product name', () => {
+  describe('Repository name', () => {
+    test('It should take in a typical Bitbucket event and return the repository name', () => {
       const parser = new BitbucketParser();
-      const productName = parser.getProductName({
+      const repoName = parser.getRepoName({
         repository: {
-          full_name: 'my-project'
+          full_name: 'SOMEORG/SOMEREPO'
         }
       });
-      expect(productName).toBe('my-project');
+      expect(repoName).toBe('SOMEORG/SOMEREPO');
     });
 
     test('It should take in a typical Bitbucket event and return an empty string if it is missing', () => {
       const parser = new BitbucketParser();
-      const productName = parser.getProductName({});
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName({});
+      expect(repoName).toBe('');
     });
 
     test('It should take in a typical Bitbucket event and return an empty string even if no input is provided', () => {
       const parser = new BitbucketParser();
       // @ts-ignore
-      const productName = parser.getProductName();
-      expect(productName).toBe('');
+      const repoName = parser.getRepoName();
+      expect(repoName).toBe('');
     });
   });
 });

@@ -18,7 +18,7 @@ export function makeEvent(
 }
 
 class EventConcrete {
-  product: string;
+  repo: string;
   date: string;
   eventType: string;
   id: string;
@@ -35,9 +35,9 @@ class EventConcrete {
       body,
       headers
     });
-    const product = parser.getProductName(body);
+    const repo = parser.getRepoName(body);
 
-    this.product = product;
+    this.repo = repo;
     this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
@@ -51,7 +51,7 @@ class EventConcrete {
 
   public getDTO(): Event {
     return {
-      product: this.product,
+      repo: this.repo,
       date: this.date,
       eventType: this.eventType as EventType,
       id: this.id,

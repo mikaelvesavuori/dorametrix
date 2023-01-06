@@ -16,9 +16,9 @@ export interface Parser {
   getPayload(payloadInput: PayloadInput): EventDto;
 
   /**
-   * @description Get the product name.
+   * @description Get the repository name.
    */
-  getProductName(body?: any): string;
+  getRepoName(body?: any): string;
 }
 
 export type EventTypeInput = {

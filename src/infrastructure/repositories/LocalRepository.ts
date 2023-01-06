@@ -71,15 +71,15 @@ class LocalRepo implements Repository {
     const repoName = key.split('_')[1];
 
     if (key.toLowerCase().startsWith('change_')) {
-      return this.changes.filter((item: Change) => item.product === repoName) || [];
+      return this.changes.filter((item: Change) => item.repo === repoName) || [];
     }
 
     if (key.toLowerCase().startsWith('deployment_')) {
-      return this.deployments.filter((item: Deployment) => item.product === repoName) || [];
+      return this.deployments.filter((item: Deployment) => item.repo === repoName) || [];
     }
 
     if (key.toLowerCase().startsWith('incident_')) {
-      return this.incidents.filter((item: Incident) => item.product === repoName) || [];
+      return this.incidents.filter((item: Incident) => item.repo === repoName) || [];
     }
 
     return [];

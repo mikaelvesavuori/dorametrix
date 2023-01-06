@@ -3,12 +3,12 @@ import { makeEvent } from '../../../../src/domain/valueObjects/Event';
 
 import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 
-import { MissingProductValueError } from '../../../../src/application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../../../src/application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
 
 describe('Failure cases', () => {
-  test('It should throw a MissingProductValueError if missing the "product" property', () => {
+  test('It should throw a MissingRepoNameError if missing the "repo" property', () => {
     expect(() =>
       // @ts-ignore
       makeDeployment({
@@ -22,14 +22,14 @@ describe('Failure cases', () => {
         message: '',
         date: ''
       })
-    ).toThrowError(MissingProductValueError);
+    ).toThrowError(MissingRepoNameError);
   });
 
   test('It should throw a MissingEventTypeValueError if missing the "eventType" property', () => {
     expect(() =>
       // @ts-ignore
       makeDeployment({
-        product: 'something',
+        repo: 'something',
         id: 'something',
         changes: [],
         eventTime: '',
@@ -46,7 +46,7 @@ describe('Failure cases', () => {
     expect(() =>
       // @ts-ignore
       makeDeployment({
-        product: 'something',
+        repo: 'something',
         eventType: 'deployment',
         changes: [],
         eventTime: '',
@@ -66,7 +66,7 @@ describe('Success cases', () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'deployment',
-        product: 'demo',
+        repo: 'demo',
         changes: [
           {
             id: 'be022558-dca1-4876-84ef-c3b3b5f5cf34',

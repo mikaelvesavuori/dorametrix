@@ -5,7 +5,7 @@ import { BitbucketParser } from '../../../../src/application/parsers/BitbucketPa
 import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 import { GitHubParser } from '../../../../src/application/parsers/GitHubParser';
 
-import { MissingProductValueError } from '../../../../src/application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../../../src/application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
 
@@ -16,7 +16,7 @@ import githubPush from '../../../../testdata/webhook-events/github/push.json';
 import { githubPushHeaders } from '../../../../testdata/headers/github';
 
 describe('Failure cases', () => {
-  test('It should throw a MissingProductValueError if missing the "product" property', () => {
+  test('It should throw a MissingRepoNameError if missing the "repo" property', () => {
     expect(() =>
       // @ts-ignore
       makeChange({
@@ -30,14 +30,14 @@ describe('Failure cases', () => {
         message: '',
         date: ''
       })
-    ).toThrowError(MissingProductValueError);
+    ).toThrowError(MissingRepoNameError);
   });
 
   test('It should throw a MissingEventTypeValueError if missing the "eventType" property', () => {
     expect(() =>
       // @ts-ignore
       makeChange({
-        product: 'something',
+        repo: 'something',
         id: 'something',
         changes: [],
         eventTime: '',
@@ -54,7 +54,7 @@ describe('Failure cases', () => {
     expect(() =>
       // @ts-ignore
       makeChange({
-        product: 'something',
+        repo: 'something',
         eventType: 'deployment',
         changes: [],
         eventTime: '',
@@ -74,7 +74,7 @@ describe('Success cases', () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'change',
-        product: 'demo'
+        repo: 'demo'
       };
       const headers = {};
 
@@ -83,7 +83,7 @@ describe('Success cases', () => {
 
       expect(change).toHaveProperty('eventType');
       expect(change).toHaveProperty('id');
-      expect(change).toHaveProperty('product');
+      expect(change).toHaveProperty('repo');
       expect(change).toHaveProperty('timeCreated');
     });
   });
@@ -99,7 +99,7 @@ describe('Success cases', () => {
 
       expect(change).toHaveProperty('eventType');
       expect(change).toHaveProperty('id');
-      expect(change).toHaveProperty('product');
+      expect(change).toHaveProperty('repo');
       expect(change).toHaveProperty('timeCreated');
     });
   });
@@ -115,7 +115,7 @@ describe('Success cases', () => {
 
       expect(change).toHaveProperty('eventType');
       expect(change).toHaveProperty('id');
-      expect(change).toHaveProperty('product');
+      expect(change).toHaveProperty('repo');
       expect(change).toHaveProperty('timeCreated');
     });
   });

@@ -3,7 +3,7 @@
  */
 export type Deployment = {
   eventType: string;
-  product: string;
+  repo: string;
   timeCreated: string;
   id: string;
   changes: Change[];

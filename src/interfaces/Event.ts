@@ -11,10 +11,11 @@ export interface Event {
   eventType: EventType;
 
   /**
-   * @description The product name, such as the name of the API
+   * @description The Git repository name, such as the name of the API
    * or Git repository that we are measuring metrics for.
+   * @example `SOMEORG/SOMEREPO`
    */
-  product: string;
+  repo: string;
 
   /**
    * @description The underlying ID taken from the main/head commit ID

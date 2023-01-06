@@ -3,7 +3,7 @@
  */
 export type Change = {
   eventType: string;
-  product: string;
+  repo: string;
   timeCreated: string;
   id: string;
   date: string;

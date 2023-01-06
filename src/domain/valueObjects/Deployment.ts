@@ -4,7 +4,7 @@ import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
-import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
 
@@ -17,7 +17,7 @@ export function makeDeployment(deploymentEvent: Event): Deployment {
 }
 
 class DeploymentConcrete {
-  product: string;
+  repo: string;
   date: string;
   eventType: string;
   id: string;
@@ -25,11 +25,11 @@ class DeploymentConcrete {
   timeCreated: string;
 
   constructor(deploymentEvent: Event) {
-    const { product, id, eventType, timeCreated, changes } = deploymentEvent;
+    const { repo, id, eventType, timeCreated, changes } = deploymentEvent;
 
-    if (!product)
-      throw new MissingProductValueError(
-        'Missing "product" when trying to create a Deployment value object!'
+    if (!repo)
+      throw new MissingRepoNameError(
+        'Missing "repo" when trying to create a Deployment value object!'
       );
     if (!eventType)
       throw new MissingEventTypeValueError(
@@ -40,7 +40,7 @@ class DeploymentConcrete {
         'Missing "id" when trying to create a Deployment value object!'
       );
 
-    this.product = product;
+    this.repo = repo;
     this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
@@ -50,7 +50,7 @@ class DeploymentConcrete {
 
   public getDTO(): Deployment {
     return {
-      product: this.product,
+      repo: this.repo,
       date: this.date,
       eventType: this.eventType,
       id: this.id,

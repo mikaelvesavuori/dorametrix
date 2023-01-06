@@ -3,7 +3,7 @@ import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
-import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
 
@@ -16,19 +16,17 @@ export function makeChange(changeEvent: Event): Change {
 }
 
 class ChangeConcrete {
-  product: string;
+  repo: string;
   eventType: string;
   id: string;
   timeCreated: string;
   date: string;
 
   constructor(changeEvent: any) {
-    const { product, eventType, id } = changeEvent;
+    const { repo, eventType, id } = changeEvent;
 
-    if (!product)
-      throw new MissingProductValueError(
-        'Missing "product" when trying to create a Change value object!'
-      );
+    if (!repo)
+      throw new MissingRepoNameError('Missing "repo" when trying to create a Change value object!');
     if (!eventType)
       throw new MissingEventTypeValueError(
         'Missing "eventType" when trying to create a Change value object!'
@@ -36,7 +34,7 @@ class ChangeConcrete {
     if (!id)
       throw new MissingIdValueError('Missing "id" when trying to create a Change value object!');
 
-    this.product = product;
+    this.repo = repo;
     this.eventType = eventType;
     this.id = id;
     this.timeCreated = Date.now().toString();
@@ -45,7 +43,7 @@ class ChangeConcrete {
 
   public getDTO(): Change {
     return {
-      product: this.product,
+      repo: this.repo,
       eventType: this.eventType,
       id: this.id,
       timeCreated: this.timeCreated,

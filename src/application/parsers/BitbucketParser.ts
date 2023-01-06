@@ -134,9 +134,9 @@ export class BitbucketParser implements Parser {
   }
 
   /**
-   * @description Get the product name.
+   * @description Get the repository name.
    */
-  public getProductName(body: any): string {
+  public getRepoName(body: any): string {
     return (body && body?.['repository']?.['full_name']) || '';
   }
 }

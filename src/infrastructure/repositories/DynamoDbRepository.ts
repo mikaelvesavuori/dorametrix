@@ -39,12 +39,12 @@ class DynamoRepository implements Repository {
    * so they don't stack on the same record.
    */
   public async addEvent(event: Event): Promise<void> {
-    const { product, timeCreated, timeResolved, message, eventTime } = event;
+    const { repo, timeCreated, timeResolved, message, eventTime } = event;
 
     const command = {
       TableName: this.tableName,
       Item: {
-        pk: { S: `EVENT_${product}` },
+        pk: { S: `EVENT_${repo}` },
         sk: { S: timeCreated },
         timeResolved: { S: timeResolved },
         message: { S: message },
@@ -60,12 +60,12 @@ class DynamoRepository implements Repository {
    * @description Add (create/update) a Change in the repository.
    */
   public async addChange(change: Change): Promise<void> {
-    const { product, id, timeCreated } = change;
+    const { repo, id, timeCreated } = change;
 
     const command = {
       TableName: this.tableName,
       Item: {
-        pk: { S: `CHANGE_${product}` },
+        pk: { S: `CHANGE_${repo}` },
         sk: { S: timeCreated },
         timeCreated: { S: timeCreated },
         id: { S: id }
@@ -79,12 +79,12 @@ class DynamoRepository implements Repository {
    * @description Handle (create/update) a Deployment in the repository.
    */
   public async addDeployment(deployment: Deployment): Promise<void> {
-    const { product, id, changes, timeCreated } = deployment;
+    const { repo, id, changes, timeCreated } = deployment;
 
     const command = {
       TableName: this.tableName,
       Item: {
-        pk: { S: `DEPLOYMENT_${product}` },
+        pk: { S: `DEPLOYMENT_${repo}` },
         sk: { S: timeCreated },
         changes: { S: JSON.stringify(changes) },
         id: { S: id }
@@ -102,12 +102,12 @@ class DynamoRepository implements Repository {
    * @description Handle (create/update) an Incident in the repository.
    */
   public async addIncident(incident: Incident): Promise<void> {
-    const { product, id, timeCreated, timeResolved, title } = incident;
+    const { repo, id, timeCreated, timeResolved, title } = incident;
 
     const command = {
       TableName: this.tableName,
       Item: {
-        pk: { S: `INCIDENT_${product}` },
+        pk: { S: `INCIDENT_${repo}` },
         sk: { S: timeCreated },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved || '' },

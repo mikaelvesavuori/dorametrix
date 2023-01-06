@@ -3,7 +3,7 @@ import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
-import { MissingProductValueError } from '../../application/errors/MissingProductValueError';
+import { MissingRepoNameError } from '../../application/errors/MissingRepoNameError';
 import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
 import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
 
@@ -16,7 +16,7 @@ export function makeIncident(incidentEvent: Event): Incident {
 }
 
 class IncidentConcrete implements Incident {
-  product: string;
+  repo: string;
   date: string;
   eventType: string;
   id: string;
@@ -25,11 +25,11 @@ class IncidentConcrete implements Incident {
   title: string;
 
   constructor(incidentEvent: Event) {
-    const { product, eventType, id, timeCreated, timeResolved, title } = incidentEvent;
+    const { repo, eventType, id, timeCreated, timeResolved, title } = incidentEvent;
 
-    if (!product)
-      throw new MissingProductValueError(
-        'Missing "product" when trying to create an Incident value object!'
+    if (!repo)
+      throw new MissingRepoNameError(
+        'Missing "repo" when trying to create an Incident value object!'
       );
     if (!eventType)
       throw new MissingEventTypeValueError(
@@ -38,7 +38,7 @@ class IncidentConcrete implements Incident {
     if (!id)
       throw new MissingIdValueError('Missing "id" when trying to create an Incident value object!');
 
-    this.product = product;
+    this.repo = repo;
     this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
@@ -49,7 +49,7 @@ class IncidentConcrete implements Incident {
 
   public getDTO(): Incident {
     return {
-      product: this.product,
+      repo: this.repo,
       date: this.date,
       eventType: this.eventType,
       id: this.id,
