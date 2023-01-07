@@ -1,69 +1,72 @@
 {
   "name": "dorametrix",
-  "version": "1.1.0",
   "description": "Dorametrix is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks",
-  "homepage": "https://github.com/mikaelvesavuori/dorametrix",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mikaelvesavuori/dorametrix.git"
-  },
+  "version": "1.1.0",
   "author": "Mikael Vesavuori",
+  "license": "MIT",
   "keywords": [
     "dorametrix",
     "dora",
     "dora-metrics",
     "devops",
-    "software-delivery"
+    "software-delivery",
+    "engops",
+    "metrics"
   ],
-  "license": "MIT",
-  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikaelvesavuori/dorametrix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mikaelvesavuori/dorametrix/issues"
+  },
+  "homepage": "https://github.com/mikaelvesavuori/dorametrix",
   "scripts": {
     "start": "npx sls offline --reloadHandler",
-    "deploy": "npx sls deploy",
-    "remove": "npx sls remove",
-    "lint": "npx eslint './src/**/*.ts' --quiet --fix",
-    "docs": "npx arkit && npx typedoc --entryPointStrategy expand",
-    "build": "npx sls package",
-    "build:hosting": "npm run docs && cp -r diagrams typedoc-docs",
-    "test": "npm run test:unit",
+    "test": "npm run test:licenses && npm run test:types && npm run test:unit",
     "test:types": "npx type-coverage --at-least 90 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
+    "test:licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
     "test:unit": "npx jest tests --collectCoverage",
     "test:unit:watch": "npx jest --clearCache && npx jest tests --collectCoverage --watch",
-    "test:integration": "npx ts-node tests/integration/index.ts",
-    "licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
-    "licenses:checker": "npx license-compatibility-checker",
+    "test:createdata": "npx ts-node tests/createTestData.ts",
+    "lint": "npx eslint './src/**/*.ts' --quiet --fix",
+    "docs": "rm -rf docs && mkdir docs && npm run docs:typedoc && npm run docs:arkit && npm run docs:cfndia",
+    "docs:arkit": "npx arkit",
+    "docs:cfndia": "npx cfn-dia draw.io -t .serverless/cloudformation-template-update-stack.json --ci-mode -o diagrams/cfn-diagram.drawio",
+    "docs:typedoc": "npx typedoc --entryPoints './src' --entryPointStrategy 'expand' --exclude '**/*+(test).ts' --externalPattern '**/node_modules/**/*' --excludeExternals --out 'docs'",
+    "build:hosting": "npm run docs:typedoc && cp -r diagrams docs && cp -r readme docs",
+    "build": "npx sls package",
+    "deploy": "npx sls deploy",
+    "teardown": "npx sls remove",
     "prepare": "husky install"
   },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3"
+  },
   "devDependencies": {
+    "@mhlabs/cfn-diagram": "1",
     "@types/aws-lambda": "8",
     "@types/jest": "29",
     "@types/node": "latest",
     "@typescript-eslint/eslint-plugin": "5",
     "@typescript-eslint/parser": "5",
     "arkit": "1",
-    "babel-loader": "8",
-    "eslint": "8",
     "eslint-config-prettier": "8",
     "eslint-plugin-prettier": "4",
+    "eslint": "8",
     "husky": "8",
     "jest": "29",
-    "license-compatibility-checker": "latest",
     "license-compliance": "latest",
-    "serverless": "3",
+    "prettier": "2",
+    "serverless-esbuild": "1",
     "serverless-iam-roles-per-function": "3",
     "serverless-offline": "12",
-    "serverless-webpack": "5",
+    "serverless": "3",
     "ts-jest": "29",
-    "ts-loader": "9",
     "ts-node": "latest",
     "tslib": "latest",
     "type-coverage": "2",
     "typedoc": "0.23.23",
-    "typescript": "4",
-    "webpack": "5",
-    "webpack-cli": "latest"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "3"
+    "typescript": "4"
   }
 }

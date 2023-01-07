@@ -4,6 +4,7 @@
 
 - Caching
 - Create test data
+- Add "offset" to "period" object in result
 
 ## Baseline quality
 
@@ -15,9 +16,8 @@
 - TODOs
 - Cleanup
 - Update documentation
-- Migrate to esbuild
-- Use same scripts (package.json and husky) as in Gitmetrix
 - Update deployment.sh script
+- Check authorization behavior so it matches Gitmetrix
 
 ## Roadmap/later
 

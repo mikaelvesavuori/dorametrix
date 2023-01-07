@@ -5,7 +5,7 @@ provider:
   runtime: nodejs18.x
   stage: ${opt:stage, 'dev'}
   region:  ${opt:region, 'eu-north-1'}
-  memorySize: ${opt:memory, 1024}
+  memorySize: ${opt:memory, 512}
   timeout: 10
   logRetentionInDays: 7
   versionFunctions: false
@@ -26,35 +26,30 @@ provider:
     MAX_DATE_RANGE: 365
 
 plugins:
-  - serverless-webpack
+  - serverless-esbuild
   - serverless-offline
   - serverless-iam-roles-per-function
 
 package:
   individually: true
-  patterns:
-    - node_modules/aws-sdk/**
-    - node_modules/aws-lambda/**
 
 custom:
   config:
-    authToken: 'something' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
-    accountNumber: '123412341234'
+    authToken: 'TODO' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
+    accountNumber: '876265053232'
     tableName: dorametrix
   aws:
     databaseArn: "arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}"
-  webpack:
-    webpackConfig: 'webpack.config.js'
-    includeModules: true
-    packager: 'npm'
-    excludeFiles: src/**/*.test.js
+  esbuild:
+    bundle: true
+    minify: true
 
 functions:
   Authorizer:
-    handler: src/infrastructure/adapters/web/AuthorizerController.handler
+    handler: src/infrastructure/adapters/web/AuthorizerHandler.handler
     description: ${self:service} authorizer
-  MetricsController:
-    handler: src/infrastructure/adapters/web/MetricsController.handler
+  GetMetrics:
+    handler: src/infrastructure/adapters/web/MetricsHandler.handler
     description: Get all four DORA metrics
     events:
       - http:
@@ -68,10 +63,11 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
+          - dynamodb:PutItem
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
-  EventController:
-    handler: src/infrastructure/adapters/web/EventController.handler
+  AddEvent:
+    handler: src/infrastructure/adapters/web/EventHandler.handler
     description: Report new event (this will then be automatically also created as a change, deployment, or incident)
     events:
       - http:
@@ -83,8 +79,8 @@ functions:
           - dynamodb:PutItem
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
-  LastDeploymentController:
-    handler: src/infrastructure/adapters/web/LastDeploymentController.handler
+  GetLastDeployment:
+    handler: src/infrastructure/adapters/web/LastDeploymentHandler.handler
     description: Get commit ID for last production deployment
     events:
       - http:

@@ -55,8 +55,10 @@ describe('Success cases', () => {
   describe('Dynamic period', () => {
     test('It should create a request DTO for a dynamic period', () => {
       const days = getRandomInteger();
-      const time = getTimestampsForPeriod(days);
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
+      const { from, to } = getTimestampsForPeriod(days);
+      const expected = { repo: 'SOMEORG/SOMEREPO', from, to };
+
+      console.log('result', days, from, to);
 
       const result = getRequestDTO({
         last: `${days}`,
@@ -69,8 +71,8 @@ describe('Success cases', () => {
     test('It should create a request DTO for a dynamic period with a negative offset', () => {
       const days = getRandomInteger();
       const offset = -5;
-      const time = getTimestampsForPeriod(days, offset);
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
+      const { from, to } = getTimestampsForPeriod(days, offset);
+      const expected = { repo: 'SOMEORG/SOMEREPO', from, to };
 
       const result = getRequestDTO({
         last: `${days}`,
@@ -84,8 +86,8 @@ describe('Success cases', () => {
     test('It should create a request DTO for a dynamic period with a positive offset', () => {
       const days = getRandomInteger();
       const offset = 5;
-      const time = getTimestampsForPeriod(days, offset);
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: time.from, to: time.to };
+      const { from, to } = getTimestampsForPeriod(days, offset);
+      const expected = { repo: 'SOMEORG/SOMEREPO', from, to };
 
       const result = getRequestDTO({
         last: `${days}`,

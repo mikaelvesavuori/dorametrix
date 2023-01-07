@@ -1,8 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm test
-npm run licenses
-npm run lint
-npx arkit
-git add .
+npm run build
+npm run test
+npm run docs:arkit
+npm run docs:cfndia
+git add diagrams/

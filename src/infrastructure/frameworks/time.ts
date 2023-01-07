@@ -1,5 +1,5 @@
 import { getCurrentDate, getDateBefore } from './date';
-import { getSecondsForDays } from './getSecondsForDays';
+import { getMillisecondsForDays } from './getMillisecondsForDays';
 
 import { InvalidIsoDateConversionError } from '../../application/errors/InvalidIsoDateConversionError';
 import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError';
@@ -11,8 +11,9 @@ import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError'
  */
 export function getTimestampsForPeriod(lastNumDays: number, offsetInHours = 0) {
   const toTime = getTimestampForInputDate(getDateBefore(true), offsetInHours, true);
-  const fromTimeUTCString: any = `${toTime}999`;
-  const fromTime = new Date(fromTimeUTCString - getSecondsForDays(lastNumDays) + 1).getTime();
+  const fromTime = new Date(
+    parseInt(`${toTime}999`) - getMillisecondsForDays(lastNumDays) + 1
+  ).getTime();
 
   return {
     from: `${fromTime}`.substring(0, 10),
