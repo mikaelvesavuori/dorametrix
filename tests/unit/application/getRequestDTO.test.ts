@@ -58,8 +58,6 @@ describe('Success cases', () => {
       const { from, to } = getTimestampsForPeriod(days);
       const expected = { repo: 'SOMEORG/SOMEREPO', from, to };
 
-      console.log('result', days, from, to);
-
       const result = getRequestDTO({
         last: `${days}`,
         repo: 'SOMEORG/SOMEREPO'
