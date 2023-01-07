@@ -10,9 +10,9 @@ import { Incident } from '../../interfaces/Incident';
 
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
-const dynamoDb = new DynamoDBClient({
-  region: process.env.REGION || 'eu-north-1'
-});
+import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/MissingEnvironmentVariablesDynamoError';
+import { DynamoItem, DynamoItems } from '../../interfaces/DynamoDb';
+import { Metrics } from '../../interfaces/Metrics';
 
 /**
  * @description Factory function to create a DynamoDB repository.
@@ -26,11 +26,55 @@ export function createNewDynamoRepository() {
  * @see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/dynamodb-example-table-read-write.html
  */
 class DynamoRepository implements Repository {
-  tableName: string;
+  readonly dynamoDb: DynamoDBClient;
+  readonly tableName: string;
+  readonly region: string;
 
   constructor() {
-    this.tableName = process.env.TABLE_NAME || 'dorametrix'; // TODO: Add error if not set
+    const REGION = process.env.REGION;
+    const TABLE_NAME = process.env.TABLE_NAME;
+    if (!REGION || !TABLE_NAME) throw new MissingEnvironmentVariablesDynamoError();
+
+    this.tableName = TABLE_NAME;
+    this.region = REGION;
+    this.dynamoDb = new DynamoDBClient({ region: this.region });
   }
+
+  /////////////
+  // Metrics //
+  /////////////
+
+  /**
+   * @description Get metrics for a given repository and a period of time.
+   */
+  public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
+    const data = await this.getItem(dataRequest);
+    const items = data?.Items || [];
+
+    return getCleanedItems(items);
+  }
+
+  /**
+   * @description Caches metrics with PutItem command.
+   * @todo Input type
+   */
+  public async cacheMetrics(key: string, range: string, metrics: Metrics): Promise<void> {
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `CACHED_${key}` },
+        sk: { S: range },
+        data: { S: JSON.stringify(metrics) }
+      }
+    };
+
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
+  }
+
+  ////////////
+  // Events //
+  ////////////
 
   /**
    * @description Add (create/update) an Event in the repository.
@@ -54,7 +98,7 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await dynamoDb.send(new PutItemCommand(command));
+    await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -73,7 +117,7 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await dynamoDb.send(new PutItemCommand(command));
+    await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -93,11 +137,11 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await dynamoDb.send(new PutItemCommand(command));
+    await this.dynamoDb.send(new PutItemCommand(command));
 
     // Update the special "last deployed" item in the database
-    command['Item']['sk']['S'] = 'lastDeployedCommit';
-    await dynamoDb.send(new PutItemCommand(command));
+    command['Item']['sk']['S'] = 'LastDeployedCommit';
+    await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -118,60 +162,54 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await dynamoDb.send(new PutItemCommand(command));
+    await this.dynamoDb.send(new PutItemCommand(command));
   }
 
-  /**
-   * @description Get metrics for a given repository and a period of time.
-   */
-  public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
-    const { key } = dataRequest;
-
-    // Check cache first - TODO rewrite
-    const cachedData: any = this.getCachedData(key);
-    if (cachedData && Object.keys(cachedData).length !== 0) return cachedData;
-
-    const data = await this.getItem(dataRequest);
-
-    // Clean up data objects
-    const items = getCleanedItems(data?.Items as any);
-
-    return items;
-  }
+  /////////////////////
+  // Private methods //
+  /////////////////////
 
   /**
    * @description Get data from cache.
+   * @todo
    */
-  private getCachedData(key: string): Record<string, unknown> {
-    const cachedData = false; // TODO
-    if (cachedData) {
-      console.log('Returning cached data...', key);
-      return JSON.parse(cachedData);
-    }
-    return {};
+  public async getCachedData(key: string, range: string): Promise<Metrics> {
+    const params = {
+      TableName: this.tableName,
+      KeyConditionExpression: 'pk = :pk AND sk = :sk',
+      ExpressionAttributeValues: {
+        ':pk': { S: `CACHED_${key}` },
+        ':sk': { S: range }
+      },
+      Limit: 1
+    };
+
+    // @ts-ignore
+    const cachedData: DynamoItems | null = await this.dynamoDb.send(new QueryCommand(params));
+
+    if (cachedData?.Items && cachedData.Items.length > 0)
+      return JSON.parse(cachedData.Items[0].data['S']);
+
+    return {} as any;
   }
 
   /**
    * @description Get data from DynamoDB.
-   * @todo
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
     const { key, fromDate, toDate, getLastDeployedCommit } = dataRequest;
 
     /**
      * @todo Revise text
-     * Only fetch days within our time window (30 days).
-     * Use a projection expression to cut back on unnecessary data transfer.
-     * Get by "lastDeployedCommit" value if "getLastDeployedCommit" is true.
+     * Get by "LastDeployedCommit" value if "getLastDeployedCommit" is true.
      */
     const command = {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :toDate',
-      ProjectionExpression: 'pk, sk, toDate, timeResolved, id, changes',
       ExpressionAttributeValues: {
         ':pk': { S: key },
         ':sk': {
-          S: getLastDeployedCommit ? 'lastDeployedCommit' : fromDate
+          S: getLastDeployedCommit ? 'LastDeployedCommit' : fromDate
         },
         ':toDate': { S: toDate }
       }
@@ -179,7 +217,7 @@ class DynamoRepository implements Repository {
 
     // @ts-ignore
     return process.env.NODE_ENV !== 'test'
-      ? await dynamoDb.send(new QueryCommand(command))
+      ? await this.dynamoDb.send(new QueryCommand(command))
       : { Items: testDataItem };
   }
 }

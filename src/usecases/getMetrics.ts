@@ -11,10 +11,86 @@ import { Incident } from '../interfaces/Incident';
  * @description The use-case for getting our DORA metrics, using interactors for each sub-case.
  */
 export async function getMetrics(repository: Repository, input: RequestDTO): Promise<Metrics> {
-  const { repo, from, to, offset } = input;
+  const cachedMetrics = await getCachedMetricsFromDatabase(input, repository);
+  if (cachedMetrics) return cachedMetrics;
 
-  const metrics = await getMetricsFromDatabase(repository, input);
-  const { changes, deployments, incidents } = metrics;
+  const metricsData = await getMetricsFromDatabase(input, repository);
+  const metrics = compileResultMetrics(input, metricsData);
+
+  await cacheMetrics(input, repository, metrics);
+
+  return metrics;
+}
+
+/**
+ * @description TODO
+ */
+async function getCachedMetricsFromDatabase(
+  input: RequestDTO,
+  repository: Repository
+): Promise<Metrics | void> {
+  const { repo, from, to } = input;
+
+  const cachedData = await repository.getCachedData(repo, `${from}_${to}`);
+
+  if (Object.keys(cachedData).length > 0) return cachedData;
+}
+
+/**
+ * @description TODO
+ */
+async function getMetricsFromDatabase(input: RequestDTO, repository: Repository) {
+  const { repo, from, to } = input;
+  const request = {
+    fromDate: from,
+    toDate: to
+  };
+
+  const changes = await repository.getMetrics({
+    ...request,
+    key: `CHANGE_${repo}`
+  });
+
+  const deployments = await repository.getMetrics({
+    ...request,
+    key: `DEPLOYMENT_${repo}`
+  });
+
+  const incidents = await repository.getMetrics({
+    ...request,
+    key: `INCIDENT_${repo}`
+  });
+
+  return {
+    changes: changes as Change[],
+    deployments: deployments as Deployment[],
+    incidents: incidents as Incident[]
+  };
+}
+
+/**
+ * @description TODO
+ */
+async function cacheMetrics(input: RequestDTO, repository: Repository, metrics: Metrics) {
+  const { repo, from, to } = input;
+  await repository.cacheMetrics(repo, `${from}_${to}`, metrics);
+}
+
+/**
+ * @description TODO
+ * @todo Create type
+ */
+function compileResultMetrics(
+  input: RequestDTO,
+  metricsData: {
+    changes: Change[];
+    deployments: Deployment[];
+    incidents: Incident[];
+  }
+): Metrics {
+  const { repo, from, to, offset } = input;
+  const { changes, deployments, incidents } = metricsData;
+
   const changesCount = changes.length;
   const deploymentCount = deployments.length;
   const incidentCount = incidents.length;
@@ -43,34 +119,5 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
       leadTimeForChanges,
       timeToRestoreServices
     }
-  };
-}
-
-async function getMetricsFromDatabase(repository: Repository, input: RequestDTO) {
-  const { repo, from, to } = input;
-  const request = {
-    fromDate: from,
-    toDate: to
-  };
-
-  const changes = await repository.getMetrics({
-    ...request,
-    key: `CHANGE_${repo}`
-  });
-
-  const deployments = await repository.getMetrics({
-    ...request,
-    key: `DEPLOYMENT_${repo}`
-  });
-
-  const incidents = await repository.getMetrics({
-    ...request,
-    key: `INCIDENT_${repo}`
-  });
-
-  return {
-    changes: changes as Change[],
-    deployments: deployments as Deployment[],
-    incidents: incidents as Incident[]
   };
 }

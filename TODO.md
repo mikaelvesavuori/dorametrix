@@ -2,7 +2,6 @@
 
 ## Features
 
-- Caching
 - Create test data
 
 ## Baseline quality

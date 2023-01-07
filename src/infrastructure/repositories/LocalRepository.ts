@@ -3,8 +3,10 @@ import { Change } from '../../interfaces/Change';
 import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
 import { Incident } from '../../interfaces/Incident';
+import { CleanedItem } from '../../interfaces/CleanedItem';
 
 import { deployments, changes, incidents } from '../../../testdata/TestDatabase';
+import { Metrics } from '../../interfaces/Metrics';
 
 /**
  * @description Factory function for local repository.
@@ -38,11 +40,11 @@ class LocalRepo implements Repository {
   /**
    * @description Get metrics for a given repository and a period of time.
    */
-  async getMetrics(dataRequest: DataRequest): Promise<any> {
-    const { key } = dataRequest;
+  async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
+    const { key, fromDate, toDate } = dataRequest;
 
-    const cachedData = this.getCachedData(key);
-    if (cachedData && Object.keys(cachedData).length !== 0) return cachedData;
+    const cachedData = this.getCachedData(key, `${fromDate}_${toDate}`);
+    if (cachedData && Object.keys(cachedData).length !== 0) return cachedData as any;
 
     const data = this.getItem(dataRequest);
 
@@ -50,17 +52,24 @@ class LocalRepo implements Repository {
   }
 
   /**
+   * @description TODO
+   */
+  async cacheMetrics(key: string, range: string, metrics: Metrics): Promise<void> {
+    if (1 > 2) console.log('TODO', key, range, metrics);
+  }
+
+  /**
    * @description Get data from local cache.
    * @todo
    */
-  private getCachedData(key: string): Record<string, any> {
-    if (1 > 2) console.log(key);
+  public async getCachedData(key: string, range: string): Promise<Metrics> {
+    if (1 > 2) console.log(key, range);
     const cachedData = false; // TODO
     if (cachedData) {
       console.log('Returning cached data...');
       return JSON.parse(cachedData);
     }
-    return {};
+    return {} as any;
   }
 
   /**

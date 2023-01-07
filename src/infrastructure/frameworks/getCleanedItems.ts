@@ -1,35 +1,35 @@
 import { CleanedItem } from '../../interfaces/CleanedItem';
 
-import { CleanedItemsError } from '../../application/errors/CleanedItemsError';
+//import { CleanedItemsError } from '../../application/errors/CleanedItemsError';
+import { DynamoItem } from '../../interfaces/DynamoDb'; // TODO: Entry, StringRepresentation
 
 /**
- * @description Clean up and return items from DynamoDB in a normalized format.
+ * @description Clean up and return items in a normalized `CleanedItem` format.
  */
-export function getCleanedItems(items: Record<string, any>[]): CleanedItem[] {
-  const fixedItems: CleanedItem[] = [];
+export function getCleanedItems(items: DynamoItem[]): CleanedItem[] {
+  if (items && items.length > 0) return items.map((item: DynamoItem) => createCleanedItem(item));
+  return [];
+}
 
-  if (items && typeof items === 'object' && items.length > 0) {
-    try {
-      items.forEach((item: any) => {
-        const cleanedItem: Record<string, any> = {};
+/**
+ * @description Produce an object with a cleaned and restored format based on the input data.
+ */
+function createCleanedItem(item: Record<string, any>): CleanedItem {
+  const cleanedItem: Record<string, any> = {};
 
-        Object.entries(item).forEach((entry: any) => {
-          const [key, value] = entry;
-          if (key === 'pk') return; // No use including this key
-          if (key === 'sk') {
-            cleanedItem['timeCreated'] = Object.values(value)[0];
-          } else if (key === 'changes') {
-            // @ts-ignore
-            cleanedItem[key] = JSON.parse(Object.values(value)[0]); // Parse into actual JSON
-          } else cleanedItem[key] = Object.values(value)[0];
-        });
+  // This is a cached item so return as-is
+  if (item.data) return JSON.parse(item.data);
 
-        fixedItems.push(cleanedItem as CleanedItem);
-      });
-    } catch (error: any) {
-      throw new CleanedItemsError();
-    }
-  }
+  Object.entries(item).forEach((entry: any) => {
+    const [key, value] = entry;
+    if (key === 'pk') return; // No use including this key
+    if (key === 'sk') {
+      cleanedItem['timeCreated'] = Object.values(value)[0];
+    } else if (key === 'changes') {
+      // @ts-ignore
+      cleanedItem[key] = JSON.parse(Object.values(value)[0]); // Parse into actual JSON
+    } else cleanedItem[key] = Object.values(value)[0];
+  });
 
-  return fixedItems;
+  return cleanedItem as CleanedItem;
 }
