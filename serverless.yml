@@ -49,7 +49,7 @@ functions:
     handler: src/infrastructure/adapters/web/AuthorizerHandler.handler
     description: ${self:service} authorizer
   GetMetrics:
-    handler: src/infrastructure/adapters/web/MetricsHandler.handler
+    handler: src/infrastructure/adapters/web/GetMetricsHandler.handler
     description: Get all four DORA metrics
     events:
       - http:
@@ -67,7 +67,7 @@ functions:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
   AddEvent:
-    handler: src/infrastructure/adapters/web/EventHandler.handler
+    handler: src/infrastructure/adapters/web/AddEventHandler.handler
     description: Report new event (this will then be automatically also created as a change, deployment, or incident)
     events:
       - http:
@@ -80,7 +80,7 @@ functions:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
   GetLastDeployment:
-    handler: src/infrastructure/adapters/web/LastDeploymentHandler.handler
+    handler: src/infrastructure/adapters/web/GetLastDeploymentHandler.handler
     description: Get commit ID for last production deployment
     events:
       - http:
