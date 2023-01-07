@@ -4,7 +4,6 @@
 
 - Caching
 - Create test data
-- Add "offset" to "period" object in result
 
 ## Baseline quality
 

@@ -33,7 +33,8 @@ describe('Success cases', () => {
       const result = await getMetrics(repo, {
         repo: 'SOMEORG/SOMEREPO',
         from: '20220101',
-        to: '20231231'
+        to: '20231231',
+        offset: 0
       });
 
       expect(result).toMatchObject(expected);

@@ -14,4 +14,8 @@ export type RequestDTO = {
    * @description Unix timestamp
    */
   to: string;
+  /**
+   * @description UTC offset
+   */
+  offset: number;
 };

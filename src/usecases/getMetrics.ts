@@ -11,7 +11,7 @@ import { Incident } from '../interfaces/Incident';
  * @description The use-case for getting our DORA metrics, using interactors for each sub-case.
  */
 export async function getMetrics(repository: Repository, input: RequestDTO): Promise<Metrics> {
-  const { repo, from, to } = input;
+  const { repo, from, to, offset } = input;
 
   const metrics = await getMetricsFromDatabase(repository, input);
   const { changes, deployments, incidents } = metrics;
@@ -29,7 +29,8 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
     repo,
     period: {
       from,
-      to
+      to,
+      offset
     },
     total: {
       changesCount,

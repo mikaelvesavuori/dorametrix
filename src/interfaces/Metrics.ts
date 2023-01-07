@@ -19,13 +19,22 @@ type RepoName = string;
  */
 type Period = {
   /**
+   * @description The date the metrics start from.
    * @example `20221201`
    */
   from: string;
   /**
+   * @description The date the metrics end at (inclusive).
    * @example `20221231`
    */
   to: string;
+  /**
+   * @description The UTC timezone offset used.
+   * @example `0`
+   * @example `-5`
+   * @example `7`
+   */
+  offset: number;
 };
 
 /**

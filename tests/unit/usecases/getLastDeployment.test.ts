@@ -4,7 +4,7 @@ import { createNewLocalRepository } from '../../../src/infrastructure/repositori
 
 describe('Success cases', () => {
   const repo = createNewLocalRepository();
-  const input = { repo: 'SOMEORG/SOMEREPO', from: '20000101', to: '20991231' };
+  const input = { repo: 'SOMEORG/SOMEREPO', from: '20000101', to: '20991231', offset: 0 };
 
   test('Given a repository name, it should get the last deployment data', async () => {
     const result = await getLastDeployment(repo, input);
