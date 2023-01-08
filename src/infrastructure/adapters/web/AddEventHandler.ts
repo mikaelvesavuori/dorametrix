@@ -6,7 +6,7 @@ import { getParser } from '../../../application/getParser';
 
 import { createEvent } from '../../../usecases/createEvent';
 
-import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
 /**
  * @description The controller for our service that handles incoming new events.
@@ -16,7 +16,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const body = event.body && typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
     const headers = event.headers;
 
-    const repo = createNewDynamoRepository();
+    const repo = createNewDynamoDbRepository();
     const parser = getParser(headers);
     const metricEvent = makeEvent(parser, body, headers);
 

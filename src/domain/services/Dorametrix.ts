@@ -80,7 +80,7 @@ class DorametrixConcrete implements Dorametrix {
    */
   private calculateDaysInScope(fromTimestamp: string, toTimestamp: string) {
     const diff = getDiffInSeconds(fromTimestamp, toTimestamp) * 1000; // Add milliseconds
-    return Math.ceil(diff / 86400); // If 0 round up to one
+    return Math.ceil(diff / 86400) || 1; // If 0 round up to 1 or fallback to 1 day
   }
 
   /**

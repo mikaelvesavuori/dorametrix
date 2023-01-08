@@ -3,11 +3,12 @@ import { getRequestDTO } from '../../../src/application/getRequestDTO';
 import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
 import { getTimestampsForPeriod } from '../../../src/infrastructure/frameworks/time';
 
+import { InvalidIsoDateConversionError } from '../../../src/application/errors/InvalidIsoDateConversionError';
+import { InvalidOffsetError } from '../../../src/application/errors/InvalidOffsetError';
 import { MissingRepoNameError } from '../../../src/application/errors/MissingRepoNameError';
 import { MissingRequiredInputParamsError } from '../../../src/application/errors/MissingRequiredInputParamsError';
 import { OutOfRangeQueryError } from '../../../src/application/errors/OutOfRangeQueryError';
 import { TooManyInputParamsError } from '../../../src/application/errors/TooManyInputParamsError';
-import { InvalidIsoDateConversionError } from '../../../src/application/errors/InvalidIsoDateConversionError';
 
 const getRandomInteger = () => Math.floor(Math.random() * 15) + 1;
 
@@ -100,72 +101,92 @@ describe('Success cases', () => {
 
 describe('Failure cases', () => {
   test('It should throw a MissingRepoNameError error if no repo name is present', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         from: '20221201',
         to: '20221231'
-      });
-    }).toThrowError(MissingRepoNameError);
+      })
+    ).toThrowError(MissingRepoNameError);
   });
 
   test('It should throw a MissingRequiredInputParamsError error if no "to" date is present', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         from: '20221201'
-      });
-    }).toThrowError(MissingRequiredInputParamsError);
+      })
+    ).toThrowError(MissingRequiredInputParamsError);
   });
 
   test('It should throw a MissingRequiredInputParamsError error if no "from" date is present', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         to: '20221201'
-      });
-    }).toThrowError(MissingRequiredInputParamsError);
+      })
+    ).toThrowError(MissingRequiredInputParamsError);
   });
 
   test('It should throw a OutOfRangeQueryError error if the "to" date is beyond the maximum date range', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         from: '20221201',
         to: '20991231'
-      });
-    }).toThrowError(OutOfRangeQueryError);
+      })
+    ).toThrowError(OutOfRangeQueryError);
   });
 
-  // TODO?
   test('It should throw a InvalidIsoDateConversionError error if the "to" date is today', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         from: '20221201',
         to: getCurrentDate()
-      });
-    }).toThrowError(InvalidIsoDateConversionError);
+      })
+    ).toThrowError(InvalidIsoDateConversionError);
   });
 
-  // TODO?
   test('It should throw a OutOfRangeQueryError error if the "from" date is today', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         from: getCurrentDate(),
         to: '20221201'
-      });
-    }).toThrowError(InvalidIsoDateConversionError);
+      })
+    ).toThrowError(InvalidIsoDateConversionError);
   });
 
   test('It should throw a TooManyInputParamsError error if using both "from" + "to" and "last" parameters', () => {
-    expect(() => {
+    expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
         from: '20221201',
         to: '20221231',
         last: '7'
-      });
-    }).toThrowError(TooManyInputParamsError);
+      })
+    ).toThrowError(TooManyInputParamsError);
+  });
+
+  test('It should throw an InvalidOffsetError if offset is too small (negative)', () => {
+    expect(() =>
+      getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
+        from: '20221201',
+        to: '20221231',
+        offset: -13
+      })
+    ).toThrowError(InvalidOffsetError);
+  });
+
+  test('It should throw an InvalidOffsetError if offset is too big (positive)', () => {
+    expect(() =>
+      getRequestDTO({
+        repo: 'SOMEORG/SOMEREPO',
+        from: '20221201',
+        to: '20221231',
+        offset: 13
+      })
+    ).toThrowError(InvalidOffsetError);
   });
 });

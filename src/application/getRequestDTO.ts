@@ -7,10 +7,11 @@ import {
 } from '../infrastructure/frameworks/time';
 import { getCurrentDate } from '../infrastructure/frameworks/date';
 
-import { MissingRequiredInputParamsError } from './errors/MissingRequiredInputParamsError';
-import { TooManyInputParamsError } from './errors/TooManyInputParamsError';
-import { OutOfRangeQueryError } from './errors/OutOfRangeQueryError';
+import { InvalidOffsetError } from './errors/InvalidOffsetError';
 import { MissingRepoNameError } from './errors/MissingRepoNameError';
+import { MissingRequiredInputParamsError } from './errors/MissingRequiredInputParamsError';
+import { OutOfRangeQueryError } from './errors/OutOfRangeQueryError';
+import { TooManyInputParamsError } from './errors/TooManyInputParamsError';
 
 /**
  * @description Retrieve query string parameters from an AWS Lambda event.
@@ -22,7 +23,7 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
   const offset = sanitizeKey(queryStringParameters, 'offset', true) as number;
   const lastNumDays = sanitizeKey(queryStringParameters, 'last', true) as number;
 
-  validateRequestInput(repo, to, from, lastNumDays);
+  validateRequestInput(repo, to, from, lastNumDays, offset);
 
   const requestDto: Record<string, any> = {
     repo
@@ -48,10 +49,17 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
 /**
  * @description Validates user request input.
  */
-function validateRequestInput(repo: string, to: string, from: string, lastNumDays: number) {
+function validateRequestInput(
+  repo: string,
+  to: string,
+  from: string,
+  lastNumDays: number,
+  offsetInHours: number
+) {
   if (!repo) throw new MissingRepoNameError('Missing required "repo" query parameter!');
   if ((!to || !from) && !lastNumDays) throw new MissingRequiredInputParamsError();
   if (from && to && lastNumDays) throw new TooManyInputParamsError();
+  if (offsetInHours < -12 || offsetInHours > 12) throw new InvalidOffsetError();
 }
 
 /**

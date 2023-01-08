@@ -1,23 +1,25 @@
 import { randomUUID } from 'crypto';
 import { DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 
-import { Repository, DataRequest } from '../../interfaces/Repository';
+import { Repository, DataRequest, CacheRequest } from '../../interfaces/Repository';
 import { CleanedItem } from '../../interfaces/CleanedItem';
 import { Change } from '../../interfaces/Change';
 import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
 import { Incident } from '../../interfaces/Incident';
+import { DynamoItems } from '../../interfaces/DynamoDb';
+import { Metrics } from '../../interfaces/Metrics';
 
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
 import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/MissingEnvironmentVariablesDynamoError';
-import { DynamoItem, DynamoItems } from '../../interfaces/DynamoDb';
-import { Metrics } from '../../interfaces/Metrics';
+
+import { getCachedTestData, getTestData } from '../../../testdata/database/DynamoTestDatabase';
 
 /**
  * @description Factory function to create a DynamoDB repository.
  */
-export function createNewDynamoRepository() {
+export function createNewDynamoDbRepository() {
   return new DynamoRepository();
 }
 
@@ -45,7 +47,7 @@ class DynamoRepository implements Repository {
   /////////////
 
   /**
-   * @description Get metrics for a given repository and a period of time.
+   * @description Get metrics (changes/deployments/incidents) for a given repository and a period of time.
    */
   public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
     const data = await this.getItem(dataRequest);
@@ -55,10 +57,39 @@ class DynamoRepository implements Repository {
   }
 
   /**
-   * @description Caches metrics with PutItem command.
-   * @todo Input type
+   * @description Get metrics from cache.
    */
-  public async cacheMetrics(key: string, range: string, metrics: Metrics): Promise<void> {
+  public async getCachedMetrics(dataRequest: DataRequest): Promise<Metrics> {
+    const { key, fromDate, toDate } = dataRequest;
+
+    const params = {
+      TableName: this.tableName,
+      KeyConditionExpression: 'pk = :pk AND sk = :sk',
+      ExpressionAttributeValues: {
+        ':pk': { S: `CACHED_${key}` },
+        ':sk': { S: `${fromDate}_${toDate}` }
+      },
+      Limit: 1
+    };
+
+    // @ts-ignore
+    const cachedData: DynamoItems | null =
+      process.env.NODE_ENV !== 'test'
+        ? await this.dynamoDb.send(new QueryCommand(params))
+        : getCachedTestData(key, fromDate, toDate);
+
+    if (cachedData?.Items && cachedData.Items.length > 0)
+      return JSON.parse(cachedData.Items[0].data['S']);
+
+    return {} as any;
+  }
+
+  /**
+   * @description Caches metrics with PutItem command.
+   */
+  public async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
+    const { key, range, metrics } = cacheRequest;
+
     const command = {
       TableName: this.tableName,
       Item: {
@@ -98,7 +129,8 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await this.dynamoDb.send(new PutItemCommand(command));
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -117,7 +149,8 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await this.dynamoDb.send(new PutItemCommand(command));
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -137,11 +170,13 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await this.dynamoDb.send(new PutItemCommand(command));
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
 
     // Update the special "last deployed" item in the database
     command['Item']['sk']['S'] = 'LastDeployedCommit';
-    await this.dynamoDb.send(new PutItemCommand(command));
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /**
@@ -162,7 +197,8 @@ class DynamoRepository implements Repository {
       }
     };
 
-    await this.dynamoDb.send(new PutItemCommand(command));
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   /////////////////////
@@ -170,39 +206,11 @@ class DynamoRepository implements Repository {
   /////////////////////
 
   /**
-   * @description Get data from cache.
-   * @todo
-   */
-  public async getCachedData(key: string, range: string): Promise<Metrics> {
-    const params = {
-      TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk = :sk',
-      ExpressionAttributeValues: {
-        ':pk': { S: `CACHED_${key}` },
-        ':sk': { S: range }
-      },
-      Limit: 1
-    };
-
-    // @ts-ignore
-    const cachedData: DynamoItems | null = await this.dynamoDb.send(new QueryCommand(params));
-
-    if (cachedData?.Items && cachedData.Items.length > 0)
-      return JSON.parse(cachedData.Items[0].data['S']);
-
-    return {} as any;
-  }
-
-  /**
    * @description Get data from DynamoDB.
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
     const { key, fromDate, toDate, getLastDeployedCommit } = dataRequest;
 
-    /**
-     * @todo Revise text
-     * Get by "LastDeployedCommit" value if "getLastDeployedCommit" is true.
-     */
     const command = {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :toDate',
@@ -215,32 +223,8 @@ class DynamoRepository implements Repository {
       }
     };
 
-    // @ts-ignore
     return process.env.NODE_ENV !== 'test'
       ? await this.dynamoDb.send(new QueryCommand(command))
-      : { Items: testDataItem };
+      : getTestData(key);
   }
 }
-
-/**
- * @description Dummy data for testing purposes.
- * @todo Use actual data shape
- */
-const testDataItem = [
-  {
-    pk: { S: 'SOMEORG/SOMEREPO' },
-    sk: { S: '1669870800' },
-    chf: { N: '67' },
-    rt: { N: '5313' },
-    d: { N: '50' },
-    ad: { N: '67' },
-    pt: { N: '1413' },
-    cl: { N: '33' },
-    cm: { N: '40' },
-    m: { N: '29' },
-    chr: { N: '60' },
-    o: { N: '58' },
-    p: { N: '23' },
-    ap: { N: '22' }
-  }
-];

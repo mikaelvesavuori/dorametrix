@@ -1,18 +1,23 @@
-import { Repository, DataRequest } from '../../interfaces/Repository';
 import { Change } from '../../interfaces/Change';
+import { CleanedItem } from '../../interfaces/CleanedItem';
 import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
 import { Incident } from '../../interfaces/Incident';
-import { CleanedItem } from '../../interfaces/CleanedItem';
-
-import { deployments, changes, incidents } from '../../../testdata/TestDatabase';
 import { Metrics } from '../../interfaces/Metrics';
+import { Repository, DataRequest, CacheRequest } from '../../interfaces/Repository';
+
+import {
+  deployments,
+  changes,
+  incidents,
+  testCachedMetrics
+} from '../../../testdata/database/LocalTestDatabase';
 
 /**
  * @description Factory function for local repository.
  */
-export function createNewLocalRepository(testData?: TestData): LocalRepo {
-  return new LocalRepo(testData);
+export function createNewLocalRepository(testData?: TestData): LocalRepository {
+  return new LocalRepository(testData);
 }
 
 type TestData = {
@@ -23,10 +28,10 @@ type TestData = {
 
 /**
  * @description The local repo acts as a simple mock for testing and similar purposes.
- * The LocalRepo can optionally be initialized with custom test data, else will default
+ * The LocalRepository can optionally be initialized with custom test data, else will default
  * to a set of functional test data.
  */
-class LocalRepo implements Repository {
+class LocalRepository implements Repository {
   changes: Change[];
   deployments: Deployment[];
   incidents: Incident[];
@@ -43,7 +48,7 @@ class LocalRepo implements Repository {
   async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
     const { key, fromDate, toDate } = dataRequest;
 
-    const cachedData = this.getCachedData(key, `${fromDate}_${toDate}`);
+    const cachedData = this.getCachedMetrics({ key, fromDate, toDate });
     if (cachedData && Object.keys(cachedData).length !== 0) return cachedData as any;
 
     const data = this.getItem(dataRequest);
@@ -52,22 +57,32 @@ class LocalRepo implements Repository {
   }
 
   /**
-   * @description TODO
+   * @description Cache metrics locally in memory.
    */
-  async cacheMetrics(key: string, range: string, metrics: Metrics): Promise<void> {
-    if (1 > 2) console.log('TODO', key, range, metrics);
+  async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
+    const { key, range, metrics } = cacheRequest;
+    console.log('Caching item...', key, range, metrics);
+    return;
   }
 
   /**
    * @description Get data from local cache.
-   * @todo
    */
-  public async getCachedData(key: string, range: string): Promise<Metrics> {
-    if (1 > 2) console.log(key, range);
-    const cachedData = false; // TODO
+  public async getCachedMetrics(dataRequest: DataRequest): Promise<Metrics> {
+    const { key, fromDate, toDate } = dataRequest;
+
+    const cachedData = (() => {
+      const repoName = key.toUpperCase();
+      const range = `${fromDate}_${toDate}`;
+
+      if (repoName === 'SOMEORG/SOMEREPO' && range === '20220101_20220131')
+        return testCachedMetrics;
+      return;
+    })();
+
     if (cachedData) {
       console.log('Returning cached data...');
-      return JSON.parse(cachedData);
+      return cachedData;
     }
     return {} as any;
   }
@@ -77,19 +92,17 @@ class LocalRepo implements Repository {
    */
   private getItem(dataRequest: DataRequest): any[] {
     const { key } = dataRequest;
+    const type = key.split('_')[0].toUpperCase();
     const repoName = key.split('_')[1];
 
-    if (key.toLowerCase().startsWith('change_')) {
+    if (type === 'CHANGE')
       return this.changes.filter((item: Change) => item.repo === repoName) || [];
-    }
 
-    if (key.toLowerCase().startsWith('deployment_')) {
+    if (type === 'DEPLOYMENT')
       return this.deployments.filter((item: Deployment) => item.repo === repoName) || [];
-    }
 
-    if (key.toLowerCase().startsWith('incident_')) {
+    if (type === 'INCIDENT')
       return this.incidents.filter((item: Incident) => item.repo === repoName) || [];
-    }
 
     return [];
   }
@@ -99,6 +112,7 @@ class LocalRepo implements Repository {
    */
   public addEvent(event: Event): Promise<any> {
     console.log('Added event item', event);
+
     // @ts-ignore
     return;
   }
@@ -108,6 +122,7 @@ class LocalRepo implements Repository {
    */
   public addChange(change: Change): Promise<any> {
     console.log('Added change item', change);
+
     // @ts-ignore
     return;
   }
@@ -127,6 +142,7 @@ class LocalRepo implements Repository {
    */
   public addIncident(incident: Incident): Promise<any> {
     console.log('Added incident item', incident);
+
     // @ts-ignore
     return;
   }

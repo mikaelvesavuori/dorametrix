@@ -25,7 +25,7 @@ function makeTwoDigitDate(date: Date | number, unit: 'day' | 'month'): string {
   const value = (() => {
     if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getDate()}`;
     if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getMonth()}`;
-    return `${date}`; //throw new InvalidDateUnitError(); // TODO
+    return `${date}`;
   })();
 
   return value.length === 1 ? `0${value}` : value;

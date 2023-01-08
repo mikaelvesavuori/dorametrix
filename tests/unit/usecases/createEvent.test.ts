@@ -5,47 +5,132 @@ import { DirectParser } from '../../../src/application/parsers/DirectParser';
 import { createEvent } from '../../../src/usecases/createEvent';
 
 import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
+import { createNewDynamoDbRepository } from '../../../src/infrastructure/repositories/DynamoDbRepository';
+
+import { MissingEventMetadataError } from '../../../src/application/errors/MissingEventMetadataError';
+
+import { clearEnv, setEnv } from '../../testUtils';
+
+// Shared setup
+const parser = new DirectParser();
+const expected = 'OK';
+const input = {
+  repo: 'SOMEORG/SOMEREPO'
+};
 
 describe('Success cases', () => {
+  describe('Using local repository', () => {
+    const repo = createNewLocalRepository();
+
+    test('It should create a change', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'change'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+
+    test('It should create a deployment', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'deployment'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+
+    test('It should create an incident', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'incident'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+  });
+
+  describe('Using DynamoDB repository', () => {
+    setEnv();
+    const repo = createNewDynamoDbRepository();
+
+    test('It should create a change', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'change'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+
+    test('It should create a deployment', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'deployment'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+
+    test('It should create an incident', async () => {
+      const metricEvent = makeEvent(
+        parser,
+        {
+          ...input,
+          eventType: 'incident'
+        },
+        {}
+      );
+
+      expect(await createEvent(repo, metricEvent)).toBe(expected);
+    });
+
+    clearEnv();
+  });
+});
+
+describe('Failure cases', () => {
   const repo = createNewLocalRepository();
-  const parser = new DirectParser();
 
-  test('It should create a change', async () => {
-    const metricEvent = makeEvent(
-      parser,
-      {
-        eventType: 'change',
-        repo: 'demo'
-      },
-      {}
+  test('It should throw a MissingEventMetadataError if missing ID', async () => {
+    const metricEvent = {
+      eventType: 'deployment'
+    };
+
+    // @ts-ignore
+    expect(async () => await createEvent(repo, metricEvent)).rejects.toThrowError(
+      MissingEventMetadataError
     );
-
-    expect(async () => await createEvent(repo, metricEvent)).not.toThrowError();
   });
 
-  test('It should create a deployment', async () => {
-    const metricEvent = makeEvent(
-      parser,
-      {
-        eventType: 'change',
-        repo: 'demo'
-      },
-      {}
+  test('It should throw a MissingEventMetadataError if missing event type', async () => {
+    const metricEvent = {
+      id: 'abc123'
+    };
+
+    // @ts-ignore
+    expect(async () => await createEvent(repo, metricEvent)).rejects.toThrowError(
+      MissingEventMetadataError
     );
-
-    expect(async () => await createEvent(repo, metricEvent)).not.toThrowError();
-  });
-
-  test('It should create an incident', async () => {
-    const metricEvent = makeEvent(
-      parser,
-      {
-        eventType: 'change',
-        repo: 'demo'
-      },
-      {}
-    );
-
-    expect(async () => await createEvent(repo, metricEvent)).not.toThrowError();
   });
 });

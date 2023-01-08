@@ -7,6 +7,7 @@ export class MissingEnvironmentVariablesDynamoError extends Error {
     this.name = 'MissingEnvironmentVariablesDynamoError';
     const message = `Missing required environment variables in DynamoDB!`;
     this.message = message;
+    //@ts-ignore
     this.cause = {
       statusCode: 500
     };

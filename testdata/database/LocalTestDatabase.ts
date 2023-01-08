@@ -1,6 +1,6 @@
-import { Change } from '../src/interfaces/Change';
-import { Deployment } from '../src/interfaces/Deployment';
-import { Incident } from '../src/interfaces/Incident';
+import { Change } from '../../src/interfaces/Change';
+import { Deployment } from '../../src/interfaces/Deployment';
+import { Incident } from '../../src/interfaces/Incident';
 
 export const deployments: Deployment[] = [
   {
@@ -84,3 +84,18 @@ export const incidents: Incident[] = [
     title: 'Some title'
   }
 ];
+
+/**
+ * @description Cached test metrics.
+ */
+export const testCachedMetrics = {
+  repo: 'SOMEORG/SOMEREPO',
+  period: { from: '20220101', to: '20220131', offset: 0 },
+  total: { changesCount: 5, deploymentCount: 1, incidentCount: 1 },
+  metrics: {
+    changeFailureRate: '1.00',
+    deploymentFrequency: '1.00',
+    leadTimeForChanges: '00:00:04:04',
+    timeToRestoreServices: '11:13:46:40'
+  }
+};

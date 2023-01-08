@@ -20,7 +20,6 @@ provider:
   apiGateway:
     minimumCompressionSize: 1024
   environment:
-    API_KEY: "TODO" # EDIT THIS TO YOUR VALUE
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.config.tableName}
     MAX_DATE_RANGE: 365
@@ -35,7 +34,7 @@ package:
 
 custom:
   config:
-    authToken: 'TODO' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
+    authToken: 'SOMETHING' # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
     accountNumber: '876265053232'
     tableName: dorametrix
   aws:
@@ -48,6 +47,8 @@ functions:
   Authorizer:
     handler: src/infrastructure/adapters/web/AuthorizerHandler.handler
     description: ${self:service} authorizer
+    environment:
+      API_KEY: ${self:custom.config.authToken}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetricsHandler.handler
     description: Get all four DORA metrics

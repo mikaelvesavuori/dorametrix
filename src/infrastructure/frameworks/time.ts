@@ -2,7 +2,6 @@ import { getCurrentDate, getDateBefore } from './date';
 import { getMillisecondsForDays } from './getMillisecondsForDays';
 
 import { InvalidIsoDateConversionError } from '../../application/errors/InvalidIsoDateConversionError';
-import { InvalidOffsetError } from '../../application/errors/InvalidOffsetError';
 
 /**
  * @description Calculates `from` and `to` timestamps for a provided period in days.
@@ -67,8 +66,6 @@ function getTimestampForISODate(
   offsetInHours = 0,
   lastPossibleTime = false
 ) {
-  if (offsetInHours < -12 || offsetInHours > 12) throw new InvalidOffsetError();
-
   const date = new Date(
     createTimezoneConvertedDateString(formattedDate, offsetInHours, lastPossibleTime)
   );

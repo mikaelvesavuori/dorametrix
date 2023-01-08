@@ -1,7 +1,6 @@
 import { CleanedItem } from '../../interfaces/CleanedItem';
 
-//import { CleanedItemsError } from '../../application/errors/CleanedItemsError';
-import { DynamoItem } from '../../interfaces/DynamoDb'; // TODO: Entry, StringRepresentation
+import { DynamoItem } from '../../interfaces/DynamoDb';
 
 /**
  * @description Clean up and return items in a normalized `CleanedItem` format.

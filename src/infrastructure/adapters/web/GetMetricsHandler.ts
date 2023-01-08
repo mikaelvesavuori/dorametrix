@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import { getMetrics } from '../../../usecases/getMetrics';
 
-import { createNewDynamoRepository } from '../../repositories/DynamoDbRepository';
+import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
 import { getRequestDTO } from '../../../application/getRequestDTO';
 
@@ -12,7 +12,7 @@ import { getRequestDTO } from '../../../application/getRequestDTO';
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
     const queryParams = getRequestDTO(event.queryStringParameters || {});
-    const repo = createNewDynamoRepository();
+    const repo = createNewDynamoDbRepository();
     const metrics = await getMetrics(repo, queryParams);
 
     return {

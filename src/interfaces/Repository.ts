@@ -10,20 +10,19 @@ import { Metrics } from './Metrics';
  */
 export interface Repository {
   /**
-   * @description Get metrics from source system.
+   * @description Get metrics from repository.
    */
   getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]>;
 
   /**
-   * @description Cache Metrics item into read-optimized result.
-   * @todo Input type
+   * @description Get metrics from cache.
    */
-  cacheMetrics(key: string, range: string, metrics: Metrics): Promise<void>;
+  getCachedMetrics(dataRequest: DataRequest): Promise<Metrics>;
 
   /**
-   * @description Get data from cache.
+   * @description Cache Metrics item into read-optimized result.
    */
-  getCachedData(key: string, range: string): Promise<Metrics>;
+  cacheMetrics(cacheRequest: CacheRequest): Promise<void>;
 
   /**
    * @description Add (create/update) an Event in the repository.
@@ -47,13 +46,31 @@ export interface Repository {
 }
 
 /**
- * @description TODO
- * @todo Check
+ * @description Input request to retrieve data from the repository.
  */
 export type DataRequest = {
   key: string;
   fromDate: string;
   toDate: string;
   getLastDeployedCommit?: boolean;
-  days?: number;
+};
+
+/**
+ * @description Input request to cache a Metrics object.
+ */
+export type CacheRequest = {
+  /**
+   * @description The key (Git repo name) under which to cache.
+   * @example `SOMEORG/SOMEREPO`
+   */
+  key: string;
+  /**
+   * @description The date range for the lookup.
+   * @example `20230101_20230131`
+   */
+  range: string;
+  /**
+   * @description A valid and complete `Metrics` object.
+   */
+  metrics: Metrics;
 };

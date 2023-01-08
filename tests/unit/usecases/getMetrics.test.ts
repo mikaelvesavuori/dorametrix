@@ -1,22 +1,33 @@
+import { clearEnv, setEnv } from '../../testUtils';
+
 import { getMetrics } from '../../../src/usecases/getMetrics';
 
 import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
+import { createNewDynamoDbRepository } from '../../../src/infrastructure/repositories/DynamoDbRepository';
+
+import { testCachedMetrics } from '../../../testdata/database/DynamoTestDatabase';
+
+// Basic valid input that will be reused across tests
+const basicInput = {
+  repo: 'SOMEORG/SOMEREPO',
+  from: '20220101',
+  to: '20221231'
+};
 
 describe('Success cases', () => {
-  const repo = createNewLocalRepository();
-
   // Setup for checking warning messages
   const warn = console.warn;
   beforeEach(() => (console.warn = jest.fn()));
   afterAll(() => (console.warn = warn));
 
-  describe('Get all metrics', () => {
-    test('It should get all metrics', async () => {
+  describe('Get metrics', () => {
+    describe('Using local repository', () => {
+      const repo = createNewLocalRepository();
       const expected = {
         repo: 'SOMEORG/SOMEREPO',
         period: {
           from: '20220101',
-          to: '20231231'
+          to: '20221231'
         },
         total: {
           deploymentCount: 1,
@@ -30,62 +41,65 @@ describe('Success cases', () => {
         }
       };
 
-      const result = await getMetrics(repo, {
-        repo: 'SOMEORG/SOMEREPO',
-        from: '20220101',
-        to: '20231231',
-        offset: 0
+      test('It should get metrics', async () => {
+        const result = await getMetrics(repo, {
+          ...basicInput,
+          offset: 0
+        });
+
+        expect(result).toMatchObject(expected);
       });
 
-      expect(result).toMatchObject(expected);
+      test('It should get cached metrics', async () => {
+        const result = await getMetrics(repo, {
+          ...basicInput,
+          from: '20220101',
+          to: '20220131',
+          offset: 0
+        });
+
+        expect(result).toMatchObject(testCachedMetrics);
+      });
     });
-  });
 
-  /* TODO
-  test('It should return a zero value if no deployments are recorded', async () => {
-
-  test('It should warn about the first match timestamp being later than the deployment', async () => {
-    const repo = createNewLocalRepository({
-      deployments: [
-        {
-          //@ts-ignore
-          timeCreated: 1640039900000,
-          eventType: 'deployment',
-          id: '987236hfahc82',
-          changes: JSON.stringify([
-            { id: '5a8c1b761edc95512a0083f35454915304cc9498', timeCreated: 1641039310000 }
-          ])
+    describe('Using DynamoDB repository', () => {
+      setEnv();
+      const repo = createNewDynamoDbRepository();
+      const expected = {
+        repo: 'SOMEORG/SOMEREPO',
+        period: { from: '20220101', to: '20221231', offset: 0 },
+        total: { changesCount: 5, deploymentCount: 1, incidentCount: 1 },
+        metrics: {
+          changeFailureRate: '1.00',
+          deploymentFrequency: '1.00',
+          leadTimeForChanges: '00:00:04:04',
+          timeToRestoreServices: '11:13:46:40'
         }
-      ]
+      };
+
+      test('It should get metrics', async () => {
+        const result = await getMetrics(repo, {
+          ...basicInput,
+          offset: 0
+        });
+
+        expect(result).toMatchObject(expected);
+      });
+
+      test('It should get cached metrics', async () => {
+        setEnv();
+        const response = await getMetrics(repo, {
+          repo: 'SOMEORG/SOMEREPO',
+          from: '20220101',
+          to: '20220131',
+          offset: 0
+        });
+
+        expect(response).toMatchObject(testCachedMetrics);
+        clearEnv();
+      });
+
+      clearEnv();
     });
-    await getMetrics(repo, { leadTimeForChanges: '' });
-
-    expect(console.warn).toHaveBeenCalled();
-    // @ts-ignore
-    const message = console.warn.mock.calls[0][0];
-    const hasWarningText = message.startsWith('Unexpected deployment data');
-    expect(hasWarningText).toBe(true);
   });
-
-  test('It should warn about the incident timestamp being later than timeResolved', async () => {
-    const repo = createNewLocalRepository({
-      incidents: [
-        {
-          id: '19028dj1klaf2',
-          // @ts-ignore
-          timeCreated: 1642034800000,
-          // @ts-ignore
-          timeResolved: 1641132310000
-        }
-      ]
-    });
-    await getMetrics(repo, { timeToRestoreServices: '' });
-
-    expect(console.warn).toHaveBeenCalled();
-    // @ts-ignore
-    const message = console.warn.mock.calls[0][0];
-    const hasWarningText = message.startsWith('Unexpected incident data');
-    expect(hasWarningText).toBe(true);
-  });
-  */
 });

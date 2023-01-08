@@ -23,7 +23,7 @@ export async function getMetrics(repository: Repository, input: RequestDTO): Pro
 }
 
 /**
- * @description TODO
+ * @description Get cached metrics from repository.
  */
 async function getCachedMetricsFromDatabase(
   input: RequestDTO,
@@ -31,13 +31,13 @@ async function getCachedMetricsFromDatabase(
 ): Promise<Metrics | void> {
   const { repo, from, to } = input;
 
-  const cachedData = await repository.getCachedData(repo, `${from}_${to}`);
+  const cachedData = await repository.getCachedMetrics({ key: repo, fromDate: from, toDate: to });
 
   if (Object.keys(cachedData).length > 0) return cachedData;
 }
 
 /**
- * @description TODO
+ * @description Get fresh metrics from repository.
  */
 async function getMetricsFromDatabase(input: RequestDTO, repository: Repository) {
   const { repo, from, to } = input;
@@ -69,16 +69,15 @@ async function getMetricsFromDatabase(input: RequestDTO, repository: Repository)
 }
 
 /**
- * @description TODO
+ * @description Cache Metrics object in repository.
  */
 async function cacheMetrics(input: RequestDTO, repository: Repository, metrics: Metrics) {
   const { repo, from, to } = input;
-  await repository.cacheMetrics(repo, `${from}_${to}`, metrics);
+  await repository.cacheMetrics({ key: repo, range: `${from}_${to}`, metrics });
 }
 
 /**
- * @description TODO
- * @todo Create type
+ * @description Return final Metrics object.
  */
 function compileResultMetrics(
   input: RequestDTO,
@@ -96,9 +95,9 @@ function compileResultMetrics(
   const incidentCount = incidents.length;
 
   const dorametrix = createNewDorametrix(repo);
+  const changeFailureRate = dorametrix.getChangeFailureRate(incidentCount, deploymentCount);
   const deploymentFrequency = dorametrix.getDeploymentFrequency(deploymentCount, from, to);
   const leadTimeForChanges = dorametrix.getLeadTimeForChanges(changes, deployments);
-  const changeFailureRate = dorametrix.getChangeFailureRate(incidentCount, deploymentCount);
   const timeToRestoreServices = dorametrix.getTimeToRestoreServices(incidents);
 
   return {
