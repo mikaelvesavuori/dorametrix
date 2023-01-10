@@ -1,9 +1,7 @@
 import { EventDto } from '../../interfaces/Event';
 import { Parser, PayloadInput } from '../../interfaces/Parser';
 
-import { MissingEventTimeError } from '../errors/MissingEventTimeError';
-import { MissingEventError } from '../errors/MissingEventError';
-import { MissingIdError } from '../errors/MissingIdError';
+import { MissingEventTimeError, MissingEventError, MissingIdError } from '../errors/errors';
 
 import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 

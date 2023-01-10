@@ -59,7 +59,7 @@ functions:
           authorizer:
             name: Authorizer
             resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.querystring.authorization, method.request.header.X-GitHub-Event
             type: request
     iamRoleStatements:
       - Effect: "Allow"

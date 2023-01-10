@@ -5,9 +5,11 @@ import { BitbucketParser } from '../../../../src/application/parsers/BitbucketPa
 import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 import { GitHubParser } from '../../../../src/application/parsers/GitHubParser';
 
-import { MissingRepoNameError } from '../../../../src/application/errors/MissingRepoNameError';
-import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
+import {
+  MissingRepoNameError,
+  MissingEventTypeValueError,
+  MissingIdValueError
+} from '../../../../src/application/errors/errors';
 
 import bitbucketPush from '../../../../testdata/webhook-events/bitbucket/push.json';
 import { bitbucketPushHeaders } from '../../../../testdata/headers/bitbucket';

@@ -33,7 +33,7 @@ class DorametrixConcrete implements Dorametrix {
 
       // Get latest deployment
       const deploymentTimes = changes
-        .map((change: any) => change.timeCreated)
+        .map((change) => change.timeCreated)
         .sort()
         .reverse();
       const latestTime = deploymentTimes[0];

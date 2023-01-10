@@ -3,9 +3,11 @@ import { Event } from '../../interfaces/Event';
 
 import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
-import { MissingRepoNameError } from '../../application/errors/MissingRepoNameError';
-import { MissingEventTypeValueError } from '../../application/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../application/errors/MissingIdValueError';
+import {
+  MissingRepoNameError,
+  MissingEventTypeValueError,
+  MissingIdValueError
+} from '../../application/errors/errors';
 
 /**
  * @description Factory function to make a Change value object.

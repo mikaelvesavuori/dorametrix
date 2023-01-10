@@ -2,7 +2,8 @@ import { randomBytes } from 'crypto';
 
 import { EventDto } from '../../interfaces/Event';
 import { EventTypeInput, Parser, PayloadInput } from '../../interfaces/Parser';
-import { UnknownEventTypeError } from '../errors/UnknownEventTypeError';
+
+import { UnknownEventTypeError } from '../errors/errors';
 
 /**
  * @description Parser adapted for "direct call" use cases, when not using a CI system or similar.

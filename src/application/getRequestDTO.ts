@@ -7,11 +7,13 @@ import {
 } from '../infrastructure/frameworks/time';
 import { getCurrentDate } from '../infrastructure/frameworks/date';
 
-import { InvalidOffsetError } from './errors/InvalidOffsetError';
-import { MissingRepoNameError } from './errors/MissingRepoNameError';
-import { MissingRequiredInputParamsError } from './errors/MissingRequiredInputParamsError';
-import { OutOfRangeQueryError } from './errors/OutOfRangeQueryError';
-import { TooManyInputParamsError } from './errors/TooManyInputParamsError';
+import {
+  InvalidOffsetError,
+  MissingRepoNameError,
+  MissingRequiredInputParamsError,
+  OutOfRangeQueryError,
+  TooManyInputParamsError
+} from './errors/errors';
 
 /**
  * @description Retrieve query string parameters from an AWS Lambda event.
@@ -29,15 +31,19 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
     repo
   };
 
-  if (lastNumDays) {
-    const { from, to } = getTimestampsForPeriod(lastNumDays, offset);
-    requestDto['from'] = from;
-    requestDto['to'] = to;
-  } else {
-    const fromDate = getTimestampForInputDate(from, offset);
-    const toDate = getTimestampForInputDate(to, offset, true);
-    requestDto['from'] = fromDate;
-    requestDto['to'] = toDate;
+  setTimestamps();
+
+  function setTimestamps() {
+    if (lastNumDays) {
+      const { from, to } = getTimestampsForPeriod(lastNumDays, offset);
+      requestDto['from'] = from;
+      requestDto['to'] = to;
+    } else {
+      const fromDate = getTimestampForInputDate(from, offset);
+      const toDate = getTimestampForInputDate(to, offset, true);
+      requestDto['from'] = fromDate;
+      requestDto['to'] = toDate;
+    }
   }
 
   validateDateRange(requestDto['to'], requestDto['from'], offset);

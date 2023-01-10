@@ -1,6 +1,6 @@
 import { convertDateToUnixTimestamp } from '../../../src/infrastructure/frameworks/convertDateToUnixTimestamp';
 
-import { MissingTimeError } from '../../../src/application/errors/MissingTimeError';
+import { MissingTimeError } from '../../../src/application/errors/errors';
 
 describe('Failure cases', () => {
   test('It should throw a MissingTimeError if no time is passed to the function', async () => {

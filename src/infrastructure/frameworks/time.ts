@@ -1,7 +1,7 @@
 import { getCurrentDate, getDateBefore } from './date';
 import { getMillisecondsForDays } from './getMillisecondsForDays';
 
-import { InvalidIsoDateConversionError } from '../../application/errors/InvalidIsoDateConversionError';
+import { InvalidIsoDateConversionError } from '../../application/errors/errors';
 
 /**
  * @description Calculates `from` and `to` timestamps for a provided period in days.

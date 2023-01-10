@@ -5,7 +5,7 @@ import { createChange } from './interactors/createChange';
 import { createDeployment } from './interactors/createDeployment';
 import { createIncident } from './interactors/createIncident';
 
-import { MissingEventMetadataError } from '../application/errors/MissingEventMetadataError';
+import { MissingEventMetadataError } from '../application/errors/errors';
 
 /**
  * @description The use-case for creating an event.

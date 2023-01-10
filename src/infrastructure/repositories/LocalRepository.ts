@@ -59,7 +59,7 @@ class LocalRepository implements Repository {
   /**
    * @description Cache metrics locally in memory.
    */
-  async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
+  public async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
     const { key, range, metrics } = cacheRequest;
     console.log('Caching item...', key, range, metrics);
     return;

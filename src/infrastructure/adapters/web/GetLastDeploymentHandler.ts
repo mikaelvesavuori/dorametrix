@@ -20,8 +20,10 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: JSON.stringify(lastDeployment)
     };
   } catch (error: any) {
+    console.error(error);
+
     return {
-      statusCode: 500,
+      statusCode: error.cause.statusCode,
       body: JSON.stringify(error.message)
     };
   }

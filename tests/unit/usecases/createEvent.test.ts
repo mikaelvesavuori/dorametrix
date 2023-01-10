@@ -7,7 +7,7 @@ import { createEvent } from '../../../src/usecases/createEvent';
 import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';
 import { createNewDynamoDbRepository } from '../../../src/infrastructure/repositories/DynamoDbRepository';
 
-import { MissingEventMetadataError } from '../../../src/application/errors/MissingEventMetadataError';
+import { MissingEventMetadataError } from '../../../src/application/errors/errors';
 
 import { clearEnv, setEnv } from '../../testUtils';
 

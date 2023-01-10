@@ -1,7 +1,9 @@
 import { BitbucketParser } from '../../../src/application/parsers/BitbucketParser';
 
-import { UnknownEventTypeError } from '../../../src/application/errors/UnknownEventTypeError';
-import { MissingEventTimeError } from '../../../src/application/errors/MissingEventTimeError';
+import {
+  UnknownEventTypeError,
+  MissingEventTimeError
+} from '../../../src/application/errors/errors';
 
 describe('Failure cases', () => {
   describe('Event types', () => {

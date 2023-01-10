@@ -1,7 +1,6 @@
 import { JiraParser } from '../../../src/application/parsers/JiraParser';
 
-import { MissingEventTimeError } from '../../../src/application/errors/MissingEventTimeError';
-import { MissingIdError } from '../../../src/application/errors/MissingIdError';
+import { MissingEventTimeError, MissingIdError } from '../../../src/application/errors/errors';
 
 describe('Success cases', () => {
   describe('Payloads', () => {

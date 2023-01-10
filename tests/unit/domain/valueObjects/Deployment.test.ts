@@ -3,9 +3,11 @@ import { makeEvent } from '../../../../src/domain/valueObjects/Event';
 
 import { DirectParser } from '../../../../src/application/parsers/DirectParser';
 
-import { MissingRepoNameError } from '../../../../src/application/errors/MissingRepoNameError';
-import { MissingEventTypeValueError } from '../../../../src/application/errors/MissingEventTypeValueError';
-import { MissingIdValueError } from '../../../../src/application/errors/MissingIdValueError';
+import {
+  MissingRepoNameError,
+  MissingEventTypeValueError,
+  MissingIdValueError
+} from '../../../../src/application/errors/errors';
 
 describe('Failure cases', () => {
   test('It should throw a MissingRepoNameError if missing the "repo" property', () => {

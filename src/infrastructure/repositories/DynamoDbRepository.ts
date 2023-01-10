@@ -12,7 +12,7 @@ import { Metrics } from '../../interfaces/Metrics';
 
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
-import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/MissingEnvironmentVariablesDynamoError';
+import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/errors';
 
 import { getCachedTestData, getTestData } from '../../../testdata/database/DynamoTestDatabase';
 
