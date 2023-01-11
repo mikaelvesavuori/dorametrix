@@ -24,7 +24,7 @@
   "scripts": {
     "start": "npx sls offline --reloadHandler",
     "test": "npm run test:licenses && npm run test:types && npm run test:unit",
-    "test:types": "npx type-coverage --at-least 92 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
+    "test:types": "npx type-coverage --at-least 93 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
     "test:licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
     "test:unit": "npx jest tests --collectCoverage",
     "test:unit:watch": "npx jest --clearCache && npx jest tests --collectCoverage --watch",
