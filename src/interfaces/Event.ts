@@ -5,8 +5,8 @@ import { Change } from './Change';
  */
 export interface Event {
   /**
-   * @description The type of event that has happened. Can be
-   * `change`, `deployment`, or `incident`.
+   * @description The type of event that has happened.
+   * Can be `change`, `deployment`, or `incident`.
    */
   eventType: EventType;
 

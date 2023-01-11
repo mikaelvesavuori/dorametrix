@@ -28,7 +28,7 @@ export interface Dorametrix {
   getLeadTimeForChanges(changes: Change[], deployments: Deployment[]): string;
 
   /**
-   * @description Get a change failure rate as an averaged number for a period of time (default: 30 days).
+   * @description Get a change failure rate as an averaged number for a period of time.
    */
   getChangeFailureRate(incidentCount: number, deploymentCount: number): string;
 

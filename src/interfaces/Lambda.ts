@@ -19,6 +19,7 @@ export type EventInput = {
  */
 export type Headers = {
   'User-Agent': string;
+  Authorization: string;
 };
 
 /**

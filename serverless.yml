@@ -22,7 +22,7 @@ provider:
   environment:
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.config.tableName}
-    MAX_DATE_RANGE: 365
+    MAX_DATE_RANGE: 30
 
 plugins:
   - serverless-esbuild
@@ -51,7 +51,7 @@ functions:
       API_KEY: ${self:custom.config.authToken}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetricsHandler.handler
-    description: Get all four DORA metrics
+    description: Get DORA metrics
     events:
       - http:
           method: GET
@@ -82,7 +82,7 @@ functions:
         Resource: ${self:custom.aws.databaseArn}
   GetLastDeployment:
     handler: src/infrastructure/adapters/web/GetLastDeploymentHandler.handler
-    description: Get commit ID for last production deployment
+    description: Get the commit ID of the last production deployment
     events:
       - http:
           method: GET

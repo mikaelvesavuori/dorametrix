@@ -4,8 +4,12 @@ import { TestDataRepository } from './testDataRepository';
 const REGION = process.env.REGION || 'eu-north-1';
 const TABLE_NAME = process.env.TABLE_NAME || 'dorametrix';
 const REPO_NAME = process.env.REPO_NAME || 'SOMEORG/SOMEREPO';
-const DEFAULT_COUNT = process.env.DEFAULT_COUNT || 365;
+const DEFAULT_COUNT = process.env.DEFAULT_COUNT || 30;
 const MAX_DAILY_EVENT_COUNT = 20;
+
+///////////////////////////////
+// NOTE: THIS IS INCOMPLETE! //
+///////////////////////////////
 
 /**
  * @description Outputs a valid change event.

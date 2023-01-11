@@ -1,5 +1,5 @@
 /**
- * @description The Deployment is one of the three primary event type.
+ * @description The Deployment is one of the three primary event types.
  */
 export type Deployment = {
   eventType: string;

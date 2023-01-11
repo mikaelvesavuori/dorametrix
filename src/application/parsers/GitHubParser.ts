@@ -14,8 +14,8 @@ import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/conv
  */
 export class GitHubParser implements Parser {
   /**
-   * @description Normalize the incoming type of event into the three
-   * supported categories: `change`, `deployment`, or `incident`.
+   * @description Normalize the incoming event into one of the three
+   * supported types: `change`, `deployment`, or `incident`.
    */
   // @ts-ignore
   public getEventType(eventTypeInput: EventTypeInput): string {

@@ -1,11 +1,11 @@
 /**
- * @description Used when an expected `authorization` query string parameter is missing.
+ * @description Used when an expected `Authorization` header is missing.
  */
-export class MissingAuthorizationQueryStringParameterError extends Error {
+export class MissingAuthorizationHeaderError extends Error {
   constructor() {
     super();
-    this.name = 'MissingAuthorizationQueryStringParameterError';
-    const message = `Missing an expected value in the "authorization" query string parameter!`;
+    this.name = 'MissingAuthorizationHeaderError';
+    const message = `Missing an expected value in the "Authorization" header!`;
     this.message = message;
     // @ts-ignore
     this.cause = {

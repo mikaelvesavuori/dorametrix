@@ -1,4 +1,6 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { MikroLog } from 'mikrolog';
+import { MikroMetric } from 'mikrometric';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 
 import { makeEvent } from '../../../domain/valueObjects/Event';
 
@@ -8,10 +10,23 @@ import { createEvent } from '../../../usecases/createEvent';
 
 import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
+import { metadataConfig } from '../../../config/metadata';
+
 /**
  * @description The controller for our service that handles incoming new events.
  */
-export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function handler(
+  event: APIGatewayProxyEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> {
+  const logger = MikroLog.start({ metadataConfig, event, context });
+  MikroMetric.start({
+    namespace: metadataConfig.service,
+    serviceName: metadataConfig.service,
+    event,
+    context
+  });
+
   try {
     const body = event.body && typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
     const headers = event.headers;
@@ -27,11 +42,13 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: ''
     };
   } catch (error: any) {
-    console.error(error);
+    const statusCode: number = error?.['cause']?.['statusCode'] || 400;
+    const message: string = error.message;
+    logger.error(error);
 
     return {
-      statusCode: error.cause.statusCode,
-      body: JSON.stringify(error.message)
+      statusCode,
+      body: JSON.stringify(message)
     };
   }
 }

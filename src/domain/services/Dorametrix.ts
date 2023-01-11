@@ -132,7 +132,7 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description Get a change failure rate as an averaged number for a period of time (default: 30 days).
+   * @description Get a change failure rate as an averaged number for a period of time.
    */
   public getChangeFailureRate(incidentCount: number, deploymentCount: number): string {
     if (incidentCount === 0 || deploymentCount === 0) return '0.00';

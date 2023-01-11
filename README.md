@@ -485,6 +485,17 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 ---
 
+## Ideas for improvements
+
+- Create test data
+- Add more tests
+- Higher type coverage
+- The time format 'DD:HH:MM:SS' is logically limited to 99 days - but is this a real problem?
+- Authorization when adding events?
+- Alarms for failures
+
+---
+
 ## References
 
 ### Articles

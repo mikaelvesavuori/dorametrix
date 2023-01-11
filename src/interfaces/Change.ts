@@ -1,5 +1,5 @@
 /**
- * @description The Change is one of the three primary event type.
+ * @description The Change is one of the three primary event types.
  */
 export type Change = {
   eventType: string;

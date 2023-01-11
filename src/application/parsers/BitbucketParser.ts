@@ -15,8 +15,8 @@ import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/conv
  */
 export class BitbucketParser implements Parser {
   /**
-   * @description Normalize the incoming type of event into the three
-   * supported categories: `change`, `deployment`, or `incident`.
+   * @description Normalize the incoming event into one of the three
+   * supported types: `change`, `deployment`, or `incident`.
    */
   public getEventType(eventTypeInput: EventTypeInput): string {
     const { headers } = eventTypeInput;

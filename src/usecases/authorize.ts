@@ -7,7 +7,7 @@ import { handleCors } from '../infrastructure/frameworks/authorization/handleCor
 
 import {
   InvalidAuthTokenError,
-  MissingAuthorizationQueryStringParameterError
+  MissingAuthorizationHeaderError
 } from '../application/errors/errors';
 
 const AUTHORIZATION_TOKEN =
@@ -16,18 +16,18 @@ const AUTHORIZATION_TOKEN =
     : process.env.AUTH_TOKEN || '';
 
 /**
- * @description Authorizer that will check for the `authorization` query string
- * parameter for an authorization token and see if it's the correct and expected one.
+ * @description Authorizer that will check for the `Authorization` header
+ * for an authorization token and see if it's the correct and expected one.
  *
- * @example `?authorization=65a662ab-9d57-4f72-aff1-3a63e0738ace` query string parameter.
+ * @example `Authorization: 65a662ab-9d57-4f72-aff1-3a63e0738ace` header.
  */
 export async function authorizeUseCase(event: EventInput) {
   try {
     // @ts-ignore
     if (event.httpMethod === 'OPTIONS') return handleCors();
 
-    const userToken = event.queryStringParameters['authorization'] || '';
-    if (!userToken) throw new MissingAuthorizationQueryStringParameterError();
+    const userToken = event?.headers['Authorization'] || '';
+    if (!userToken) throw new MissingAuthorizationHeaderError();
 
     const isValid = userToken === AUTHORIZATION_TOKEN;
     if (!isValid) throw new InvalidAuthTokenError();
@@ -37,7 +37,7 @@ export async function authorizeUseCase(event: EventInput) {
     const message: string = error.message;
     const logger = MikroLog.start();
     logger.error(message);
-    const id = event.queryStringParameters['authorization'] || 'UNKNOWN';
+    const id = event?.headers['Authorization'] || 'UNKNOWN';
     return generatePolicy(id, 'Deny', event.methodArn, {});
   }
 }
