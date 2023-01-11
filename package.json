@@ -1,7 +1,7 @@
 {
   "name": "dorametrix",
   "description": "Dorametrix is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "keywords": [

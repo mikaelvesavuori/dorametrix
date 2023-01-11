@@ -10,6 +10,7 @@ import { Incident } from '../../interfaces/Incident';
 import { DynamoItems } from '../../interfaces/DynamoDb';
 import { Metrics } from '../../interfaces/Metrics';
 
+import { addCustomMetric } from '../frameworks/addCustomMetric';
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
 import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/errors';
@@ -50,9 +51,15 @@ class DynamoRepository implements Repository {
    * @description Get metrics (changes/deployments/incidents) for a given repository and a period of time.
    */
   public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
-    const data = await this.getItem(dataRequest);
-    const items = data?.Items || [];
+    const cachedData = await this.getItem(dataRequest);
+    const items = cachedData?.Items || [];
 
+    if (cachedData.length > 0) {
+      addCustomMetric('cached');
+      return getCleanedItems(cachedData);
+    }
+
+    addCustomMetric('uncached');
     return getCleanedItems(items);
   }
 
