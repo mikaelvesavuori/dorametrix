@@ -34,11 +34,11 @@ package:
 
 custom:
   config:
-    authToken: 'SOMETHING' # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
-    accountNumber: '876265053232'
+    authToken: SOMETHING # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
+    accountNumber: 123412341234
     tableName: dorametrix
   aws:
-    databaseArn: "arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}"
+    databaseArn: arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}
   esbuild:
     bundle: true
     minify: true
@@ -48,7 +48,7 @@ functions:
     handler: src/infrastructure/adapters/web/AuthorizerHandler.handler
     description: ${self:service} authorizer
     environment:
-      API_KEY: ${self:custom.config.authToken}
+      AUTH_TOKEN: ${self:custom.config.authToken}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetricsHandler.handler
     description: Get DORA metrics
@@ -59,7 +59,7 @@ functions:
           authorizer:
             name: Authorizer
             resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
-            identitySource: method.request.querystring.authorization, method.request.header.X-GitHub-Event
+            identitySource: method.request.header.Authorization
             type: request
     iamRoleStatements:
       - Effect: "Allow"
