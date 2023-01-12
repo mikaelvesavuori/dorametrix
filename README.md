@@ -275,6 +275,47 @@ This is very straight-forward, just add the total time of all incidents (from st
 
 ---
 
+## Details on the technical implementation
+
+### Anonymous data
+
+`dorametrix` does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with `dorametrix`.
+
+### Metrics and history
+
+The granularity of metrics collection is on the daily level, in the format `YYYYMMDD` (e.g. `20221020`). While you can get a range of dates, you can't get more exact responses than a full day.
+
+**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because `gitmetrix` caches all data requests. Caching a dataset with incomplete data would not be very good.
+
+### Time
+
+#### Time zone used
+
+This uses UTC/GMT/Zulu time.
+
+#### How timestamps are set
+
+Timestamps are set internally in `dorametrix` and generated based on the UTC/GMT/Zulu time.
+
+**This should be fine for most circumstances but will possibly be inaccurate if you have teams that are very widely distributed**, in which case certain events may be posted to the wrong date.
+
+To cater for more precise queries, you can use the `offset` parameter with values between `-12` and `12` (default is `0`) to adjust for a particular time zone.
+
+### Caching
+
+On any given metrics retrieval request, `gitmetrix` will behave in one of two ways:
+
+- **Cached filled**: Return the cached content.
+- **Cache empty**: Query > Store response in cache > Return response.
+
+Caching is always done for a range of dates. All subsequent lookups will use the cached data only if the exact same "from" and "to" date ranges are cached.
+
+| Primary Key                 | Secondary Key           | Value (example)           |
+| --------------------------- | ----------------------- | ------------------------- |
+| `METRICS_CACHED_{ORG/REPO}` | `{FROM_DATE}_{TO_DATE}` | `Items` array of response |
+
+---
+
 ## Example API calls
 
 All of the below demonstrates "directly calling" the API; since webhook events from GitHub, Bitbucket and Jira have other (varying shapes) they are out-of-scope for the example calls.
@@ -389,6 +430,38 @@ All of the below demonstrates "directly calling" the API; since webhook events f
     "from": "1672531200",
     "to": "1673395199",
     "offset": 0
+  },
+  "total": {
+    "changesCount": 3,
+    "deploymentCount": 1,
+    "incidentCount": 0
+  },
+  "metrics": {
+    "changeFailureRate": "0.00",
+    "deploymentFrequency": "0.10",
+    "leadTimeForChanges": "00:00:04:04",
+    "timeToRestoreServices": "00:00:00:00"
+  }
+}
+```
+
+### Get all metrics with a time zone offset
+
+Note that this works precisely the same for `last` usage.
+
+#### Request
+
+`GET {{BASE_URL}}/metrics?repo=SOMEORG/SOMEREPO&from=20230101&to=20230110&offset=-5`
+
+#### Example response
+
+```json
+{
+  "repo": "SOMEORG/SOMEREPO",
+  "period": {
+    "from": "1672513200",
+    "to": "1673377199",
+    "offset": -5
   },
   "total": {
     "changesCount": 3,
