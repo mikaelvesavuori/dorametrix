@@ -122,7 +122,7 @@ Run `npm run deploy`.
 
 ## Logging and metrics
 
-`gitmetrix` uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
+`dorametrix` uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
 
 Logs will have a richly structured format and metrics for cached and uncached reads will be output to CloudWatch Logs (using Embedded Metrics Format, under the covers).
 
@@ -283,9 +283,9 @@ This is very straight-forward, just add the total time of all incidents (from st
 
 ### Metrics and history
 
-The granularity of metrics collection is on the daily level, in the format `YYYYMMDD` (e.g. `20221020`). While you can get a range of dates, you can't get more exact responses than a full day.
+While you can get a range of dates, you can't get more exact responses than a full day.
 
-**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because `gitmetrix` caches all data requests. Caching a dataset with incomplete data would not be very good.
+**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because `dorametrix` caches all data requests. Caching a dataset with incomplete data would not be very good.
 
 ### Time
 
@@ -303,16 +303,12 @@ To cater for more precise queries, you can use the `offset` parameter with value
 
 ### Caching
 
-On any given metrics retrieval request, `gitmetrix` will behave in one of two ways:
+On any given metrics retrieval request, `dorametrix` will behave in one of two ways:
 
 - **Cached filled**: Return the cached content.
 - **Cache empty**: Query > Store response in cache > Return response.
 
 Caching is always done for a range of dates. All subsequent lookups will use the cached data only if the exact same "from" and "to" date ranges are cached.
-
-| Primary Key                 | Secondary Key           | Value (example)           |
-| --------------------------- | ----------------------- | ------------------------- |
-| `METRICS_CACHED_{ORG/REPO}` | `{FROM_DATE}_{TO_DATE}` | `Items` array of response |
 
 ---
 
