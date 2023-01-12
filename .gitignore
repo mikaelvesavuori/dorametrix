@@ -16,3 +16,4 @@ jest-coverage/
 # Diagrams
 diagrams/*.bkp
 diagrams/*.bak
+diagrams/*.dtmp

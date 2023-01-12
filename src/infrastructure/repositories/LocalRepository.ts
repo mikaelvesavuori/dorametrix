@@ -62,7 +62,6 @@ class LocalRepository implements Repository {
   public async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
     const { key, range, metrics } = cacheRequest;
     console.log('Caching item...', key, range, metrics);
-    return;
   }
 
   /**
@@ -77,7 +76,6 @@ class LocalRepository implements Repository {
 
       if (repoName === 'SOMEORG/SOMEREPO' && range === '20220101_20220131')
         return testCachedMetrics;
-      return;
     })();
 
     if (cachedData) {
@@ -110,40 +108,28 @@ class LocalRepository implements Repository {
   /**
    * @description Add (create/update) an Event in the repository.
    */
-  public addEvent(event: Event): Promise<any> {
+  public async addEvent(event: Event): Promise<void> {
     console.log('Added event item', event);
-
-    // @ts-ignore
-    return;
   }
 
   /**
    * @description Add (create/update) a Change in the repository.
    */
-  public addChange(change: Change): Promise<any> {
+  public async addChange(change: Change): Promise<void> {
     console.log('Added change item', change);
-
-    // @ts-ignore
-    return;
   }
 
   /**
    * @description Add (create/update) a Deployment in the repository.
    */
-  public addDeployment(deployment: Deployment): Promise<any> {
+  public async addDeployment(deployment: Deployment): Promise<void> {
     console.log('Added deployment item', deployment);
-
-    // @ts-ignore
-    return;
   }
 
   /**
    * @description Update (or create) an Incident in the repository.
    */
-  public addIncident(incident: Incident): Promise<any> {
+  public async addIncident(incident: Incident): Promise<void> {
     console.log('Added incident item', incident);
-
-    // @ts-ignore
-    return;
   }
 }

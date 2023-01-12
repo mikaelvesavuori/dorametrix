@@ -46,7 +46,7 @@ Please see the [generated documentation site](https://dorametrix.pages.dev) for 
 
 ## Prerequisites
 
-- Recent [Node.js](https://nodejs.org/en/) (ideally 16+) installed.
+- Recent [Node.js](https://nodejs.org/en/) (ideally 18+) installed.
 - Amazon Web Services (AWS) account with sufficient permissions so that you can deploy infrastructure. A naive but simple policy would be full rights for CloudWatch, Lambda, API Gateway, DynamoDB, X-Ray, and S3.
 - Ideally some experience with [Serverless Framework](https://www.serverless.com) as that's what we will use to deploy the service and infrastructure.
 - You will need to deploy the stack prior to working with it locally as it uses actual infrastructure even in local mode.
@@ -57,12 +57,13 @@ Clone, fork, or download the repo as you normally would. Run `npm install`.
 
 ## Commands
 
-The below commands are the most critical ones. See `package.json` for more commands!
+The below commands are the most critical ones. See `package.json` for more commands! Substitute `npm` for `yarn` or whatever floats your boat.
 
 - `npm start`: Run Serverless Framework in offline mode
-- `npm test`: Test code
+- `npm test`: Run tests on the codebase
 - `npm run deploy`: Deploy with Serverless Framework
 - `npm run build`: Package and build the code with Serverless Framework
+- `npm run teardown`: Removes the deployed stack
 
 ## Configuration
 
@@ -72,12 +73,14 @@ You can set certain values in `serverless.yml`.
 
 #### Required
 
-- `API_KEY`: The API key you want to use to (somewhat) secure your service. You will use this when calling the service later.
+- `custom.config.accountNumber`: Your AWS account number.
+- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service (for requests, not for adding events which is always open). You will use this when calling the service.
+
+Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
 #### Optional
 
-- `REGION`: The AWS region you want to use (default: `eu-north-1`)
-- `TABLE_NAME`: The DynamoDB table name you want to use (default: `dorametrix`)
+- `custom.config.tableName`: This defaults to `dorametrix` but can be changed.
 
 ### Optional: Set up your incident handling webhook
 
@@ -117,6 +120,14 @@ Note that it will attempt to connect to a database, so deploy the application an
 
 Run `npm run deploy`.
 
+## Logging and metrics
+
+`gitmetrix` uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
+
+Logs will have a richly structured format and metrics for cached and uncached reads will be output to CloudWatch Logs (using Embedded Metrics Format, under the covers).
+
+---
+
 ## Raising `dorametrix` events
 
 ### Creating deployments
@@ -139,12 +150,12 @@ As seen above, the required inputs are:
 
 #### GitHub Actions action
 
-An example using two user-provided secrets for endpoint and API key:
+An example using two user-provided secrets for endpoint (`DORAMETRIX_ENDPOINT`) and API key (`DORAMETRIX_API_KEY`):
 
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v2
+    uses: actions/checkout@v3
     with:
       fetch-depth: 0
 
@@ -216,7 +227,7 @@ The period that is taken into account is 30 days in most cases, or 7 days for de
 
 #### Calculation
 
-`{number of deployments} / 7` is the standard (i.e. number of deployments in the last week). (TODO: This is no longer the case)
+`{number of deployments in period} / {number of incidents in period}` is the standard (i.e. number of deployments in the last week).
 
 ### Lead Time for Changes
 
@@ -333,146 +344,71 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 `204 No Content`
 
-### Get all metrics
+### Get all metrics from last X days ("sliding window")
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?repo=myproduct`
+`GET {{BASE_URL}}/metrics?repo=SOMEORG/SOMEREPO&last=30`
 
 #### Example response
 
 ```json
 {
-  "changeFailureRate": "0.00",
-  "deploymentFrequency": "0.00",
-  "leadTimeForChanges": "00:00:00:00",
-  "timeToRestoreServices": "00:00:23:11"
-}
-```
-
-### Get all metrics (raw) TODO
-
-#### Request
-
-`GET {{BASE_URL}}/metrics?repo=myproduct`
-
-#### Example response
-
-```json
-{
-  // Dynamically set by the response
   "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "20221228",
-    "to": "20221229"
+    "from": "1672963200",
+    "to": "1673395199",
+    "offset": 0
   },
-  // Retrieved metrics
   "total": {
-    "incidents": "2",
-    "deployments": "13",
-    "leadTimeForChanges": "00:01:00:00",
-    "timeToRestoreServices": "00:01:23:11"
+    "changesCount": 3,
+    "deploymentCount": 1,
+    "incidentCount": 0
   },
-  "average": {
+  "metrics": {
     "changeFailureRate": "0.00",
-    "deploymentFrequency": "0.00",
-    "leadTimeForChanges": "00:00:00:00",
-    "timeToRestoreServices": "00:00:23:11"
-  },
-  "daily": {
-    // For all days...
-    "20221228": {
-      "changeFailureRate": "0.00",
-      "deploymentFrequency": "0.00",
-      "leadTimeForChanges": "00:00:00:00",
-      "timeToRestoreServices": "00:00:23:11"
-    },
-    "20221229": {
-      "changeFailureRate": "0.00",
-      "deploymentFrequency": "0.00",
-      "leadTimeForChanges": "00:00:00:00",
-      "timeToRestoreServices": "00:00:23:11"
-    }
+    "deploymentFrequency": "0.20",
+    "leadTimeForChanges": "00:00:04:04",
+    "timeToRestoreServices": "00:00:00:00"
   }
 }
 ```
 
-### Get specific metric (changeFailureRate)
+### Get all metrics between two dates
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?changeFailureRate&repo=myproduct`
+`GET {{BASE_URL}}/metrics?repo=SOMEORG/SOMEREPO&from=20230101&to=20230110`
 
 #### Example response
 
 ```json
 {
-  "changeFailureRate": "0.00"
+  "repo": "SOMEORG/SOMEREPO",
+  "period": {
+    "from": "1672531200",
+    "to": "1673395199",
+    "offset": 0
+  },
+  "total": {
+    "changesCount": 3,
+    "deploymentCount": 1,
+    "incidentCount": 0
+  },
+  "metrics": {
+    "changeFailureRate": "0.00",
+    "deploymentFrequency": "0.10",
+    "leadTimeForChanges": "00:00:04:04",
+    "timeToRestoreServices": "00:00:00:00"
+  }
 }
 ```
 
-### Get specific metric (deploymentFrequency)
+### Get last deployment ID
 
 #### Request
 
-`GET {{BASE_URL}}/metrics?deploymentFrequency&repo=myproduct`
-
-#### Example response
-
-```json
-{
-  "deploymentFrequency": "0.00"
-}
-```
-
-### Get specific metric (leadTimeForChanges)
-
-#### Request
-
-`GET {{BASE_URL}}/metrics?leadTimeForChanges&repo=myproduct`
-
-#### Example response
-
-```json
-{
-  "leadTimeForChanges": "00:00:00:00"
-}
-```
-
-### Get specific metric (timeToRestoreServices)
-
-#### Request
-
-`GET {{BASE_URL}}/metrics?timeToRestoreServices&repo=myproduct`
-
-#### Response
-
-```json
-{
-  "timeToRestoreServices": "00:00:23:11"
-}
-```
-
-### Get multiple specific metrics
-
-#### Request example
-
-`GET {{BASE_URL}}/metrics?timeToRestoreServices&leadTimeForChanges&repo=myproduct`
-
-#### Response
-
-```json
-{
-  "leadTimeForChanges": "00:00:00:00",
-  "timeToRestoreServices": "00:00:23:11"
-}
-```
-
-### Get last deployment
-
-#### Request
-
-`GET {{BASE_URL}}/lastdeployment?repo=myproduct`
+`GET {{BASE_URL}}/lastdeployment?repo=SOMEORG/SOMEREPO`
 
 #### Response
 
@@ -490,7 +426,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 - Create test data
 - Add more tests
 - Higher type coverage
-- The time format 'DD:HH:MM:SS' is logically limited to 99 days - but is this a real problem?
+- The time format `DD:HH:MM:SS` is logically limited to 99 days - but is this a real problem?
 - Authorization when adding events?
 - Alarms for failures
 
