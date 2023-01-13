@@ -80,6 +80,7 @@ Note that all unit tests use a separate authorization token that you don't have 
 
 #### Optional
 
+- `custom.config.maxDateRange`: This defaults to `30` which is a reasonable default.
 - `custom.config.tableName`: This defaults to `dorametrix` but can be changed.
 
 ### Optional: Set up your incident handling webhook
@@ -214,7 +215,7 @@ See below for the tool-specific conventions.
 
 _Quotes from [a blog post on Google Cloud](https://cloud.google.com/blog/products/devops-sre/using-the-four-keys-to-measure-your-devops-performance)._
 
-The period that is taken into account is 30 days in most cases, or 7 days for deployment frequency. These values are configurable.
+The period that is taken into account is the one provided in the `serverless.yml` configuration, under `custom.config.maxDateRange`. It's set to 30 (days) by default.
 
 ### Deployment frequency
 
@@ -241,7 +242,7 @@ Same as deployment frequency (see above).
 
 The solution used in `dorametrix` is based on calculating the difference between the earliest commit timestamp in a change batch (that lead to a deployment) with the timestamp of the actual deployment.
 
-`{accumulated time of every first commit for each deployment} / {number of deployments}`
+`{accumulated time of every first commit for each deployment in period} / {number of deployments in period}`
 
 ### Change Failure Rate
 
@@ -271,7 +272,7 @@ Depends on the above collection of incidents (change failure rate).
 
 This is very straight-forward, just add the total time of all incidents (from start to being resolved). Unresolved tasks will obviously continue to add up.
 
-`{accumulated time of all incidents} / {actual incident count}`.
+`{accumulated time of all incidents in period} / {incident count in period}`.
 
 ---
 

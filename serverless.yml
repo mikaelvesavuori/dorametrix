@@ -22,7 +22,7 @@ provider:
   environment:
     REGION: ${self:provider.region}
     TABLE_NAME: ${self:custom.config.tableName}
-    MAX_DATE_RANGE: 30
+    MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
 
 plugins:
   - serverless-esbuild
@@ -36,6 +36,7 @@ custom:
   config:
     authToken: SOMETHING # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
     accountNumber: 123412341234
+    maxDateRange: 30
     tableName: dorametrix
   aws:
     databaseArn: arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}
