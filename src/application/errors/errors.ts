@@ -220,6 +220,39 @@ export class MissingTimeError extends Error {
 }
 
 /**
+ * @description Used when the Jira parser is missing the `fields` object.
+ */
+export class MissingJiraFieldsError extends Error {
+  constructor() {
+    super();
+    this.name = 'MissingJiraFieldsError';
+    const message = 'Missing "fields" object in Jira webhook input!';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 400
+    };
+  }
+}
+
+/**
+ * @description Used when the Jira parser is not picking up repository URL input from a custom field.
+ */
+export class MissingJiraMatchedCustomFieldKeyError extends Error {
+  constructor() {
+    super();
+    this.name = 'MissingJiraMatchedCustomFieldKeyError';
+    const message =
+      'Missing a matched custom field key for the repository name! Have you created a required custom field where the repository URL is passed in? Examples for valid input: "https://bitbucket.org/SOMEORG/SOMEREPO/" or "https://github.com/SOMEORG/SOMEREPO".';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 400
+    };
+  }
+}
+
+/**
  * @description Used when a queried date is out of range.
  */
 export class OutOfRangeQueryError extends Error {

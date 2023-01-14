@@ -1,30 +1,30 @@
-# `dorametrix` 🚀 🧑‍🚀 🧑🏿‍🚀 🧑🏻‍🚀 👩‍🚀 📈
+# Dorametrix 🚀 🧑‍🚀 🧑🏿‍🚀 🧑🏻‍🚀 👩‍🚀 📈
 
 ![Build Status](https://github.com/mikaelvesavuori/dorametrix/workflows/main/badge.svg) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmikaelvesavuori%2Fdorametrix.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmikaelvesavuori%2Fdorametrix?ref=badge_shield) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mikaelvesavuori_dorametrix&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mikaelvesavuori_dorametrix) [![CodeScene Code Health](https://codescene.io/projects/23699/status-badges/code-health)](https://codescene.io/projects/23699) [![CodeScene System Mastery](https://codescene.io/projects/23699/status-badges/system-mastery)](https://codescene.io/projects/23699) [![codecov](https://codecov.io/gh/mikaelvesavuori/dorametrix/branch/main/graph/badge.svg?token=AIV06YBT8U)](https://codecov.io/gh/mikaelvesavuori/dorametrix) [![Maintainability](https://api.codeclimate.com/v1/badges/1a609622737c6c48225c/maintainability)](https://codeclimate.com/github/mikaelvesavuori/dorametrix/maintainability)
 
 ## Know if you are running high-performing software development teams by making it clear how individual products (i.e. services, APIs, systems...) line up with the [DORA metrics](https://www.leanix.net/en/wiki/vsm/dora-metrics).
 
-`dorametrix` is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks. It has pre-baked support for push and incident events from GitHub Actions, Bitbucket and Jira (only incidents!), and can be run "as is" as a web service, too.
+Dorametrix is a Node.js-based service that helps you calculate your DORA metrics, by inferring your metrics from events you can create manually or with webhooks. It has pre-baked support for push and incident events from GitHub Actions, Bitbucket and Jira (only incidents!), and can be run "as is" as a web service, too.
 
 🏖️ It's super easy to get started with, comes pre-packaged and needs just a tiny bit of fiddling with webhooks and settings on your end: Simply put, the easiest way you can start using DORA metrics in a scalable way today!
 
-✋ ℹ️ Credit where credit is due: This project is strongly influenced by [Google Cloud's `Four Keys`](https://github.com/GoogleCloudPlatform/fourkeys) project. The Four Keys project is great but is, for obvious reasons, Google Cloud-oriented. It also uses a SQL database and ETL pattern which is less than ideal from a serverless perspective. In general, the approach and the structuring and nomenclature is the same here. Most interestingly, that `dorametrix` is better decoupled from the specifics of any one CI tool, and uses DynamoDB (NoSQL) instead of BigQuery.
+✋ ℹ️ Credit where credit is due: This project is strongly influenced by [Google Cloud's `Four Keys`](https://github.com/GoogleCloudPlatform/fourkeys) project. The Four Keys project is great but is, for obvious reasons, Google Cloud-oriented. It also uses a SQL database and ETL pattern which is less than ideal from a serverless perspective. In general, the approach and the structuring and nomenclature is the same here. Most interestingly, that Dorametrix is better decoupled from the specifics of any one CI tool, and uses DynamoDB (NoSQL) instead of BigQuery.
 
-## How `dorametrix` works
+## How Dorametrix works
 
-At its heart, `dorametrix` is a serverless web service that collects and represents specific delivery-related events that you send to it, which are then stored in a database. As a user you can request these metrics, which are calculated from the same stored events.
+At its heart, Dorametrix is a serverless web service that collects and represents specific delivery-related events that you send to it, which are then stored in a database. As a user you can request these metrics, which are calculated from the same stored events.
 
-_For more exact information, see the section "What are the DORA metrics and how does `dorametrix` calculate them?" further down._
+_For more exact information, see the section "What are the DORA metrics and how does Dorametrix calculate them?" further down._
 
 ### The events
 
-The most basic data type we have is the **Event**. These are internally created from inputs to the service. For example, when you push a commit, an Event is added to the database. The event will contain, for example, information like the commit SHA, time of the commit, and similar. We keep the events indefinitely so we can have a complete record of all `dorametrix` events that have occurred.
+The most basic data type we have is the **Event**. These are internally created from inputs to the service. For example, when you push a commit, an Event is added to the database. The event will contain, for example, information like the commit SHA, time of the commit, and similar. We keep the events indefinitely so we can have a complete record of all Dorametrix events that have occurred.
 
-`dorametrix` will also (on its own) add individual domain-specific records for (respectively) a Change, Deployment, or Incident, based on the incoming data. This is so we can easily follow up on those typologies and make the desired calculations.
+Dorametrix will also (on its own) add individual domain-specific records for (respectively) a Change, Deployment, or Incident, based on the incoming data. This is so we can easily follow up on those typologies and make the desired calculations.
 
 - **Changes** essentially correspond to `push`-type lifecycle events, since these represent commits.
 - **Deployments** are added by you manually, as a separate activity at the end of a deployment pipe.
-- **Incidents** are special, and more complex, since they both have to be raised and (later) be resolved. This can be done manually by calling `dorametrix` but it's highly recommended (and much more practical) to let your issue tracker send such events by webhook based on actual user interactions with issues or tickets.
+- **Incidents** are special, and more complex, since they both have to be raised and (later) be resolved. This can be done manually by calling Dorametrix but it's highly recommended (and much more practical) to let your issue tracker send such events by webhook based on actual user interactions with issues or tickets.
 
 ---
 
@@ -32,7 +32,7 @@ The most basic data type we have is the **Event**. These are internally created 
 
 ### Solution diagram
 
-_As it stands currently, `dorametrix` is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
+_As it stands currently, Dorametrix is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
 
 !["Dorametrix diagram"](./diagrams/dorametrix-diagram.png)
 
@@ -87,27 +87,33 @@ Note that all unit tests use a separate authorization token that you don't have 
 
 _This is highly recommended but not strictly necessary, though it will become quite a hassle if you do not automate incident handling._
 
+Webhooks are fired automatically from your chosen tool upon your selected events being fired in them. This makes the practical integration very easy to set up.
+
 #### GitHub
 
 Create a webhook; [see this guide if you need instructions](https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks).
 
-Add your `dorametrix` endpoint URL, set the content type to `application/json` and select the event types `Issues` and `Push`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`), set the content type to `application/json` and select the event types `Issues` and `Push`.
 
 #### Bitbucket
 
 Create a webhook; [see this guide if you need instructions](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/#Create-webhooks).
 
-Add your `dorametrix` endpoint URL and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`) and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
 
 #### Jira
 
 Create a webhook; [see this guide if you need instructions](https://developer.atlassian.com/server/jira/platform/webhooks/#registering-a-webhook).
 
-Add your `dorametrix` endpoint URL and select the event types `Repository:Push`, `Issue:created`, `Issue:updated`, `Issue:deleted`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`) and select the event types `Issue:created`, `Issue:updated`, `Issue:deleted`.
+
+**Note**: Because there is no mapping between the Jira project and a given repository you need to manually provide that context through Jira. Dorametrix will assume a custom field on any issue: The ideal option is the URL field type where the value must conform to either a GitHub or Bitbucket repository URL, i.e. `https://github.com/SOMEORG/SOMEREPO` or `https://bitbucket.org/SOMEORG/SOMEREPO/` format.
+
+_If there is a need to support additional Git hosts, then please raise an Issue and explain what the authorative URL format is for your tool._
 
 #### Note on security with webhook secrets
 
-The current version of `dorametrix` does not have built-in support for GitHub webhook secrets, but if there is sufficient demand I might add such support.
+The current version of Dorametrix does not have built-in support for GitHub webhook secrets, but if there is sufficient demand I might add such support.
 
 _Note that Bitbucket Cloud and Jira do not have support for webhook secrets: https://jira.atlassian.com/browse/BCLOUD-14683._
 
@@ -123,13 +129,13 @@ Run `npm run deploy`.
 
 ## Logging and metrics
 
-`dorametrix` uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
+Dorametrix uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
 
 Logs will have a richly structured format and metrics for cached and uncached reads will be output to CloudWatch Logs (using Embedded Metrics Format, under the covers).
 
 ---
 
-## Raising `dorametrix` events
+## Raising Dorametrix events
 
 ### Creating deployments
 
@@ -211,7 +217,7 @@ See below for the tool-specific conventions.
 
 ---
 
-## What are the DORA metrics and how does `dorametrix` calculate them?
+## What are the DORA metrics and how does Dorametrix calculate them?
 
 _Quotes from [a blog post on Google Cloud](https://cloud.google.com/blog/products/devops-sre/using-the-four-keys-to-measure-your-devops-performance)._
 
@@ -223,8 +229,8 @@ The period that is taken into account is the one provided in the `serverless.yml
 
 #### Data collection
 
-1. Send a `CHANGE` event when starting up the CI build. You can do this with either a direct call to the `dorametrix` API endpoint, or by using a webhook ("push" event or similar) in [GitHub](https://docs.github.com/en/developers/webhooks-and-events/webhooks/about-webhooks), [Bitbucket](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/), or [Jira](https://developer.atlassian.com/server/jira/platform/webhooks/).
-2. Send a `DEPLOYMENT` event after pushing code to your production environment. You can do this with either a direct call to the `dorametrix` API endpoint, or by using a convenience [GitHub action](https://github.com/mikaelvesavuori/dorametrix-action) or [Bitbucket pipe](https://github.com/mikaelvesavuori/dorametrix-pipe) for your CI. See the [GitHub action demo](https://github.com/mikaelvesavuori/demo-dorametrix-action) or [Bitbucket pipe demo](https://github.com/mikaelvesavuori/demo-dorametrix-pipe) for more information.
+1. Send a `CHANGE` event when starting up the CI build. You can do this with either a direct call to the Dorametrix API endpoint, or by using a webhook ("push" event or similar) in [GitHub](https://docs.github.com/en/developers/webhooks-and-events/webhooks/about-webhooks), [Bitbucket](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/), or [Jira](https://developer.atlassian.com/server/jira/platform/webhooks/).
+2. Send a `DEPLOYMENT` event after pushing code to your production environment. You can do this with either a direct call to the Dorametrix API endpoint, or by using a convenience [GitHub action](https://github.com/mikaelvesavuori/dorametrix-action) or [Bitbucket pipe](https://github.com/mikaelvesavuori/dorametrix-pipe) for your CI. See the [GitHub action demo](https://github.com/mikaelvesavuori/demo-dorametrix-action) or [Bitbucket pipe demo](https://github.com/mikaelvesavuori/demo-dorametrix-pipe) for more information.
 
 #### Calculation
 
@@ -240,7 +246,7 @@ Same as deployment frequency (see above).
 
 #### Calculation
 
-The solution used in `dorametrix` is based on calculating the difference between the earliest commit timestamp in a change batch (that lead to a deployment) with the timestamp of the actual deployment.
+The solution used in Dorametrix is based on calculating the difference between the earliest commit timestamp in a change batch (that lead to a deployment) with the timestamp of the actual deployment.
 
 `{accumulated time of every first commit for each deployment in period} / {number of deployments in period}`
 
@@ -250,13 +256,13 @@ The solution used in `dorametrix` is based on calculating the difference between
 
 #### Data collection
 
-Send an `INCIDENT` event. You can do this with either a direct call to the `dorametrix` API endpoint, or by using a webhook ("opened"/"closed"/"labeled"/"unlabeled" event or similar) in [GitHub](https://docs.github.com/en/developers/webhooks-and-events/webhooks/about-webhooks), [Bitbucket](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/), or [Jira](https://developer.atlassian.com/server/jira/platform/webhooks/). The conventions are listed above, in the "Configuration" section.
+Send an `INCIDENT` event. You can do this with either a direct call to the Dorametrix API endpoint, or by using a webhook ("opened"/"closed"/"labeled"/"unlabeled" event or similar) in [GitHub](https://docs.github.com/en/developers/webhooks-and-events/webhooks/about-webhooks), [Bitbucket](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/), or [Jira](https://developer.atlassian.com/server/jira/platform/webhooks/). The conventions are listed above, in the "Configuration" section.
 
-You could certainly look into other types of integrations and automations, for example by connecting a failing function with calling `dorametrix` (or connecting Cloudwatch to it).
+You could certainly look into other types of integrations and automations, for example by connecting a failing function with calling Dorametrix (or connecting Cloudwatch to it).
 
 #### Calculation
 
-Some thinkers in the DORA metrics space will say that we need to understand whether a deployment was successful or failed. In `dorametrix` this is seen as unimportant and an over-complication of matters. Instead, all deployments are simply... deployments.
+Some thinkers in the DORA metrics space will say that we need to understand whether a deployment was successful or failed. In Dorametrix this is seen as unimportant and an over-complication of matters. Instead, all deployments are simply... deployments.
 
 `{incident count} / {deployment count}`.
 
@@ -280,13 +286,13 @@ This is very straight-forward, just add the total time of all incidents (from st
 
 ### Anonymous data
 
-`dorametrix` does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with `dorametrix`.
+Dorametrix does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with Dorametrix.
 
 ### Metrics and history
 
 While you can get a range of dates, you can't get more exact responses than a full day.
 
-**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because `dorametrix` caches all data requests. Caching a dataset with incomplete data would not be very good.
+**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because Dorametrix caches all data requests. Caching a dataset with incomplete data would not be very good.
 
 ### Time
 
@@ -296,7 +302,7 @@ This uses UTC/GMT/Zulu time.
 
 #### How timestamps are set
 
-Timestamps are set internally in `dorametrix` and generated based on the UTC/GMT/Zulu time.
+Timestamps are set internally in Dorametrix and generated based on the UTC/GMT/Zulu time.
 
 **This should be fine for most circumstances but will possibly be inaccurate if you have teams that are very widely distributed**, in which case certain events may be posted to the wrong date.
 
@@ -304,7 +310,7 @@ To cater for more precise queries, you can use the `offset` parameter with value
 
 ### Caching
 
-On any given metrics retrieval request, `dorametrix` will behave in one of two ways:
+On any given metrics retrieval request, Dorametrix will behave in one of two ways:
 
 - **Cached filled**: Return the cached content.
 - **Cache empty**: Query > Store response in cache > Return response.

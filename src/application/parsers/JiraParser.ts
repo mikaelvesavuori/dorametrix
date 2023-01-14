@@ -1,7 +1,13 @@
 import { EventDto } from '../../interfaces/Event';
 import { Parser, PayloadInput } from '../../interfaces/Parser';
 
-import { MissingEventTimeError, MissingEventError, MissingIdError } from '../errors/errors';
+import {
+  MissingEventTimeError,
+  MissingEventError,
+  MissingIdError,
+  MissingJiraFieldsError,
+  MissingJiraMatchedCustomFieldKeyError
+} from '../errors/errors';
 
 import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 
@@ -115,12 +121,30 @@ export class JiraParser implements Parser {
 
   /**
    * @description Get the repository name.
+   * @example `https://bitbucket.org/SOMEORG/SOMEREPO/src/master/`
+   * @example `https://bitbucket.org/SOMEORG/SOMEREPO/`
+   * @example `https://github.com/SOMEORG/SOMEREPO`
    */
   public getRepoName(body: Record<string, any>): string {
-    const domain = body?.['user']?.['self'].split('https://')[1].split('.atlassian.net')[0];
-    const project = body?.['issue']?.['fields']?.['project']?.['name'];
+    const fields: Record<string, any> = body?.issue?.fields;
+    if (!fields) throw new MissingJiraFieldsError();
 
-    if (domain && project) return `${domain}/${project}`;
-    return '';
+    const matchedCustomFieldKey: string =
+      Object.keys(fields).filter(
+        (key: string) =>
+          typeof fields[key] === 'string' &&
+          key.startsWith('customfield_') &&
+          (fields[key].startsWith('https://bitbucket.org/') ||
+            fields[key].startsWith('https://github.com/'))
+      )[0] || '';
+
+    if (!matchedCustomFieldKey) throw new MissingJiraMatchedCustomFieldKeyError();
+
+    const repoName: string = fields[matchedCustomFieldKey]
+      .replace('https://bitbucket.org/', '')
+      .replace('https://github.com/', '')
+      .split('/src/')[0];
+
+    return repoName;
   }
 }

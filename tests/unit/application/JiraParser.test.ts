@@ -1,99 +1,11 @@
 import { JiraParser } from '../../../src/application/parsers/JiraParser';
 
-import { MissingEventTimeError, MissingIdError } from '../../../src/application/errors/errors';
-
-describe('Success cases', () => {
-  describe('Payloads', () => {
-    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', () => {
-      const parser = new JiraParser();
-      expect(() =>
-        parser.getPayload({
-          headers: {},
-          body: {
-            issue_event_type_name: 'issue_created',
-            issue: {
-              id: '10004',
-              fields: {}
-            }
-          }
-        })
-      ).toThrowError(MissingEventTimeError);
-    });
-  });
-
-  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID', () => {
-    const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
-        headers: {},
-        body: {
-          issue_event_type_name: 'issue_created',
-          issue: {
-            fields: {
-              created: '2022-02-03T20:04:45.243+0100'
-            }
-          }
-        }
-      })
-    ).toThrowError(MissingIdError);
-  });
-
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp', () => {
-    const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
-        headers: {},
-        body: {
-          issue_event_type_name: 'issue_generic',
-          issue: {
-            id: '10004',
-            fields: {
-              updated: '2022-02-03T20:05:45.243+0100',
-              summary: 'Test issue'
-            }
-          },
-          changelog: {
-            id: '10014',
-            items: [
-              {
-                field: 'resolution',
-                toString: 'Done'
-              }
-            ]
-          }
-        }
-      })
-    ).toThrowError(MissingEventTimeError);
-  });
-
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp', () => {
-    const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
-        headers: {},
-        body: {
-          issue_event_type_name: 'issue_generic',
-          issue: {
-            id: '10004',
-            fields: {
-              created: '2022-02-03T20:04:45.243+0100',
-              summary: 'Test issue'
-            }
-          },
-          changelog: {
-            id: '10014',
-            items: [
-              {
-                field: 'resolution',
-                toString: 'Done'
-              }
-            ]
-          }
-        }
-      })
-    ).toThrowError(MissingEventTimeError);
-  });
-});
+import {
+  MissingEventTimeError,
+  MissingIdError,
+  MissingJiraFieldsError,
+  MissingJiraMatchedCustomFieldKeyError
+} from '../../../src/application/errors/errors';
 
 describe('Success cases', () => {
   describe('Event types', () => {
@@ -274,7 +186,9 @@ describe('Success cases', () => {
   });
 
   describe('Repository name', () => {
-    test('It should take in a typical Jira event and return the repository name', () => {
+    test('It should take in a typical Jira event and return the GitHub repository name', () => {
+      const expected = 'SOMEORG/SOMEREPO';
+
       const parser = new JiraParser();
       const repoName = parser.getRepoName({
         user: {
@@ -284,26 +198,171 @@ describe('Success cases', () => {
           id: '10004',
           fields: {
             created: '2022-02-03T20:04:45.243+0100',
-            project: {
-              name: 'SOMEORG/SOMEREPO'
-            }
+            customfield_10035: `https://github.com/${expected}`
           }
         }
       });
-      expect(repoName).toBe('something/SOMEORG/SOMEREPO');
+      expect(repoName).toBe(expected);
     });
 
-    test('It should take in a typical Jira event and return an empty string if it is missing', () => {
+    test('It should take in a typical Jira event and return the Bitbucket repository name', () => {
+      const expected = 'SOMEORG/SOMEREPO';
+
       const parser = new JiraParser();
-      const repoName = parser.getRepoName({});
-      expect(repoName).toBe('');
+      const repoName = parser.getRepoName({
+        user: {
+          self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
+        },
+        issue: {
+          id: '10004',
+          fields: {
+            created: '2022-02-03T20:04:45.243+0100',
+            customfield_10035: `https://bitbucket.org/${expected}`
+          }
+        }
+      });
+      expect(repoName).toBe(expected);
     });
 
-    test('It should take in a typical Jira event and return an empty string even if no input is provided', () => {
+    test('It should take in a typical Jira event and return the Bitbucket repository name from longform input', () => {
+      const expected = 'SOMEORG/SOMEREPO';
+
       const parser = new JiraParser();
+      const repoName = parser.getRepoName({
+        user: {
+          self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
+        },
+        issue: {
+          id: '10004',
+          fields: {
+            created: '2022-02-03T20:04:45.243+0100',
+            customfield_10035: `https://bitbucket.org/${expected}/src/master/`
+          }
+        }
+      });
+      expect(repoName).toBe(expected);
+    });
+  });
+});
+
+describe('Failure cases', () => {
+  describe('Payloads', () => {
+    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', () => {
+      const parser = new JiraParser();
+      expect(() =>
+        parser.getPayload({
+          headers: {},
+          body: {
+            issue_event_type_name: 'issue_created',
+            issue: {
+              id: '10004',
+              fields: {}
+            }
+          }
+        })
+      ).toThrowError(MissingEventTimeError);
+    });
+  });
+
+  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID', () => {
+    const parser = new JiraParser();
+    expect(() =>
+      parser.getPayload({
+        headers: {},
+        body: {
+          issue_event_type_name: 'issue_created',
+          issue: {
+            fields: {
+              created: '2022-02-03T20:04:45.243+0100'
+            }
+          }
+        }
+      })
+    ).toThrowError(MissingIdError);
+  });
+
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp', () => {
+    const parser = new JiraParser();
+    expect(() =>
+      parser.getPayload({
+        headers: {},
+        body: {
+          issue_event_type_name: 'issue_generic',
+          issue: {
+            id: '10004',
+            fields: {
+              updated: '2022-02-03T20:05:45.243+0100',
+              summary: 'Test issue'
+            }
+          },
+          changelog: {
+            id: '10014',
+            items: [
+              {
+                field: 'resolution',
+                toString: 'Done'
+              }
+            ]
+          }
+        }
+      })
+    ).toThrowError(MissingEventTimeError);
+  });
+
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp', () => {
+    const parser = new JiraParser();
+    expect(() =>
+      parser.getPayload({
+        headers: {},
+        body: {
+          issue_event_type_name: 'issue_generic',
+          issue: {
+            id: '10004',
+            fields: {
+              created: '2022-02-03T20:04:45.243+0100',
+              summary: 'Test issue'
+            }
+          },
+          changelog: {
+            id: '10014',
+            items: [
+              {
+                field: 'resolution',
+                toString: 'Done'
+              }
+            ]
+          }
+        }
+      })
+    ).toThrowError(MissingEventTimeError);
+  });
+
+  test('It should throw a MissingJiraFieldsError if the "fields" object is missing', () => {
+    const parser = new JiraParser();
+
+    expect(() => {
+      parser.getRepoName({});
+    }).toThrowError(MissingJiraFieldsError);
+  });
+
+  test('It should throw a MissingJiraFieldsError if the input is missing', () => {
+    const parser = new JiraParser();
+
+    expect(() => {
       // @ts-ignore
-      const repoName = parser.getRepoName();
-      expect(repoName).toBe('');
-    });
+      parser.getRepoName();
+    }).toThrowError(MissingJiraFieldsError);
+  });
+
+  test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field', () => {
+    const parser = new JiraParser();
+
+    expect(() => {
+      parser.getRepoName({
+        issue: {
+          fields: {}
+        }
+      });
+    }).toThrowError(MissingJiraMatchedCustomFieldKeyError);
   });
 });
