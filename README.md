@@ -109,6 +109,8 @@ Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`) a
 
 **Note**: Because there is no mapping between the Jira project and a given repository you need to manually provide that context through Jira. Dorametrix will assume a custom field on any issue: The ideal option is the URL field type where the value must conform to either a GitHub or Bitbucket repository URL, i.e. `https://github.com/SOMEORG/SOMEREPO` or `https://bitbucket.org/SOMEORG/SOMEREPO/` format. The actual name and description of the field does not matter.
 
+!["Jira task example with custom field for URL"](./readme/jira-task-custom-repo-field.png)
+
 _If there is a need to support additional Git hosts, then please raise an Issue and explain what the authorative URL format is for your tool._
 
 #### Note on security with webhook secrets
