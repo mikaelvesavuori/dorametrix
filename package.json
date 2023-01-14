@@ -34,7 +34,7 @@
     "docs:arkit": "npx arkit",
     "docs:cfndia": "npx cfn-dia draw.io -t .serverless/cloudformation-template-update-stack.json --ci-mode -o diagrams/cfn-diagram.drawio",
     "docs:typedoc": "npx typedoc --entryPoints './src' --entryPointStrategy 'expand' --exclude '**/*+(test).ts' --externalPattern '**/node_modules/**/*' --excludeExternals --out 'docs'",
-    "build:hosting": "npm run docs:typedoc && cp -r diagrams docs",
+    "build:hosting": "npm run docs:typedoc && cp -r diagrams docs && cp -r readme docs",
     "build": "npx sls package",
     "deploy": "npx sls deploy",
     "teardown": "npx sls remove",
