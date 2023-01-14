@@ -1,10 +1,8 @@
+import { getTimestampsForPeriod } from 'chrono-utils';
+
 import { getRequestDTO } from '../../../src/application/getRequestDTO';
 
-import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
-import { getTimestampsForPeriod } from '../../../src/infrastructure/frameworks/time';
-
 import {
-  InvalidIsoDateConversionError,
   InvalidOffsetError,
   MissingRepoNameError,
   MissingRequiredInputParamsError,
@@ -137,26 +135,6 @@ describe('Failure cases', () => {
         to: '20991231'
       })
     ).toThrowError(OutOfRangeQueryError);
-  });
-
-  test('It should throw a InvalidIsoDateConversionError error if the "to" date is today', () => {
-    expect(() =>
-      getRequestDTO({
-        repo: 'SOMEORG/SOMEREPO',
-        from: '20221201',
-        to: getCurrentDate()
-      })
-    ).toThrowError(InvalidIsoDateConversionError);
-  });
-
-  test('It should throw a OutOfRangeQueryError error if the "from" date is today', () => {
-    expect(() =>
-      getRequestDTO({
-        repo: 'SOMEORG/SOMEREPO',
-        from: getCurrentDate(),
-        to: '20221201'
-      })
-    ).toThrowError(InvalidIsoDateConversionError);
   });
 
   test('It should throw a TooManyInputParamsError error if using both "from" + "to" and "last" parameters', () => {

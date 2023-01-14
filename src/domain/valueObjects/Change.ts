@@ -1,7 +1,7 @@
+import { getCurrentDate } from 'chrono-utils';
+
 import { Change } from '../../interfaces/Change';
 import { Event } from '../../interfaces/Event';
-
-import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
 import {
   MissingRepoNameError,

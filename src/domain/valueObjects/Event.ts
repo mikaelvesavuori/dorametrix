@@ -1,8 +1,8 @@
+import { getCurrentDate } from 'chrono-utils';
+
 import { Event, EventType } from '../../interfaces/Event';
 import { Change } from '../../interfaces/Change';
 import { Parser } from '../../interfaces/Parser';
-
-import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
 /**
  * @description Create the main type of event, the titular `Event` which

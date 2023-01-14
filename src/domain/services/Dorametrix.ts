@@ -1,11 +1,10 @@
+import { getDiffInSeconds, prettifyTime } from 'chrono-utils';
+
 import { Dorametrix } from '../../interfaces/Dorametrix';
 import { Change } from '../../interfaces/Change';
 import { Deployment, DeploymentChange } from '../../interfaces/Deployment';
 import { Incident } from '../../interfaces/Incident';
 import { DeploymentResponse } from '../../interfaces/DeploymentResponse';
-
-import { prettifyTime } from '../../infrastructure/frameworks/prettifyTime';
-import { getDiffInSeconds } from '../../infrastructure/frameworks/getDiffInSeconds';
 
 /**
  * @description Factory function to create new Dorametrix instance.

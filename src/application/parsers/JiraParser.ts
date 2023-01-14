@@ -1,3 +1,5 @@
+import { convertDateToUnixTimestamp } from 'chrono-utils';
+
 import { EventDto } from '../../interfaces/Event';
 import { Parser, PayloadInput } from '../../interfaces/Parser';
 
@@ -8,8 +10,6 @@ import {
   MissingJiraFieldsError,
   MissingJiraMatchedCustomFieldKeyError
 } from '../errors/errors';
-
-import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 
 /**
  * @description Parser adapted for Jira.

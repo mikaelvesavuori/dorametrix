@@ -3,9 +3,9 @@ import { RequestDTO } from '../interfaces/Input';
 import {
   getMaxTimestampFromDate,
   getTimestampForInputDate,
-  getTimestampsForPeriod
-} from '../infrastructure/frameworks/time';
-import { getCurrentDate } from '../infrastructure/frameworks/date';
+  getTimestampsForPeriod,
+  getCurrentDate
+} from 'chrono-utils';
 
 import {
   InvalidOffsetError,

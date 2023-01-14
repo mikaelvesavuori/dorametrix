@@ -1,3 +1,5 @@
+import { convertDateToUnixTimestamp } from 'chrono-utils';
+
 import { EventDto } from '../../interfaces/Event';
 import { Parser, EventTypeInput, PayloadInput } from '../../interfaces/Parser';
 import {
@@ -6,8 +8,6 @@ import {
   MissingEventError,
   MissingIdError
 } from '../errors/errors';
-
-import { convertDateToUnixTimestamp } from '../../infrastructure/frameworks/convertDateToUnixTimestamp';
 
 /**
  * @description Parser adapted for GitHub.
