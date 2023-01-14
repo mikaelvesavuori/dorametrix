@@ -98,7 +98,7 @@ async function createTestDataController(dataCount = DEFAULT_COUNT) {
 
   for (let index = 0; index < dataCount; index++) {
     const date = new Date('2022-01-01');
-    date.setDate(date.getDate() + index);
+    date.setDate(date.getUTCDate() + index);
     demoData.push(createDemoMetric);
   }
 

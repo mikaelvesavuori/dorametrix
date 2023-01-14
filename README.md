@@ -300,7 +300,7 @@ While you can get a range of dates, you can't get more exact responses than a fu
 
 #### Time zone used
 
-This uses UTC/GMT/Zulu time.
+Dorametrix uses UTC/GMT/Zulu time.
 
 #### How timestamps are set
 

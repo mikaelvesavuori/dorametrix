@@ -9,7 +9,7 @@
 export function getCurrentDate(noDashes = false): string {
   const date = new Date();
   const day = makeTwoDigitDate(date, 'day');
-  const month = makeTwoDigitDate(date.getMonth() + 1, 'day');
+  const month = makeTwoDigitDate(date.getUTCMonth() + 1, 'day');
   const year = date.getUTCFullYear();
 
   const dateString = `${year}-${month}-${day}`;
@@ -23,8 +23,8 @@ export function getCurrentDate(noDashes = false): string {
  */
 function makeTwoDigitDate(date: Date | number, unit: 'day' | 'month'): string {
   const value = (() => {
-    if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getDate()}`;
-    if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getMonth()}`;
+    if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getUTCDate()}`;
+    if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getUTCMonth()}`;
     return `${date}`;
   })();
 
