@@ -402,8 +402,8 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 {
   "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "1672963200",
-    "to": "1673395199",
+    "from": "20230101",
+    "to": "20230110",
     "offset": 0
   },
   "total": {
@@ -432,8 +432,8 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 {
   "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "1672531200",
-    "to": "1673395199",
+    "from": "20230101",
+    "to": "20230110",
     "offset": 0
   },
   "total": {
@@ -464,8 +464,8 @@ Note that this works precisely the same for `last` usage.
 {
   "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "1672513200",
-    "to": "1673377199",
+    "from": "20230101",
+    "to": "20230110",
     "offset": -5
   },
   "total": {

@@ -6,7 +6,7 @@ export const deployments: Deployment[] = [
   {
     repo: 'SOMEORG/SOMEREPO',
     timeCreated: '1641039900000', // Sat Jan 01 2022 13:25:00 GMT+0100 (CET)
-    date: '20230101',
+    date: '20220101',
     eventType: 'deployment',
     id: '987236hfahc82',
     changes: [

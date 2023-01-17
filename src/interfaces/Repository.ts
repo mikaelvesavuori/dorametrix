@@ -50,8 +50,14 @@ export interface Repository {
  */
 export type DataRequest = {
   key: string;
-  fromDate: string;
-  toDate: string;
+  /**
+   * @description Unit timestamp to start "from".
+   */
+  from: string;
+  /**
+   * @description Unit timestamp to query "to".
+   */
+  to: string;
   getLastDeployedCommit?: boolean;
 };
 

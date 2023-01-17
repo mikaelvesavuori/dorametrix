@@ -10,8 +10,8 @@ import { testCachedMetrics } from '../../../testdata/database/DynamoTestDatabase
 // Basic valid input that will be reused across tests
 const basicInput = {
   repo: 'SOMEORG/SOMEREPO',
-  from: '20220101',
-  to: '20221231'
+  from: '1640995200000',
+  to: '1672531199000'
 };
 
 describe('Success cases', () => {
@@ -53,8 +53,8 @@ describe('Success cases', () => {
       test('It should get cached metrics', async () => {
         const result = await getMetrics(repo, {
           ...basicInput,
-          from: '20220101',
-          to: '20220131',
+          from: '1640995200000',
+          to: '1643673599000',
           offset: 0
         });
 
@@ -90,8 +90,8 @@ describe('Success cases', () => {
         setEnv();
         const response = await getMetrics(repo, {
           repo: 'SOMEORG/SOMEREPO',
-          from: '20220101',
-          to: '20220131',
+          from: '1640995200000',
+          to: '1643673599000',
           offset: 0
         });
 

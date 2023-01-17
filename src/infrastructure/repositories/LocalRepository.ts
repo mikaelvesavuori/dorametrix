@@ -46,9 +46,9 @@ class LocalRepository implements Repository {
    * @description Get metrics for a given repository and a period of time.
    */
   async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
-    const { key, fromDate, toDate } = dataRequest;
+    const { key, from, to } = dataRequest;
 
-    const cachedData = this.getCachedMetrics({ key, fromDate, toDate });
+    const cachedData = this.getCachedMetrics({ key, from, to });
     if (cachedData && Object.keys(cachedData).length !== 0) return cachedData as any;
 
     const data = this.getItem(dataRequest);
@@ -68,13 +68,14 @@ class LocalRepository implements Repository {
    * @description Get data from local cache.
    */
   public async getCachedMetrics(dataRequest: DataRequest): Promise<Metrics> {
-    const { key, fromDate, toDate } = dataRequest;
+    const { key, from, to } = dataRequest;
 
     const cachedData = (() => {
       const repoName = key.toUpperCase();
-      const range = `${fromDate}_${toDate}`;
+      const range = `${from}_${to}`;
 
-      if (repoName === 'SOMEORG/SOMEREPO' && range === '20220101_20220131')
+      // 20220101_20220131
+      if (repoName === 'SOMEORG/SOMEREPO' && range === '1640995200000_1643673599000')
         return testCachedMetrics;
     })();
 

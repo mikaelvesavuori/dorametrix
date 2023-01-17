@@ -1,3 +1,5 @@
+import { getDateFromTimestamp } from 'chrono-utils';
+
 import { createNewDorametrix } from '../domain/services/Dorametrix';
 
 import { Metrics } from '../interfaces/Metrics';
@@ -31,7 +33,7 @@ async function getCachedMetricsFromDatabase(
 ): Promise<Metrics | void> {
   const { repo, from, to } = input;
 
-  const cachedData = await repository.getCachedMetrics({ key: repo, fromDate: from, toDate: to });
+  const cachedData = await repository.getCachedMetrics({ key: repo, from, to });
 
   if (Object.keys(cachedData).length > 0) return cachedData;
 }
@@ -42,8 +44,8 @@ async function getCachedMetricsFromDatabase(
 async function getMetricsFromDatabase(input: RequestDTO, repository: Repository) {
   const { repo, from, to } = input;
   const request = {
-    fromDate: from,
-    toDate: to
+    from,
+    to
   };
 
   const changes = await repository.getMetrics({
@@ -103,8 +105,8 @@ function compileResultMetrics(
   return {
     repo,
     period: {
-      from,
-      to,
+      from: getDateFromTimestamp(from),
+      to: getDateFromTimestamp(to),
       offset
     },
     total: {

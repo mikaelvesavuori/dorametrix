@@ -78,7 +78,8 @@ class DorametrixConcrete implements Dorametrix {
    * @description Calculates number of days within scope of two timestamps. Minimum is 1.
    */
   private calculateDaysInScope(fromTimestamp: string, toTimestamp: string) {
-    const diff = getDiffInSeconds(fromTimestamp, toTimestamp) * 1000; // Add milliseconds
+    const multiplier = fromTimestamp.length === 10 ? 1000 : 0; // Add milliseconds if 10-digit timestamp
+    const diff = getDiffInSeconds(fromTimestamp, toTimestamp) * multiplier;
     return Math.ceil(diff / 86400) || 1; // If 0 round up to 1 or fallback to 1 day
   }
 

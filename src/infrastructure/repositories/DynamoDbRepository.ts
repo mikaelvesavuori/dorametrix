@@ -67,14 +67,14 @@ class DynamoRepository implements Repository {
    * @description Get metrics from cache.
    */
   public async getCachedMetrics(dataRequest: DataRequest): Promise<Metrics> {
-    const { key, fromDate, toDate } = dataRequest;
+    const { key, from, to } = dataRequest;
 
     const params = {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :pk AND sk = :sk',
       ExpressionAttributeValues: {
         ':pk': { S: `CACHED_${key}` },
-        ':sk': { S: `${fromDate}_${toDate}` }
+        ':sk': { S: `${from}_${to}` }
       },
       Limit: 1
     };
@@ -83,7 +83,7 @@ class DynamoRepository implements Repository {
     const cachedData: DynamoItems | null =
       process.env.NODE_ENV !== 'test'
         ? await this.dynamoDb.send(new QueryCommand(params))
-        : getCachedTestData(key, fromDate, toDate);
+        : getCachedTestData(key, from, to);
 
     if (cachedData?.Items && cachedData.Items.length > 0)
       return JSON.parse(cachedData.Items[0].data['S']);
@@ -216,17 +216,17 @@ class DynamoRepository implements Repository {
    * @description Get data from DynamoDB.
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
-    const { key, fromDate, toDate, getLastDeployedCommit } = dataRequest;
+    const { key, from, to, getLastDeployedCommit } = dataRequest;
 
     const command = {
       TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :toDate',
+      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :to',
       ExpressionAttributeValues: {
         ':pk': { S: key },
         ':sk': {
-          S: getLastDeployedCommit ? 'LastDeployedCommit' : fromDate
+          S: getLastDeployedCommit ? 'LastDeployedCommit' : from
         },
-        ':toDate': { S: toDate }
+        ':to': { S: to }
       }
     };
 

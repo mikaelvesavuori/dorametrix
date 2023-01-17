@@ -187,22 +187,6 @@ export class MissingRequiredInputParamsError extends Error {
 }
 
 /**
- * @description Used when something is missing time.
- */
-export class MissingTimeError extends Error {
-  constructor() {
-    super();
-    this.name = 'MissingTimeError';
-    const message = 'Missing time in "convertDateToUnixTimestamp"!';
-    this.message = message;
-    //@ts-ignore
-    this.cause = {
-      statusCode: 500
-    };
-  }
-}
-
-/**
  * @description Used when the Jira parser is missing the `fields` object.
  */
 export class MissingJiraFieldsError extends Error {

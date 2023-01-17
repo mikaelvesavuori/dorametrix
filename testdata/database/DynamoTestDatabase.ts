@@ -91,7 +91,8 @@ export function getCachedTestData(key: string, fromDate: string, toDate: string)
   const fixedKey = key.toUpperCase();
   const range = `${fromDate}_${toDate}`;
 
-  if (fixedKey === 'SOMEORG/SOMEREPO' && range === '20220101_20220131')
+  // 20220101_20220131
+  if (fixedKey === 'SOMEORG/SOMEREPO' && range === '1640995200000_1643673599000')
     return {
       Items: [
         {
