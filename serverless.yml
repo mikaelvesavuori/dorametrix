@@ -136,6 +136,8 @@ resources:
     # DynamoDB
     DorametrixTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
       Properties:
         TableName: ${self:custom.config.tableName}
         AttributeDefinitions:
