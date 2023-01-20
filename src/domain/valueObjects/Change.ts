@@ -44,12 +44,12 @@ class ChangeConcrete {
   }
 
   public getDTO(): Change {
-    return {
+    return Object.freeze({
       repo: this.repo,
       eventType: this.eventType,
       id: this.id,
       timeCreated: this.timeCreated,
       date: this.date
-    };
+    });
   }
 }

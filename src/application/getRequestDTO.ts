@@ -49,7 +49,7 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
   validateDateRange(requestDto['to'], requestDto['from'], offset);
 
   requestDto['offset'] = offset;
-  return requestDto as RequestDTO;
+  return Object.freeze(requestDto) as RequestDTO;
 }
 
 /**

@@ -50,13 +50,13 @@ class DeploymentConcrete {
   }
 
   public getDTO(): Deployment {
-    return {
+    return Object.freeze({
       repo: this.repo,
       date: this.date,
       eventType: this.eventType,
       id: this.id,
       changes: this.changes,
       timeCreated: this.timeCreated
-    };
+    });
   }
 }

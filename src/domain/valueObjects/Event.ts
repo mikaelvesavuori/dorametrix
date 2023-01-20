@@ -50,7 +50,7 @@ class EventConcrete {
   }
 
   public getDTO(): Event {
-    return {
+    return Object.freeze({
       repo: this.repo,
       date: this.date,
       eventType: this.eventType as EventType,
@@ -61,6 +61,6 @@ class EventConcrete {
       timeResolved: this.timeResolved,
       title: this.title,
       message: this.message
-    };
+    });
   }
 }

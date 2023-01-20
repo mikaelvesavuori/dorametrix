@@ -50,7 +50,7 @@ class IncidentConcrete implements Incident {
   }
 
   public getDTO(): Incident {
-    return {
+    return Object.freeze({
       repo: this.repo,
       date: this.date,
       eventType: this.eventType,
@@ -58,6 +58,6 @@ class IncidentConcrete implements Incident {
       timeCreated: this.timeCreated,
       timeResolved: this.timeResolved,
       title: this.title
-    };
+    });
   }
 }
