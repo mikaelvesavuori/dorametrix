@@ -329,15 +329,13 @@ Caching is always done for a range of dates. All subsequent lookups will use the
 
 ## Example API calls
 
-_Remember to pass your authorization token in the `Authorization` header!_
-
 All of the below demonstrates "directly calling" the API; since webhook events from GitHub, Bitbucket and Jira have other (varying shapes) they are out-of-scope for the example calls.
 
 ### Create change
 
 #### Request
 
-`POST {{BASE_URL}}/event`
+`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
 
 ```json
 {
@@ -354,7 +352,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`POST {{BASE_URL}}/event`
+`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
 
 ```json
 {
@@ -385,7 +383,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`POST {{BASE_URL}}/event`
+`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
 
 ```json
 {
@@ -399,6 +397,8 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 `204 No Content`
 
 ### Get all metrics from last X days ("sliding window")
+
+_Remember to pass your authorization token in the `Authorization` header for any GET requests!_
 
 #### Request
 
