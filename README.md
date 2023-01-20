@@ -74,7 +74,7 @@ You can set certain values in `serverless.yml`.
 #### Required
 
 - `custom.config.accountNumber`: Your AWS account number.
-- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service (for requests, not for adding events which is always open). You will use this when calling the service.
+- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service.
 
 Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
@@ -93,19 +93,19 @@ Webhooks are fired automatically from your chosen tool upon your selected events
 
 Create a webhook; [see this guide if you need instructions](https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`), set the content type to `application/json` and select the event types `Issues` and `Push`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`), set the content type to `application/json` and select the event types `Issues` and `Push`.
 
 #### Bitbucket
 
 Create a webhook; [see this guide if you need instructions](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/#Create-webhooks).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`) and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`) and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
 
 #### Jira
 
 Create a webhook; [see this guide if you need instructions](https://developer.atlassian.com/server/jira/platform/webhooks/#registering-a-webhook).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event`) and select the event types `Issue:created`, `Issue:updated`, `Issue:deleted`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`) and select the event types `Issue:created`, `Issue:updated`, `Issue:deleted`.
 
 **Note**: Because there is no mapping between the Jira project and a given repository you need to manually provide that context through Jira. Dorametrix will assume a custom field on any issue: The ideal option is the URL field type where the value must conform to either a GitHub or Bitbucket repository URL, i.e. `https://github.com/SOMEORG/SOMEREPO` or `https://bitbucket.org/SOMEORG/SOMEREPO/` format. The actual name and description of the field does not matter.
 
@@ -118,6 +118,12 @@ _If there is a need to support additional Git hosts, then please raise an Issue 
 The current version of Dorametrix does not have built-in support for GitHub webhook secrets, but if there is sufficient demand I might add such support.
 
 _Note that Bitbucket Cloud and Jira do not have support for webhook secrets: https://jira.atlassian.com/browse/BCLOUD-14683._
+
+The approach used in Dorametrix is instead to make the best of the situation and require an `authorization` query string parameter with a custom authorization token. This then gets verified by a [Lambda Authorizer function](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html).
+
+All GET requests require that same token but in a more practical `Authorization` header.
+
+This approach adds a minimal security measure but is flexible enough to also work effortlessly with any integration tests you might want to run. At the end of the day an acceptable compromise solution, I hope.
 
 ## Running locally
 
@@ -323,6 +329,8 @@ Caching is always done for a range of dates. All subsequent lookups will use the
 
 ## Example API calls
 
+_Remember to pass your authorization token in the `Authorization` header!_
+
 All of the below demonstrates "directly calling" the API; since webhook events from GitHub, Bitbucket and Jira have other (varying shapes) they are out-of-scope for the example calls.
 
 ### Create change
@@ -501,11 +509,10 @@ Note that this works precisely the same for `last` usage.
 
 ## Ideas for improvements
 
-- Create test data
+- Create test data functionality/script
 - Add more tests
 - Higher type coverage
 - The time format `DD:HH:MM:SS` is logically limited to 99 days - but is this a real problem?
-- Authorization when adding events?
 - Alarms for failures
 
 ---

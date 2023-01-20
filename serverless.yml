@@ -19,10 +19,6 @@ provider:
     Usage: ${self:service}
   apiGateway:
     minimumCompressionSize: 1024
-  environment:
-    REGION: ${self:provider.region}
-    TABLE_NAME: ${self:custom.config.tableName}
-    MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
 
 plugins:
   - serverless-esbuild
@@ -34,22 +30,54 @@ package:
 
 custom:
   config:
-    authToken: SOMETHING # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
+    authToken: something # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
     accountNumber: 123412341234
     maxDateRange: 30
     tableName: dorametrix
   aws:
     databaseArn: arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}
+    apiGatewayCachingTtl:
+      prod: 30
+      dev: 0
+      test: 0
+    apiGatewayCachingTtlValue: ${self:custom.aws.apiGatewayCachingTtl.${self:provider.stage}, self:custom.aws.apiGatewayCachingTtl.test} # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
   esbuild:
     bundle: true
     minify: true
 
 functions:
-  Authorizer:
+  AuthorizerAdd:
     handler: src/infrastructure/adapters/web/Authorizer.handler
-    description: ${self:service} authorizer
+    description: ${self:service} authorizer for adding metrics
     environment:
       AUTH_TOKEN: ${self:custom.config.authToken}
+  AuthorizerGet:
+    handler: src/infrastructure/adapters/web/Authorizer.handler
+    description: ${self:service} authorizer for getting metrics
+    environment:
+      AUTH_TOKEN: ${self:custom.config.authToken}
+  AddEvent:
+    handler: src/infrastructure/adapters/web/AddEvent.handler
+    description: Report new event (this will then be automatically also created as a change, deployment, or incident)
+    events:
+      - http:
+          method: POST
+          path: /event
+          authorizer:
+            name: AuthorizerAdd
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
+            identitySource: method.request.querystring.authorization
+            type: request
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:Query
+        Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+      MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetrics.handler
     description: Get DORA metrics
@@ -58,29 +86,29 @@ functions:
           method: GET
           path: /metrics
           authorizer:
-            name: Authorizer
-            resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+            name: AuthorizerGet
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
             identitySource: method.request.header.Authorization
             type: request
+          cors:
+            origin: '*'
+            methods:
+              - GET
+            headers:
+              - Content-Type
+              - Authorization
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Credentials
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           - dynamodb:PutItem
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
-  AddEvent:
-    handler: src/infrastructure/adapters/web/AddEvent.handler
-    description: Report new event (this will then be automatically also created as a change, deployment, or incident)
-    events:
-      - http:
-          method: POST
-          path: /event
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - dynamodb:PutItem
-          - dynamodb:Query
-        Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+      MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
   GetLastDeployment:
     handler: src/infrastructure/adapters/web/GetLastDeployment.handler
     description: Get the commit ID of the last production deployment
@@ -89,8 +117,8 @@ functions:
           method: GET
           path: /lastdeployment
           authorizer:
-            name: Authorizer
-            resultTtlInSeconds: 30 # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+            name: AuthorizerGet
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
             identitySource: method.request.header.Authorization
             type: request
     iamRoleStatements:
@@ -98,6 +126,10 @@ functions:
         Action:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+      MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
 
 resources:
   Resources:
