@@ -7,6 +7,7 @@ import { getMetrics } from '../../../usecases/getMetrics';
 import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
 import { getRequestDTO } from '../../../application/getRequestDTO';
+import { createQueryStringParamsObjectFromString } from '../../../application/createQueryStringParamsObjectFromString';
 
 import { metadataConfig } from '../../../config/metadata';
 
@@ -26,7 +27,9 @@ export async function handler(
   });
 
   try {
-    const queryParams = getRequestDTO(event.queryStringParameters || {});
+    const queryStringParameters = createQueryStringParamsObjectFromString(event);
+    const queryParams = getRequestDTO(queryStringParameters);
+    console.log('queryParams', queryParams);
     const repo = createNewDynamoDbRepository();
     const metrics = await getMetrics(repo, queryParams);
 
