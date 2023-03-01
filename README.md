@@ -74,13 +74,14 @@ You can set certain values in `serverless.yml`.
 #### Required
 
 - `custom.config.accountNumber`: Your AWS account number.
-- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service.
+- `custom.config.apiKey`: The "API key" or authorization token you want to use to secure your service.
 
 Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
 #### Optional
 
 - `custom.config.maxDateRange`: This defaults to `30` which is a reasonable default.
+- `custom.config.maxLifeInDays`: This defaults to `90` but can be changed.
 - `custom.config.tableName`: This defaults to `dorametrix` but can be changed.
 
 ### Optional: Set up your incident handling webhook
@@ -93,19 +94,19 @@ Webhooks are fired automatically from your chosen tool upon your selected events
 
 Create a webhook; [see this guide if you need instructions](https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`), set the content type to `application/json` and select the event types `Issues` and `Push`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=API_KEY`), set the content type to `application/json` and select the event types `Issues` and `Push`.
 
 #### Bitbucket
 
 Create a webhook; [see this guide if you need instructions](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/#Create-webhooks).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`) and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=API_KEY`) and select the event types `Repository:Push`, `Issue:Created` and `Issue:Updated`.
 
 #### Jira
 
 Create a webhook; [see this guide if you need instructions](https://developer.atlassian.com/server/jira/platform/webhooks/#registering-a-webhook).
 
-Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=AUTH_TOKEN`) and select the event types `Issue:created`, `Issue:updated`, `Issue:deleted`.
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=API_KEY`) and select the event types `Issue:created`, `Issue:updated`, `Issue:deleted`.
 
 **Note**: Because there is no mapping between the Jira project and a given repository you need to manually provide that context through Jira. Dorametrix will assume a custom field on any issue: The ideal option is the URL field type where the value must conform to either a GitHub or Bitbucket repository URL, i.e. `https://github.com/SOMEORG/SOMEREPO` or `https://bitbucket.org/SOMEORG/SOMEREPO/` format. The actual name and description of the field does not matter.
 
@@ -133,7 +134,9 @@ Note that it will attempt to connect to a database, so deploy the application an
 
 ## Deployment
 
-Run `npm run deploy`.
+First make sure that you have a fallback value for your AWS account number in `serverless.yml`, for example: `awsAccountNumber: ${opt:awsAccountNumber, '123412341234'}` or that you set the deployment script to use the flag, for example `npx sls deploy --awsAccountNumber 123412341234`.
+
+Then you can deploy with `npm run deploy`.
 
 ## Logging and metrics
 
@@ -296,6 +299,10 @@ This is very straight-forward, just add the total time of all incidents (from st
 
 Dorametrix does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with Dorametrix.
 
+### Data is removed after a period of time
+
+To keep the volume of data manageable, version `2.1.0` introduces a `maxLifeInDays` setting. It defaults to `90` days, after which DynamoDB will remove the record after the given period + 1 day. You can set the value to any other value, as needed.
+
 ### Metrics and history
 
 While you can get a range of dates, you can't get more exact responses than a full day.
@@ -335,7 +342,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
+`POST {{BASE_URL}}/event?authorization=API_KEY`
 
 ```json
 {
@@ -352,7 +359,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
+`POST {{BASE_URL}}/event?authorization=API_KEY`
 
 ```json
 {
@@ -383,7 +390,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 
 #### Request
 
-`POST {{BASE_URL}}/event?authorization=AUTH_TOKEN`
+`POST {{BASE_URL}}/event?authorization=API_KEY`
 
 ```json
 {

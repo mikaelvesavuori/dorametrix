@@ -6,9 +6,27 @@ provider:
   stage: ${opt:stage, 'dev'}
   region:  ${opt:region, 'eu-north-1'}
   memorySize: ${opt:memory, 512}
-  timeout: 10
-  logRetentionInDays: 7
+  timeout: ${opt:timeout, 10}
+  logRetentionInDays: ${opt:logRetentionInDays, 7}
   versionFunctions: false
+  httpApi:
+    cors: true
+    #disableDefaultEndpoint: true
+    authorizers:
+      AuthorizerAdd:
+        functionName: AuthorizerAdd
+        resultTtlInSeconds: ${self:custom.config.aws.apiGatewayCachingTtl.${self:provider.stage}, '0'}
+        identitySource:
+          - $request.querystring.authorization
+        type: request
+        enableSimpleResponses: true
+      AuthorizerGet:
+        functionName: AuthorizerGet
+        resultTtlInSeconds: ${self:custom.config.aws.apiGatewayCachingTtl.${self:provider.stage}, '0'}
+        identitySource:
+          - $request.header.Authorization
+        type: request
+        enableSimpleResponses: true
   deploymentBucket:
     blockPublicAccess: true
     maxPreviousDeploymentArtifacts: 5
@@ -30,12 +48,13 @@ package:
 
 custom:
   config:
-    authToken: something # EDIT THIS TO YOUR VALUE - see for example https://www.uuidgenerator.net for getting a UUID v4
-    accountNumber: 123412341234
-    maxDateRange: 30
-    tableName: dorametrix
+    apiKey: ${opt:apiKey, '82490d5a-1950-4527-ab2f-5c984c861462'} # Add your desired valid API key here or use the default
+    awsAccountNumber: ${opt:awsAccountNumber, '500450767305'} # Set this to your value if you want to use a fallback value
+    maxDateRange: ${opt:maxDateRange, '30'}
+    maxLifeInDays: ${opt:maxLifeInDays, '90'}
+    tableName: ${self:service}-${self:provider.stage}
   aws:
-    databaseArn: arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}
+    databaseArn: arn:aws:dynamodb:${aws:region}:${self:custom.config.awsAccountNumber}:table/${self:custom.config.tableName}
     apiGatewayCachingTtl:
       prod: 30
       dev: 0
@@ -47,27 +66,24 @@ custom:
 
 functions:
   AuthorizerAdd:
-    handler: src/infrastructure/adapters/web/Authorizer.handler
+    handler: src/infrastructure/authorizers/Authorizer.handler
     description: ${self:service} authorizer for adding metrics
     environment:
-      AUTH_TOKEN: ${self:custom.config.authToken}
+      API_KEY: ${self:custom.config.apiKey}
   AuthorizerGet:
-    handler: src/infrastructure/adapters/web/Authorizer.handler
+    handler: src/infrastructure/authorizers/Authorizer.handler
     description: ${self:service} authorizer for getting metrics
     environment:
-      AUTH_TOKEN: ${self:custom.config.authToken}
+      API_KEY: ${self:custom.config.apiKey}
   AddEvent:
     handler: src/infrastructure/adapters/web/AddEvent.handler
     description: Report new event (this will then be automatically also created as a change, deployment, or incident)
     events:
-      - http:
+      - httpApi:
           method: POST
           path: /event
           authorizer:
             name: AuthorizerAdd
-            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
-            identitySource: method.request.querystring.authorization
-            type: request
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -75,30 +91,19 @@ functions:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
     environment:
-      REGION: ${self:provider.region}
+      REGION: ${aws:region}
       TABLE_NAME: ${self:custom.config.tableName}
       MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
+      MAX_LIFE_IN_DAYS: ${self:custom.config.maxLifeInDays}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetrics.handler
     description: Get DORA metrics
     events:
-      - http:
+      - httpApi:
           method: GET
           path: /metrics
           authorizer:
             name: AuthorizerGet
-            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
-            identitySource: method.request.header.Authorization
-            type: request
-          cors:
-            origin: '*'
-            methods:
-              - GET
-            headers:
-              - Content-Type
-              - Authorization
-              - Access-Control-Allow-Origin
-              - Access-Control-Allow-Credentials
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -106,28 +111,25 @@ functions:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
     environment:
-      REGION: ${self:provider.region}
+      REGION: ${aws:region}
       TABLE_NAME: ${self:custom.config.tableName}
       MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
   GetLastDeployment:
     handler: src/infrastructure/adapters/web/GetLastDeployment.handler
     description: Get the commit ID of the last production deployment
     events:
-      - http:
+      - httpApi:
           method: GET
           path: /lastdeployment
           authorizer:
             name: AuthorizerGet
-            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
-            identitySource: method.request.header.Authorization
-            type: request
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           - dynamodb:Query
         Resource: ${self:custom.aws.databaseArn}
     environment:
-      REGION: ${self:provider.region}
+      REGION: ${aws:region}
       TABLE_NAME: ${self:custom.config.tableName}
       MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
 
@@ -158,33 +160,3 @@ resources:
         BillingMode: PAY_PER_REQUEST
         PointInTimeRecoverySpecification:
           PointInTimeRecoveryEnabled: true
-    # API Gateway
-    GatewayResponseDefault4XX:
-      Type: 'AWS::ApiGateway::GatewayResponse'
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        ResponseType: DEFAULT_4XX
-        RestApiId:
-          Ref: 'ApiGatewayRestApi'
-    AuthFailureExpiredGatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        ResponseType: EXPIRED_TOKEN
-        RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'
-    AuthFailureUnauthorizedGatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        ResponseType: UNAUTHORIZED
-        RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'

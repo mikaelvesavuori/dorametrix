@@ -1,10 +1,10 @@
 /**
  * @description Used when an expected `Authorization` header is missing.
  */
-export class MissingAuthorizationHeaderError extends Error {
+export class MissingAuthorizationError extends Error {
   constructor() {
     super();
-    this.name = 'MissingAuthorizationHeaderError';
+    this.name = 'MissingAuthorizationError';
     const message = `Missing an expected value in the "Authorization" header!`;
     this.message = message;
     // @ts-ignore

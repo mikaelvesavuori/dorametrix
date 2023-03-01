@@ -4,14 +4,8 @@
 export type EventInput = {
   body: Record<string, any>;
   headers: Headers;
-  httpMethod: HttpMethod;
-  queryStringParameters: QueryStringParameters;
-  methodArn: string;
-  /**
-   * @description Ending URL path
-   * @example '/GetMetrics';
-   */
-  resource: string;
+  requestContext?: RequestContext;
+  identitySource: string[];
 };
 
 /**
@@ -19,18 +13,11 @@ export type EventInput = {
  */
 export type Headers = {
   'User-Agent': string;
-  Authorization: string;
+  Authorization?: string;
 };
 
-/**
- * @description Supported HTTP methods.
- */
-export type HttpMethod = 'GET' | 'POST' | 'OPTIONS';
-
-/**
- * @description Simplified query string parameters object.
- */
-export type QueryStringParameters = {
-  [key: string]: string;
-  authorization: string;
+type RequestContext = {
+  http: {
+    method: string;
+  };
 };

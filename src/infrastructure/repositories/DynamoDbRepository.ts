@@ -10,6 +10,8 @@ import { Incident } from '../../interfaces/Incident';
 import { DynamoItems } from '../../interfaces/DynamoDb';
 import { Metrics } from '../../interfaces/Metrics';
 
+import { getExpiryTime } from '../../application/getExpiryTime';
+
 import { addCustomMetric } from '../frameworks/addCustomMetric';
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
@@ -129,6 +131,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `EVENT_${repo}` },
         sk: { S: timeCreated },
+        expiresAt: { S: getExpiryTime() },
         timeCreated: { S: eventTime },
         timeResolved: { S: timeResolved },
         message: { S: message },
@@ -151,6 +154,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `CHANGE_${repo}` },
         sk: { S: timeCreated },
+        expiresAt: { S: getExpiryTime() },
         timeCreated: { S: timeCreated },
         id: { S: id }
       }
@@ -171,6 +175,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `DEPLOYMENT_${repo}` },
         sk: { S: timeCreated },
+        expiresAt: { S: getExpiryTime() },
         timeCreated: { S: timeCreated },
         changes: { S: JSON.stringify(changes) },
         id: { S: id }
@@ -197,6 +202,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `INCIDENT_${repo}` },
         sk: { S: timeCreated },
+        expiresAt: { S: getExpiryTime() },
         timeCreated: { S: timeCreated },
         timeResolved: { S: timeResolved || '' },
         title: { S: title },
