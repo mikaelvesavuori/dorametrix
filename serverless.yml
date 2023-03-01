@@ -49,7 +49,7 @@ package:
 custom:
   config:
     apiKey: ${opt:apiKey, '82490d5a-1950-4527-ab2f-5c984c861462'} # Add your desired valid API key here or use the default
-    awsAccountNumber: ${opt:awsAccountNumber, '500450767305'} # Set this to your value if you want to use a fallback value
+    awsAccountNumber: ${opt:awsAccountNumber, '123412341234'} # Set this to your value if you want to use a fallback value
     maxDateRange: ${opt:maxDateRange, '30'}
     maxLifeInDays: ${opt:maxLifeInDays, '90'}
     tableName: ${self:service}-${self:provider.stage}
