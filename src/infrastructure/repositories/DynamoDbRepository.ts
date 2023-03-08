@@ -222,17 +222,16 @@ class DynamoRepository implements Repository {
    * @description Get data from DynamoDB.
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
-    const { key, from, to, getLastDeployedCommit } = dataRequest;
+    const { key, from, getLastDeployedCommit } = dataRequest;
 
     const command = {
       TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :to',
+      KeyConditionExpression: 'pk = :pk AND sk = :sk',
       ExpressionAttributeValues: {
         ':pk': { S: key },
         ':sk': {
           S: getLastDeployedCommit ? 'LastDeployedCommit' : from
-        },
-        ':to': { S: to }
+        }
       }
     };
 

@@ -53,6 +53,15 @@ export function getRequestDTO(queryStringParameters: Record<string, any>): Reque
 }
 
 /**
+ * @description Get the DTO for a request to get the last deployment.
+ */
+export function getLastDeployedDTO(queryStringParameters: Record<string, any>): RequestDTO {
+  return Object.freeze({
+    repo: sanitizeKey(queryStringParameters, 'repo') as string
+  }) as RequestDTO;
+}
+
+/**
  * @description Validates user request input.
  */
 function validateRequestInput(

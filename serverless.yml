@@ -3,6 +3,7 @@ service: dorametrix
 provider:
   name: aws
   runtime: nodejs18.x
+  architecture: arm64
   stage: ${opt:stage, 'dev'}
   region:  ${opt:region, 'eu-north-1'}
   memorySize: ${opt:memory, 512}

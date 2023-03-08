@@ -6,7 +6,7 @@ import { getLastDeployment } from '../../../usecases/getLastDeployment';
 
 import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
-import { getRequestDTO } from '../../../application/getRequestDTO';
+import { getLastDeployedDTO } from '../../../application/getRequestDTO';
 import { createQueryStringParamsObjectFromString } from '../../../application/createQueryStringParamsObjectFromString';
 
 import { metadataConfig } from '../../../config/metadata';
@@ -28,7 +28,7 @@ export async function handler(
 
   try {
     const queryStringParameters = createQueryStringParamsObjectFromString(event);
-    const input = getRequestDTO(queryStringParameters);
+    const input = getLastDeployedDTO(queryStringParameters);
     const repo = createNewDynamoDbRepository();
     const lastDeployment = await getLastDeployment(repo, input);
 
