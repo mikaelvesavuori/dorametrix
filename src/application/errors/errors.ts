@@ -187,6 +187,22 @@ export class MissingRequiredInputParamsError extends Error {
 }
 
 /**
+ * @description Used when the Shortcut parser is missing the `fields` object.
+ */
+export class MissingShortcutFieldsError extends Error {
+  constructor() {
+    super();
+    this.name = 'MissingShortcutFieldsError';
+    const message = 'Missing "fields" object in Shortcut webhook input!';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 400
+    };
+  }
+}
+
+/**
  * @description Used when the Jira parser is missing the `fields` object.
  */
 export class MissingJiraFieldsError extends Error {
