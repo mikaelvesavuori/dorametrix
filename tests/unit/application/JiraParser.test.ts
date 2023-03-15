@@ -9,17 +9,18 @@ import {
 
 describe('Success cases', () => {
   describe('Event types', () => {
-    test('It should return "incident" for event types', () => {
+    test('It should return "incident" for event types', async () => {
       const parser = new JiraParser();
-      const eventType = parser.getEventType();
+      const eventType = await parser.getEventType();
+      
       expect(eventType).toBe('incident');
     });
   });
 
   describe('Payloads', () => {
-    test('It should return the provided event if it is unknown together with the a correct object', () => {
+    test('It should return the provided event if it is unknown together with the a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'something-else'
@@ -32,9 +33,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-    test('It should take in an "issue created" ("issue_created") event and return a correct object', () => {
+    test('It should take in an "issue created" ("issue_created") event and return a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_created',
@@ -53,9 +54,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-    test('It should take in an "issue updated (resolved)" ("issue_generic") event and return a correct object', () => {
+    test('It should take in an "issue updated (resolved)" ("issue_generic") event and return a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_generic',
@@ -99,9 +100,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-    test('It should take in an "issue deleted" event and return a correct object', () => {
+    test('It should take in an "issue deleted" event and return a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           webhookEvent: 'jira:issue_deleted',
@@ -122,9 +123,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-    test('It should take in a "labeled as incident" ("issue_updated") event and return a correct object', () => {
+    test('It should take in a "labeled as incident" ("issue_updated") event and return a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_updated',
@@ -153,9 +154,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-    test('It should take in a "labeled as something other than incident" ("issue_updated") event and return a correct object', () => {
+    test('It should take in a "labeled as something other than incident" ("issue_updated") event and return a correct object', async () => {
       const parser = new JiraParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_updated',
@@ -186,11 +187,11 @@ describe('Success cases', () => {
   });
 
   describe('Repository name', () => {
-    test('It should take in a typical Jira event and return the GitHub repository name', () => {
+    test('It should take in a typical Jira event and return the GitHub repository name', async () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = parser.getRepoName({
+      const repoName = await parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -205,11 +206,11 @@ describe('Success cases', () => {
       expect(repoName).toBe(expected);
     });
 
-    test('It should take in a typical Jira event and return the Bitbucket repository name', () => {
+    test('It should take in a typical Jira event and return the Bitbucket repository name', async () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = parser.getRepoName({
+      const repoName = await parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -224,11 +225,11 @@ describe('Success cases', () => {
       expect(repoName).toBe(expected);
     });
 
-    test('It should take in a typical Jira event and return the Bitbucket repository name from longform input', () => {
+    test('It should take in a typical Jira event and return the Bitbucket repository name from longform input', async () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = parser.getRepoName({
+      const repoName = await parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -247,10 +248,10 @@ describe('Success cases', () => {
 
 describe('Failure cases', () => {
   describe('Payloads', () => {
-    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', () => {
+    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', async () => {
       const parser = new JiraParser();
-      expect(() =>
-        parser.getPayload({
+      try {
+      await parser.getPayload({
           headers: {},
           body: {
             issue_event_type_name: 'issue_created',
@@ -260,14 +261,16 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      } catch(e){
+        expect(e).toBeInstanceOf(MissingEventTimeError);
+      }
     });
   });
 
-  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID', () => {
+  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID',async () => {
     const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
+    try {
+    await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_created',
@@ -278,13 +281,15 @@ describe('Failure cases', () => {
           }
         }
       })
-    ).toThrowError(MissingIdError);
+    } catch(e){
+      expect(e).toBeInstanceOf(MissingIdError);
+    }
   });
 
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp', () => {
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp',async () => {
     const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
+    try {
+      await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_generic',
@@ -306,13 +311,15 @@ describe('Failure cases', () => {
           }
         }
       })
-    ).toThrowError(MissingEventTimeError);
+    } catch(e){
+      expect(e).toBeInstanceOf(MissingEventTimeError);
+    }
   });
 
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp', () => {
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp',async () => {
     const parser = new JiraParser();
-    expect(() =>
-      parser.getPayload({
+    try {
+      await parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_generic',
@@ -334,35 +341,44 @@ describe('Failure cases', () => {
           }
         }
       })
-    ).toThrowError(MissingEventTimeError);
+    } catch(e){
+      expect(e).toBeInstanceOf(MissingEventTimeError);
+    }
   });
 
-  test('It should throw a MissingJiraFieldsError if the "fields" object is missing', () => {
+  test('It should throw a MissingJiraFieldsError if the "fields" object is missing',async () => {
     const parser = new JiraParser();
 
-    expect(() => {
-      parser.getRepoName({});
-    }).toThrowError(MissingJiraFieldsError);
+    try {
+      await parser.getRepoName({});
+    } catch(e){
+      expect(e).toBeInstanceOf(MissingJiraFieldsError);
+    }
   });
 
-  test('It should throw a MissingJiraFieldsError if the input is missing', () => {
+  test('It should throw a MissingJiraFieldsError if the input is missing',async () => {
     const parser = new JiraParser();
 
-    expect(() => {
+    try {
       // @ts-ignore
-      parser.getRepoName();
-    }).toThrowError(MissingJiraFieldsError);
+      await parser.getRepoName();
+    } catch(e) {
+      expect(e).toBeInstanceOf(MissingJiraFieldsError);
+    }
   });
 
-  test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field', () => {
+  test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field',async () => {
     const parser = new JiraParser();
 
-    expect(() => {
-      parser.getRepoName({
+    try{ 
+      await parser.getRepoName({
         issue: {
           fields: {}
         }
       });
-    }).toThrowError(MissingJiraMatchedCustomFieldKeyError);
+    } catch(e) {
+      expect(e).toBeInstanceOf(MissingJiraMatchedCustomFieldKeyError);
+    }
   });
 });
+ 

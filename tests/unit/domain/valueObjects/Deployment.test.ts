@@ -64,7 +64,7 @@ describe('Failure cases', () => {
 
 describe('Success cases', () => {
   describe('Direct parser', () => {
-    test('It should create a valid Deployment', () => {
+    test('It should create a valid Deployment', async () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'deployment',
@@ -86,7 +86,7 @@ describe('Success cases', () => {
       };
       const headers = {};
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const deployment = makeDeployment(event);
 
       expect(deployment).toHaveProperty('id');

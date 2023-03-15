@@ -72,7 +72,7 @@ describe('Failure cases', () => {
 
 describe('Success cases', () => {
   describe('Direct parser', () => {
-    test('It should create a valid Change', () => {
+    test('It should create a valid Change', async () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'change',
@@ -80,7 +80,7 @@ describe('Success cases', () => {
       };
       const headers = {};
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const change = makeChange(event);
 
       expect(change).toHaveProperty('eventType');
@@ -91,12 +91,12 @@ describe('Success cases', () => {
   });
 
   describe('Bitbucket parser', () => {
-    test('It should create a valid Change', () => {
+    test('It should create a valid Change', async () => {
       const parser = new BitbucketParser();
       const body = bitbucketPush;
       const headers = bitbucketPushHeaders;
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const change = makeChange(event);
 
       expect(change).toHaveProperty('eventType');
@@ -107,12 +107,12 @@ describe('Success cases', () => {
   });
 
   describe('GitHub parser', () => {
-    test('It should create a valid Change', () => {
+    test('It should create a valid Change', async () => {
       const parser = new GitHubParser();
       const body = githubPush;
       const headers = githubPushHeaders;
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const change = makeChange(event);
 
       expect(change).toHaveProperty('eventType');

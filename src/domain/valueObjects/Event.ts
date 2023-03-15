@@ -8,45 +8,65 @@ import { Parser } from '../../interfaces/Parser';
  * @description Create the main type of event, the titular `Event` which
  * can be reassembled to other, more specific types or "value objects" later.
  */
-export function makeEvent(
+export async function makeEvent(
   parser: Parser,
   body: Record<string, any>,
   headers: Record<string, any>
-): Event {
+): Promise<Event> {
   const eventConcrete = new EventConcrete(parser, body, headers);
+  await EventConcrete.populate(eventConcrete, parser, body, headers);
   return eventConcrete.getDTO();
 }
 
 class EventConcrete {
-  repo: string;
+  repo: string = ''
   date: string;
-  eventType: string;
-  id: string;
-  changes: Change[];
-  eventTime: string;
-  timeCreated: string;
-  timeResolved: string;
-  title: string;
-  message: string;
+  eventType: string = ''
+  id: string = '';
+  changes: Change[] = new Array<Change>(0);
+  eventTime: string = '';
+  timeCreated: string = '';
+  timeResolved: string = '';
+  title: string = '';
+  message: string = '';
+
 
   constructor(parser: Parser, body: Record<string, any>, headers: Record<string, any>) {
-    const eventType = parser.getEventType({ body, headers });
-    const { id, eventTime, timeCreated, timeResolved, title, message } = parser.getPayload({
+    this.date = getCurrentDate(true);
+    EventConcrete.populate(this, parser, body, headers);
+  }
+
+  static async populate(event: EventConcrete, parser: Parser, body: Record<string, any>, headers: Record<string, any>) : Promise<EventConcrete>
+  {
+    const eventType = await parser.getEventType({ body, headers });
+
+    const repo = await parser.getRepoName(body);
+
+    event.repo = repo;
+    event.date = getCurrentDate(true);
+    event.eventType = eventType;
+    event.changes = body.changes || [];
+    
+    const { id, eventTime, timeCreated, timeResolved, title, message } = await parser.getPayload({
       body,
       headers
     });
-    const repo = parser.getRepoName(body);
 
-    this.repo = repo;
-    this.date = getCurrentDate(true);
-    this.eventType = eventType;
-    this.id = id;
-    this.changes = body.changes || [];
-    this.eventTime = eventTime.toString();
-    this.timeCreated = timeCreated.toString();
-    this.timeResolved = timeResolved ? timeResolved.toString() : '';
-    this.title = title || '';
-    this.message = message || '';
+    event.id = id;
+    event.eventTime = eventTime.toString();
+    event.timeCreated = timeCreated.toString();
+    event.timeResolved = timeResolved ? timeResolved.toString() : '';
+    event.title = title || '';
+    event.message = message || '';
+
+    return event;
+  }
+
+
+  static async create(parser: Parser, body: Record<string, any>, headers: Record<string, any>) : Promise<EventConcrete>
+  {
+    var event = new EventConcrete(parser, body, headers);
+    return EventConcrete.populate(event, parser, body, headers)
   }
 
   public getDTO(): Event {

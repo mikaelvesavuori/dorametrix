@@ -18,7 +18,7 @@ export class BitbucketParser implements Parser {
    * @description Normalize the incoming event into one of the three
    * supported types: `change`, `deployment`, or `incident`.
    */
-  public getEventType(eventTypeInput: EventTypeInput): string {
+  public async getEventType(eventTypeInput: EventTypeInput): Promise<string> {
     const { headers } = eventTypeInput;
     const eventType = headers?.['X-Event-Key'] || headers?.['x-event-key'];
     if (eventType === 'repo:push') return 'change';
@@ -29,7 +29,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Get payload fields from the right places.
    */
-  public getPayload(payloadInput: PayloadInput): EventDto {
+  public async getPayload(payloadInput: PayloadInput): Promise<EventDto> {
     const { headers } = payloadInput;
     const body = payloadInput.body || {};
 
@@ -139,7 +139,7 @@ export class BitbucketParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: Record<string, any>): string {
+  public async getRepoName(body: Record<string, any>): Promise<string> {
     return (body && body?.['repository']?.['full_name']) || '';
   }
 }

@@ -13,7 +13,7 @@ export class DirectParser implements Parser {
    * @description Normalize the incoming type of event into the three
    * supported categories: `change`, `deployment`, or `incident`.
    */
-  public getEventType(eventTypeInput: EventTypeInput): string {
+  public async getEventType(eventTypeInput: EventTypeInput): Promise<string> {
     const { body } = eventTypeInput;
     const eventType = body && body.eventType;
     if (eventType === 'change' || eventType === 'deployment' || eventType === 'incident')
@@ -24,7 +24,7 @@ export class DirectParser implements Parser {
   /**
    * @description Create payload data, as these won't exist on the original material.
    */
-  public getPayload(payloadInput?: PayloadInput): EventDto {
+  public async getPayload(payloadInput?: PayloadInput): Promise<EventDto> {
     const body = payloadInput ? payloadInput.body : undefined;
     const date = Date.now().toString();
 
@@ -43,7 +43,7 @@ export class DirectParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public getRepoName(body: Record<string, any>): string {
+  public async getRepoName(body: Record<string, any>): Promise<string> {
     return (body && body?.['repo']) || '';
   }
 }

@@ -74,7 +74,7 @@ describe('Failure cases', () => {
 
 describe('Success cases', () => {
   describe('Direct parser', () => {
-    test('It should create a valid Incident', () => {
+    test('It should create a valid Incident', async () => {
       const parser = new DirectParser();
       const body = {
         eventType: 'incident',
@@ -82,7 +82,7 @@ describe('Success cases', () => {
       };
       const headers = {};
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
       expect(incident).toHaveProperty('repo');
@@ -95,12 +95,12 @@ describe('Success cases', () => {
   });
 
   describe('Bitbucket parser', () => {
-    test('It should create a valid Incident', () => {
+    test('It should create a valid Incident', async () => {
       const parser = new BitbucketParser();
       const body = bitbucketIssueCreated;
       const headers = bitbucketIssueCreatedHeaders;
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
       expect(incident).toHaveProperty('repo');
@@ -111,12 +111,12 @@ describe('Success cases', () => {
       expect(incident).toHaveProperty('title');
     });
 
-    test('It should update a valid Incident', () => {
+    test('It should update a valid Incident', async () => {
       const parser = new BitbucketParser();
       const body = bitbucketIssueUpdatedResolved;
       const headers = bitbucketIssueUpdatedHeaders;
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
       expect(incident).toHaveProperty('repo');
@@ -129,7 +129,7 @@ describe('Success cases', () => {
   });
 
   describe('GitHub parser', () => {
-    test('It should create a valid Incident', () => {
+    test('It should create a valid Incident', async () => {
       const parser = new GitHubParser();
       const body = {
         repository: {
@@ -138,7 +138,7 @@ describe('Success cases', () => {
       };
       const headers = githubIncidentHeaders;
 
-      const event = makeEvent(parser, body, headers);
+      const event = await makeEvent(parser, body, headers);
       const incident = makeIncident(event);
 
       expect(incident).toHaveProperty('repo');

@@ -8,17 +8,17 @@ export interface Parser {
    * @description Normalize the incoming type of event into the three
    * supported categories: `change`, `deployment`, or `incident`.
    */
-  getEventType(eventTypeInput: EventTypeInput): string;
+  getEventType(eventTypeInput: EventTypeInput): Promise<string>;
 
   /**
    * @description Get payload fields from the right places.
    */
-  getPayload(payloadInput: PayloadInput): EventDto;
+  getPayload(payloadInput: PayloadInput): Promise<EventDto>;
 
   /**
    * @description Get the repository name.
    */
-  getRepoName(body?: Record<string, any>): string;
+  getRepoName(body?: Record<string, any>): Promise<string>;
 }
 
 export type EventTypeInput = {

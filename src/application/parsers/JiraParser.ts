@@ -18,14 +18,14 @@ export class JiraParser implements Parser {
   /**
    * @description Jira only handles Incidents, so this simply returns a hard coded value for it.
    */
-  public getEventType(): string {
+  public async getEventType(): Promise<string> {
     return 'incident';
   }
 
   /**
    * @description Get payload fields from the right places.
    */
-  public getPayload(payloadInput: PayloadInput): EventDto {
+  public async getPayload(payloadInput: PayloadInput): Promise<EventDto> {
     const body = payloadInput.body || {};
 
     const event = (() => {
@@ -125,7 +125,7 @@ export class JiraParser implements Parser {
    * @example `https://bitbucket.org/SOMEORG/SOMEREPO/`
    * @example `https://github.com/SOMEORG/SOMEREPO`
    */
-  public getRepoName(body: Record<string, any>): string {
+  public async getRepoName(body: Record<string, any>): Promise<string> {
     const fields: Record<string, any> = body?.issue?.fields;
     if (!fields) throw new MissingJiraFieldsError();
 

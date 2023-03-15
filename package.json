@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3",
+    "axios": "1.3.4",
     "chrono-utils": "1",
     "mikrolog": "2",
     "mikrometric": "1"
