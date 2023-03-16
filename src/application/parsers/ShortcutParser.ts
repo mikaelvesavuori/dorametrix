@@ -18,11 +18,21 @@ import {
 export class ShortcutParser implements Parser {
 
   storyData: Record<string, any> = {};
+  shortcutIncidentLabelId: number;
   shortcutToken: string;
   logger: MikroLog;
 
   constructor() {
+    const parseIntValue = (value : any, defaultValue : number) : number => {
+      const parsed = parseInt(value);
+      if (isNaN(parsed)) { return defaultValue; }
+      return parsed;
+    }
+
+    /* istanbul ignore next */
     this.shortcutToken = process.env.SHORTCUT_TOKEN ?? "11111111-1111-1111-1111-111111111111"
+    this.shortcutIncidentLabelId = parseIntValue(process.env.SHORTCUT_INCIDENT_LABEL_ID, 2805);
+
     this.logger = MikroLog.start({ metadataConfig: metadataConfig });
   }
   
@@ -41,6 +51,24 @@ export class ShortcutParser implements Parser {
                         });
   }
 
+  private hasIncidentLabel(webhookActions: Record<string, any>) : boolean {
+    return this.hasLabelId("adds", this.shortcutIncidentLabelId, webhookActions);
+  }
+
+  private hasLabelId(check:string, incidentLabelId: number, webhookActions: Record<string, any>) : boolean {
+    for (let index in Object.keys(webhookActions)) {
+      let action: Record<string, any> = Object.values(webhookActions)[index];
+
+      //Check labels when a story is created
+      if (action?.['label_ids']?.filter((label: number) => label == incidentLabelId ).length > 0) return true;
+
+      //Check labels when a story is changed
+      if (action?.['changes']?.['label_ids']?.[check]?.filter((label: number) => label == incidentLabelId ).length > 0) return true;
+    }
+
+    return false;
+  }
+
   /**
    * @description Shortcut only handles Incidents, so this simply returns a hard coded value for it.
    */
@@ -48,12 +76,7 @@ export class ShortcutParser implements Parser {
     const webhookbody = eventTypeInput.body || {};
     if(!webhookbody || Object.keys(webhookbody).length == 0) throw new MissingShortcutFieldsError();
 
-    const labelAdds = webhookbody?.['actions'][0]?.['changes']?.['label_ids']?.['adds'] || [];
-    if (labelAdds && labelAdds.length > 0
-      && (labelAdds).filter((label: number) => label == 2805 ).length > 0) {
-        return "incident"
-    }
-
+    if (this.hasIncidentLabel(webhookbody?.['actions'])) return "incident";
     return "change"
   }
 
@@ -71,24 +94,14 @@ export class ShortcutParser implements Parser {
       if(body?.['completed'] == true) return "closed";
       if(body?.['archived'] == true) return "closed";
 
-      if (webhookbody?.['actions'].filter((action: Record<string, any>) => action?.['action'] == "create" ).length > 0) return "opened";
+      if (webhookbody?.['actions'].filter((action: Record<string, any>) => action?.['action'] == "create" ).length > 0) {
+        if (this.hasIncidentLabel(webhookbody?.['actions'])) return "labeled"
+        return "opened";
+      }
 
-      const eventType = webhookbody?.['actions'].filter((action: Record<string, any>) => action?.['action'] == "update" ).length > 0 ? "opened" : "unknown";
-      if (eventType == 'opened') {
-        const checkLabels = (check:string, actions: Record<string, any>) : boolean => {
-          for (let index in Object.keys(actions)) {
-            let action: Record<string, any> = Object.values(actions)[index];
-            if (action?.['changes']?.['label_ids']?.[check]?.filter((label: number) => label == 2805 ).length > 0) return true;
-          }
-          return false;
-        }
-
-        const labelAdds = checkLabels("adds", webhookbody?.['actions'])
-        if (labelAdds) return "labeled"
-
-        const labelRemoves = checkLabels("removes", webhookbody?.['actions'])
-        if (labelRemoves) return "unlabeled"
-
+      if (webhookbody?.['actions'].filter((action: Record<string, any>) => action?.['action'] == "update" ).length > 0) {
+        if (this.hasLabelId("adds", this.shortcutIncidentLabelId, webhookbody?.['actions'])) return "labeled"
+        if (this.hasLabelId("removes", this.shortcutIncidentLabelId, webhookbody?.['actions'])) return "unlabeled"
         return "opened";
       }
       
