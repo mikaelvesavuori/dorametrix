@@ -22,7 +22,7 @@ export class ShortcutParser implements Parser {
   logger: MikroLog;
 
   constructor() {
-    this.shortcutToken = process.env.SHORTCUT_TOKEN ?? "11111111-1111-1111-1111-4db7893273fa";
+    this.shortcutToken = process.env.SHORTCUT_TOKEN ?? "11111111-1111-1111-1111-111111111111"
     this.logger = MikroLog.start({ metadataConfig: metadataConfig });
   }
   
@@ -116,7 +116,7 @@ export class ShortcutParser implements Parser {
     return {
       eventTime: webhook?.['changed_at'],
       timeCreated: convertDateToUnixTimestamp(body?.['created_at']),
-      id: body?.['id'],
+      id: `${ body?.['id'] }`,
       title: body?.['name'],
       message: JSON.stringify(body)
     };
@@ -127,7 +127,7 @@ export class ShortcutParser implements Parser {
       eventTime: webhook?.['changed_at'],
       timeCreated: convertDateToUnixTimestamp(body?.['created_at']),
       timeResolved: this.handleTimeResolved(body),
-      id: body?.['id'],
+      id: `${ body?.['id'] }`,
       title: body?.['name'],
       message: JSON.stringify(body)
     };
