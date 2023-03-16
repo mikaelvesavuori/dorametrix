@@ -94,6 +94,20 @@ const webHookIncoming_remove_labeled_16927 = {
                 ]
             }
         }
+    },
+    {
+      "id": 2507,
+      "entity_type": "story",
+      "action": "update",
+      "name": "Deploy current product to np-usea1-3",
+      "story_type": "feature",
+      "app_url": "https://app.shortcut.com/ehawk/story/2507",
+      "changes": {
+          "moved": {
+              "new": true,
+              "old": false
+          }
+      }
     }
   ]
 }
@@ -284,6 +298,27 @@ describe('Success cases', () => {
       });
       expect(payload.timeResolved).toBe(Date.now().toString());
     });
+    
+    test('It should mark unlabeled events are closed when label change occurs at the end of the actions', async () => {
+      var storyData = JSON.parse(JSON.stringify(genericStoryData));;
+      var webhookData = webHookIncoming_remove_labeled_16927
+
+      webhookData.actions = [
+        webhookData.actions[1],
+        webhookData.actions[0]
+      ];
+
+      Date.now = jest.fn(() => 1487076708000) 
+      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhookData
+      });
+      expect(payload.timeResolved).toBe(Date.now().toString());
+    });
+
 
     test('It should make updates with no labels as opened', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));;

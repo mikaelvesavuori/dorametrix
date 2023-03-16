@@ -75,17 +75,19 @@ export class ShortcutParser implements Parser {
 
       const eventType = webhookbody?.['actions'].filter((action: Record<string, any>) => action?.['action'] == "update" ).length > 0 ? "opened" : "unknown";
       if (eventType == 'opened') {
-        const labelAdds = webhookbody?.['actions'][0]?.['changes']?.['label_ids']?.['adds'] || [];
-        if (labelAdds && labelAdds.length > 0
-          && (labelAdds).filter((label: number) => label == 2805 ).length > 0) {
-            return "labeled"
+        const checkLabels = (check:string, actions: Record<string, any>) : boolean => {
+          for (let index in Object.keys(actions)) {
+            let action: Record<string, any> = Object.values(actions)[index];
+            if (action?.['changes']?.['label_ids']?.[check]?.filter((label: number) => label == 2805 ).length > 0) return true;
+          }
+          return false;
         }
 
-        const labelRemoves = webhookbody?.['actions'][0]?.['changes']?.['label_ids']?.['removes'] || [];
-        if (labelRemoves && labelRemoves.length > 0
-          && (labelRemoves).filter((label: number) => label == 2805 ).length > 0) {
-            return "unlabeled"
-        }
+        const labelAdds = checkLabels("adds", webhookbody?.['actions'])
+        if (labelAdds) return "labeled"
+
+        const labelRemoves = checkLabels("removes", webhookbody?.['actions'])
+        if (labelRemoves) return "unlabeled"
 
         return "opened";
       }
