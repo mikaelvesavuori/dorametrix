@@ -132,7 +132,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `EVENT_${repo}` },
         sk: { S: timeCreated },
-        expiresAt: { S: getExpiryTime() },
+        expiresAt: { S: getExpiryTime(true) },
         timeCreated: { S: eventTime },
         timeResolved: { S: timeResolved },
         message: { S: message },
