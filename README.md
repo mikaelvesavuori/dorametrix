@@ -53,7 +53,7 @@ Please see the [generated documentation site](https://dorametrix.pages.dev) for 
 
 ## Installation
 
-Clone, fork, or download the repo as you normally would. Run `npm install`.
+Clone, fork, or download the repo as you normally would. Run `npm install --force`.
 
 ## Commands
 

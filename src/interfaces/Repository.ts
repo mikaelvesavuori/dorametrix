@@ -76,7 +76,7 @@ export type CacheRequest = {
    */
   range: string;
   /**
-   * @description A valid and complete `Metrics` object.
+   * @description A valid and complete `Metrics` object.
    */
   metrics: Metrics;
 };

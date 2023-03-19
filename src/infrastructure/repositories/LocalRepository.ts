@@ -89,7 +89,7 @@ class LocalRepository implements Repository {
   /**
    * @description Get data from local repository.
    */
-  private getItem(dataRequest: DataRequest): any[] {
+  private getItem(dataRequest: DataRequest): any {
     const { key } = dataRequest;
     const type = key.split('_')[0].toUpperCase();
     const repoName = key.split('_')[1];
@@ -102,8 +102,6 @@ class LocalRepository implements Repository {
 
     if (type === 'INCIDENT')
       return this.incidents.filter((item: Incident) => item.repo === repoName) || [];
-
-    return [];
   }
 
   /**

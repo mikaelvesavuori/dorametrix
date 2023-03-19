@@ -104,6 +104,7 @@ class DynamoRepository implements Repository {
       Item: {
         pk: { S: `CACHED_${key}` },
         sk: { S: range },
+        expiresAt: { S: getExpiryTime() },
         data: { S: JSON.stringify(metrics) }
       }
     };
