@@ -22,21 +22,13 @@ export class ShortcutParser implements Parser {
   logger: MikroLog;
 
   constructor() {
-    const parseIntValue = (value: any, defaultValue: number): number => {
-      const parsed = parseInt(value);
-      if (isNaN(parsed)) {
-        return defaultValue;
-      }
-      return parsed;
-    };
-
     /* istanbul ignore next */
     this.shortcutToken = process.env.SHORTCUT_TOKEN ?? '';
     if (this.shortcutToken === '' || this.shortcutToken === 'undefined')
       throw new ShortcutConfigurationError('SHORTCUT_TOKEN');
 
-    this.shortcutIncidentLabelId = parseIntValue(process.env.SHORTCUT_INCIDENT_LABEL_ID, 0);
-    if (this.shortcutIncidentLabelId === 0)
+    this.shortcutIncidentLabelId = global.parseInt(process.env.SHORTCUT_INCIDENT_LABEL_ID ?? '0');
+    if (this.shortcutIncidentLabelId === 0 || isNaN(this.shortcutIncidentLabelId))
       throw new ShortcutConfigurationError('SHORTCUT_INCIDENT_LABEL_ID');
 
     this.logger = MikroLog.start({ metadataConfig: metadataConfig });
