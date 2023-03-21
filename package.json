@@ -29,7 +29,7 @@
     "test:unit": "npx jest tests --collectCoverage",
     "test:unit:watch": "npx jest --clearCache && npx jest tests --collectCoverage --watch",
     "test:createdata": "npx ts-node tests/createTestData.ts",
-    "lint": "npx eslint './src/**/*.ts' --quiet --fix",
+    "lint": "npx eslint \"./src/**/*.ts\" --fix",
     "docs": "rm -rf docs && mkdir docs && npm run docs:typedoc && npm run docs:arkit && npm run docs:cfndia",
     "docs:arkit": "npx arkit",
     "docs:cfndia": "npx cfn-dia draw.io -t .serverless/cloudformation-template-update-stack.json --ci-mode -o diagrams/cfn-diagram.drawio",

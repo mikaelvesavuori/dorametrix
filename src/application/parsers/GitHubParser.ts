@@ -15,7 +15,7 @@ import {
 export class GitHubParser implements Parser {
   /**
    * @description Normalize the incoming event into one of the three
-   * supported types: `change`, `deployment`, or `incident`. 
+   * supported types: `change`, `deployment`, or `incident`.
    */
   // @ts-ignore
   public async getEventType(eventTypeInput: EventTypeInput): Promise<string> {

@@ -46,7 +46,7 @@ export class ShortcutParser implements Parser {
     const id: string = body?.['primary_id'];
     if (!id) throw new MissingIdError('Missing ID in getStoryData()!');
 
-    var storyData: Record<string, any> = {};
+    let storyData: Record<string, any> = {};
     this.logger.info('fetching story ' + id);
 
     await fetch('https://api.app.shortcut.com/api/v3/stories/' + id, {
@@ -55,10 +55,8 @@ export class ShortcutParser implements Parser {
       .then(async (response: any) => {
         storyData = await response.json();
       })
-      .catch(function (err: any) {
-        console.log('Unable to fetch -', err);
-      });
 
+    if (!storyData || Object.keys(storyData).length == 0) throw new MissingShortcutFieldsError();
     return storyData;
   }
 
@@ -71,8 +69,8 @@ export class ShortcutParser implements Parser {
     incidentLabelId: number,
     webhookActions: Record<string, any>
   ): boolean {
-    for (let index in Object.keys(webhookActions)) {
-      let action: Record<string, any> = Object.values(webhookActions)[index];
+    for (const index in Object.keys(webhookActions)) {
+      const action: Record<string, any> = Object.values(webhookActions)[index];
 
       //Check labels when a story is created
       if (action?.['label_ids']?.filter((label: number) => label == incidentLabelId).length > 0)
@@ -111,7 +109,6 @@ export class ShortcutParser implements Parser {
       throw new MissingShortcutFieldsError();
 
     const body = await this.getStoryData(webhookbody);
-    if (!body || Object.keys(body).length == 0) throw new MissingShortcutFieldsError();
 
     const event = (() => {
       if (body?.['completed'] == true) return 'closed';
@@ -194,7 +191,7 @@ export class ShortcutParser implements Parser {
    */
   public async getRepoName(body: Record<string, any>): Promise<string> {
     console.log('getRepoName', body);
-    const repoName: string = 'eHawk';
+    const repoName = 'eHawk';
     return repoName;
   }
 }

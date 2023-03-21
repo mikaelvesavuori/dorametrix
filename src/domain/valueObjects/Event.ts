@@ -19,25 +19,28 @@ export async function makeEvent(
 }
 
 class EventConcrete {
-  repo: string = ''
+  repo = '';
   date: string;
-  eventType: string = ''
-  id: string = '';
+  eventType = '';
+  id = '';
   changes: Change[] = new Array<Change>(0);
-  eventTime: string = '';
-  timeCreated: string = '';
-  timeResolved: string = '';
-  title: string = '';
-  message: string = '';
-
+  eventTime = '';
+  timeCreated = '';
+  timeResolved = '';
+  title = '';
+  message = '';
 
   constructor(parser: Parser, body: Record<string, any>, headers: Record<string, any>) {
     this.date = getCurrentDate(true);
     EventConcrete.populate(this, parser, body, headers);
   }
 
-  static async populate(event: EventConcrete, parser: Parser, body: Record<string, any>, headers: Record<string, any>) : Promise<EventConcrete>
-  {
+  static async populate(
+    event: EventConcrete,
+    parser: Parser,
+    body: Record<string, any>,
+    headers: Record<string, any>
+  ): Promise<EventConcrete> {
     const eventType = await parser.getEventType({ body, headers });
 
     const repo = await parser.getRepoName(body);
@@ -46,7 +49,7 @@ class EventConcrete {
     event.date = getCurrentDate(true);
     event.eventType = eventType;
     event.changes = body.changes || [];
-    
+
     const { id, eventTime, timeCreated, timeResolved, title, message } = await parser.getPayload({
       body,
       headers
@@ -62,11 +65,13 @@ class EventConcrete {
     return event;
   }
 
-
-  static async create(parser: Parser, body: Record<string, any>, headers: Record<string, any>) : Promise<EventConcrete>
-  {
-    var event = new EventConcrete(parser, body, headers);
-    return EventConcrete.populate(event, parser, body, headers)
+  static async create(
+    parser: Parser,
+    body: Record<string, any>,
+    headers: Record<string, any>
+  ): Promise<EventConcrete> {
+    const event = new EventConcrete(parser, body, headers);
+    return EventConcrete.populate(event, parser, body, headers);
   }
 
   public getDTO(): Event {
