@@ -1,5 +1,6 @@
-import axios from 'axios';
 import { MikroLog } from 'mikrolog';
+import fetch from 'cross-fetch';
+
 import { metadataConfig } from '../../config/metadata';
 import { convertDateToUnixTimestamp } from 'chrono-utils';
 
@@ -16,7 +17,6 @@ import {
  * @description Parser adapted for Shortcut.
  */
 export class ShortcutParser implements Parser {
-  storyData: Record<string, any> = {};
   shortcutIncidentLabelId: number;
   shortcutToken: string;
   logger: MikroLog;
@@ -40,17 +40,21 @@ export class ShortcutParser implements Parser {
   
   private async getStoryData(body: Record<string, any>) : Promise<Record<string, any>>
   {
-    if(Object.keys(this.storyData).length > 0) return this.storyData;
-
     const id : string = body?.['primary_id'];
     if (!id) throw new MissingIdError('Missing ID in getStoryData()!');
 
+    var storyData: Record<string, any> = {};
     this.logger.info("fetching story " + id);
-    return axios.get("https://api.app.shortcut.com/api/v3/stories/" + id, { headers: {"Shortcut-Token" : this.shortcutToken}})
-                        .then((rsp) => {
-                          this.storyData = rsp.data;
-                          return rsp.data;
-                        });
+
+    await fetch("https://api.app.shortcut.com/api/v3/stories/" + id, { headers: {'Shortcut-Token' : this.shortcutToken} })
+      .then( async (response: any)=> {
+        storyData = await response.json();
+      })
+      .catch(function (err: any) {
+        console.log("Unable to fetch -", err);
+      });
+
+    return storyData;
   }
 
   private hasIncidentLabel(webhookActions: Record<string, any>) : boolean {

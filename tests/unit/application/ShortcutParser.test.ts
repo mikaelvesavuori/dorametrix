@@ -1,14 +1,16 @@
-import axios from 'axios';
-import { ShortcutParser } from '../../../src/application/parsers/ShortcutParser';
+import fetchMock, { enableFetchMocks } from 'jest-fetch-mock'
+enableFetchMocks()
+jest.setMock("cross-fetch", fetchMock);
 
 import { convertDateToUnixTimestamp } from 'chrono-utils';
+
+import { ShortcutParser } from '../../../src/application/parsers/ShortcutParser';
 
 import {
   MissingIdError,
   MissingShortcutFieldsError,
   ShortcutConfigurationError,
 } from '../../../src/application/errors/errors';
-
 
 const webHookIncoming_16927 = {
   id: "595285dc-9c43-4b9c-a1e6-0cd9aff5b084",
@@ -38,7 +40,6 @@ const webHookIncoming_16927 = {
     }
   ]
 }
-
 
 const webHookIncoming_labeled_16927 = {
   id: "595285dc-9c43-4b9c-a1e6-0cd9aff5b084",
@@ -176,23 +177,18 @@ const genericStoryData : Record<string, any> = {
   "description": "foo desc"
 }
 
-
 describe('Success cases', () => {
-
   describe('Event types', () => {
     beforeEach(() => {
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
-      process.env.SHORTCUT_TOKEN = "11111111"
-    });
-
-    afterEach(() => {
+      fetchMock.resetMocks()
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
       process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     test('It should return "change" for event types', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -205,7 +201,7 @@ describe('Success cases', () => {
 
     test('It should return "incident" for event types', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -218,7 +214,7 @@ describe('Success cases', () => {
 
     test('It should return "incident" for event types on story created with incident label', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -231,7 +227,7 @@ describe('Success cases', () => {
 
     test('It should return "change" for event types on story created without incident label', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -247,7 +243,7 @@ describe('Success cases', () => {
       var webhookData = JSON.parse(JSON.stringify(webHookIncoming_create_with_labeled_16927))
       webhookData.actions[0].label_ids = [ 1234 ]
 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "1234"
 
@@ -261,11 +257,10 @@ describe('Success cases', () => {
     });
 
     test('It should use the environment shortcut incident label id and report a change', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
-
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "1234"
+
+      var storyData = JSON.parse(JSON.stringify(genericStoryData));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -280,18 +275,14 @@ describe('Success cases', () => {
 
   describe('Payloads', () => {
     beforeEach(() => {
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
-      process.env.SHORTCUT_TOKEN = "11111111"
-    });
-
-    afterEach(() => {
+      fetchMock.resetMocks()
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
       process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     test('It should return the provided event if it is unknown together with the a correct object', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -307,10 +298,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('message');
     });
 
-
     test('It should return assigned properties on update', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      axios.get = jest.fn(() => Promise.resolve<any>( { data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -328,7 +318,7 @@ describe('Success cases', () => {
 
     test('It should return assigned properties on create', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       var webhookData = webHookIncoming_create_with_labeled_16927
       webhookData.actions[0].action = "create";
@@ -349,7 +339,7 @@ describe('Success cases', () => {
 
     test('It should return assigned properties on create without incident label', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));;
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       var webhookData = webHookIncoming_create_with_out_labeled_16927
 
@@ -377,7 +367,7 @@ describe('Success cases', () => {
       var webhookData = webHookIncoming_labeled_16927
       webhookData.actions[0].action = "updated";
 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -397,7 +387,7 @@ describe('Success cases', () => {
       var webhookData = webHookIncoming_labeled_16927 || webHookIncoming_16927
       webhookData.actions[0].action = "updated";
 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -418,7 +408,7 @@ describe('Success cases', () => {
       var webhookData = webHookIncoming_remove_labeled_16927
 
       Date.now = jest.fn(() => 1487076708000) 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -438,7 +428,7 @@ describe('Success cases', () => {
       ];
 
       Date.now = jest.fn(() => 1487076708000) 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -448,13 +438,12 @@ describe('Success cases', () => {
       expect(payload.timeResolved).toBe(Date.now().toString());
     });
 
-
     test('It should make updates with no labels as opened', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));;
       var webhookData = webHookIncoming_no_label_changes_16927
 
       Date.now = jest.fn(() => 1487076708000) 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -472,7 +461,7 @@ describe('Success cases', () => {
 
       var webhookData = webHookIncoming_labeled_16927
 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -483,43 +472,12 @@ describe('Success cases', () => {
       expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
     });
 
-    test('It should used cached data to prevent excess api calls', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));;
-      storyData.id = 876
-      storyData.archived = true;
-      storyData.completed_at = "2016-12-31T12:30:00Z"
-
-      var webhookData = webHookIncoming_labeled_16927
-      webhookData.actions[0].action = "created";
-
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
-      const spy = jest.spyOn(axios, 'get');
-
-      const parser = new ShortcutParser();
-      await parser.getPayload({
-        headers: {},
-        body: webhookData
-      });
-
-      await parser.getPayload({
-        headers: {},
-        body: webhookData
-      });
-
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
     test('It should parse the story id from the webhook payload', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       var webhookData = webHookIncoming_labeled_16927
       webhookData.primary_id = 123456;
 
-      const mockCallback = jest.fn((url, header) => {
-        console.log(url, header);
-        return Promise.resolve<any>({ data: storyData });
-      });
-
-      axios.get = mockCallback
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -527,9 +485,7 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-   
-      const argUrl = 0;
-      expect(mockCallback.mock.calls[0][argUrl]).toBe("https://api.app.shortcut.com/api/v3/stories/123456");
+      expect(fetchMock).toHaveBeenCalledWith("https://api.app.shortcut.com/api/v3/stories/123456", {"headers": {"Shortcut-Token": "11111111"}});
     });
 
     test('It should use the environment shortcut token', async () => {
@@ -539,12 +495,7 @@ describe('Success cases', () => {
       var webhookData = webHookIncoming_labeled_16927
       webhookData.primary_id = 123456;
 
-      const mockCallback = jest.fn((url, header) => {
-        console.log(url, header);
-        return Promise.resolve<any>({ data: storyData });
-      });
-
-      axios.get = mockCallback
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -552,29 +503,23 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-   
-      const argHeader = 1
-      expect(mockCallback.mock.calls[0][argHeader].headers["Shortcut-Token"]).toBe("222222")
+      expect(fetchMock).toHaveBeenCalledWith("https://api.app.shortcut.com/api/v3/stories/123456", {"headers": {"Shortcut-Token": "222222"}});
     });
   });
 
   describe('Repository name', () => {
     beforeEach(() => {
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
-      process.env.SHORTCUT_TOKEN = "11111111"
-    });
-
-    afterEach(() => {
+      fetchMock.resetMocks()
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
       process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     test('It should take in a typical Jira event and return the GitHub repository name', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>(storyData));
+
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const expected = 'eHawk';
-
       const parser = new ShortcutParser();
       const repoName = await parser.getRepoName({
         user: {
@@ -588,15 +533,20 @@ describe('Success cases', () => {
           }
         }
       });
+
       expect(repoName).toBe(expected);
     });
   });
-
 });
-
 
 describe('Failure cases', () => {
   describe("Constructor", () => {
+    beforeEach(() => {
+      fetchMock.resetMocks()
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
     test('It should throw a ShortcutConfigurationError error if non-numeric shortcut label is provided', () => {
       process.env.SHORTCUT_TOKEN = "ABC"
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "This is not a number"
@@ -643,18 +593,14 @@ describe('Failure cases', () => {
 
   describe('Event types', () => {
     beforeEach(() => {
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
-      process.env.SHORTCUT_TOKEN = "11111111"
-    });
-
-    afterEach(() => {
+      fetchMock.resetMocks()
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
       process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     test('It should throw a MissingShortcutFieldsError if webhook data is empty', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>(storyData));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       try {
@@ -672,7 +618,7 @@ describe('Failure cases', () => {
 
     test('It should throw a MissingShortcutFieldsError if webhook data is undefined', async () => {
       var storyData = genericStoryData;
-      axios.get = jest.fn(() => Promise.resolve<any>(storyData));
+      fetchMock.mockResponse(JSON.stringify(storyData))
 
       const parser = new ShortcutParser();
       try {
@@ -690,11 +636,9 @@ describe('Failure cases', () => {
 
     test('It should throw a MissingShortcutFieldsError if story data is empty',async () => {
       var webhookData = webHookIncoming_labeled_16927
-
-      axios.get = jest.fn(() => Promise.resolve<any>({ data : { } }));
+      fetchMock.mockResponse(JSON.stringify({ }))
 
       const parser = new ShortcutParser();
-
       try {
         await parser.getPayload({
             headers: {},
@@ -711,11 +655,7 @@ describe('Failure cases', () => {
 
   describe('Payloads', () => {
     beforeEach(() => {
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
-      process.env.SHORTCUT_TOKEN = "11111111"
-    });
-
-    afterEach(() => {
+      fetchMock.resetMocks()
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
       process.env.SHORTCUT_TOKEN = "11111111"
     });
@@ -777,7 +717,7 @@ describe('Failure cases', () => {
     test('It should throw a MissingShortcutFieldsError if story data is empty',async () => {
       var webhookData = webHookIncoming_labeled_16927
 
-      axios.get = jest.fn(() => Promise.resolve<any>({ data : { } }));
+      fetchMock.mockResponse(JSON.stringify({ }))
 
       const parser = new ShortcutParser();
 
