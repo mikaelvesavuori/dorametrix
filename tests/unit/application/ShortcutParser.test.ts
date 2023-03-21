@@ -1,8 +1,7 @@
+import { convertDateToUnixTimestamp } from 'chrono-utils';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
 jest.setMock('cross-fetch', fetchMock);
-
-import { convertDateToUnixTimestamp } from 'chrono-utils';
 
 import { ShortcutParser } from '../../../src/application/parsers/ShortcutParser';
 
@@ -27,6 +26,7 @@ describe('Success cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should return "change" for event types', async () => {
@@ -121,6 +121,7 @@ describe('Success cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should return the provided event if it is unknown together with the a correct object', async () => {
@@ -356,6 +357,7 @@ describe('Success cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should take in a typical Jira event and return the GitHub repository name', async () => {
@@ -363,7 +365,7 @@ describe('Success cases', () => {
 
       fetchMock.mockResponse(JSON.stringify(storyData));
 
-      const expected = 'eHawk';
+      const expected = 'SOMEREPO';
       const parser = new ShortcutParser();
       const repoName = await parser.getRepoName({
         user: {
@@ -389,10 +391,10 @@ describe('Failure cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should throw a ShortcutConfigurationError error if non-numeric shortcut label is provided', () => {
-      process.env.SHORTCUT_TOKEN = 'ABC';
       process.env.SHORTCUT_INCIDENT_LABEL_ID = 'This is not a number';
 
       try {
@@ -407,7 +409,6 @@ describe('Failure cases', () => {
 
     test('It should throw a ShortcutConfigurationError error if a shortcut auth token is empty', () => {
       process.env.SHORTCUT_TOKEN = '';
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = '1';
 
       try {
         new ShortcutParser();
@@ -421,7 +422,32 @@ describe('Failure cases', () => {
 
     test('It should throw a ShortcutConfigurationError error if a shortcut auth token is undefined', () => {
       process.env.SHORTCUT_TOKEN = undefined;
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = '1';
+
+      try {
+        new ShortcutParser();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ShortcutConfigurationError);
+        return;
+      }
+
+      fail();
+    });
+
+    test('It should throw a ShortcutConfigurationError error if a SHORTCUT_REPONAME is empty', () => {
+      process.env.SHORTCUT_REPONAME = '';
+
+      try {
+        new ShortcutParser();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ShortcutConfigurationError);
+        return;
+      }
+
+      fail();
+    });
+
+    test('It should throw a ShortcutConfigurationError error if a SHORTCUT_REPONAME is undefined', () => {
+      process.env.SHORTCUT_REPONAME = undefined;
 
       try {
         new ShortcutParser();
@@ -439,6 +465,7 @@ describe('Failure cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should throw a MissingShortcutFieldsError if webhook data is empty', () => {
@@ -486,6 +513,7 @@ describe('Failure cases', () => {
       fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
+      process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
 
     test('It should throw a MissingIdError if event is missing an ID', () => {

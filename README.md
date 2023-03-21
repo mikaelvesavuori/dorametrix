@@ -126,9 +126,14 @@ Create an incident label:
 * [Creating Shortcut Labels](https://help.shortcut.com/hc/en-us/articles/205702619-Shortcut-Labels-and-the-Labels-Page-)
 * The [Shortcut Label Page](https://help.shortcut.com/hc/en-us/articles/115003637163-The-Individual-Label-Page) shows the label id in the url
 
-**Note**: You must pass the `shortcutApiToken` and `shortcutIncidentLabelId` options on your first deployment. Refer to [Deployment](/README.md#deployment) or update the `serverless.yaml` file options. Filing to set these option will result in a runtime error
-- `custom.shortcut.apiToken`: Shortcut API token to load story details
-- `custom.shortcut.incidentLabelId`: Label id to identify incidents over changes
+**Note**: You must pass the following options on your first deployment. Refer to [Deployment](/README.md#deployment) or update the `serverless.yaml` file options. _Failing to set these option will result in a runtime error_
+
+Required
+- `custom.shortcut.shortcutApiToken`: Shortcut API token to load story details
+- `custom.shortcut.shortcutIncidentLabelId`: Label id to identify incidents over changes
+
+Optional
+- `custom.shortcut.shortcutRepoName`: Repository name to be used, defaults to `unknown`
 
 #### Note on security with webhook secrets
 

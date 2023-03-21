@@ -19,6 +19,7 @@ import {
 export class ShortcutParser implements Parser {
   shortcutIncidentLabelId: number;
   shortcutToken: string;
+  repoName: string;
   logger: MikroLog;
 
   constructor() {
@@ -27,6 +28,11 @@ export class ShortcutParser implements Parser {
     if (this.shortcutToken === '' || this.shortcutToken === 'undefined')
       throw new ShortcutConfigurationError('SHORTCUT_TOKEN');
 
+    /* istanbul ignore next */
+    this.repoName = process.env.SHORTCUT_REPONAME ?? '';
+    if (this.repoName === '' || this.repoName === 'undefined')
+      throw new ShortcutConfigurationError('SHORTCUT_REPONAME');
+
     this.shortcutIncidentLabelId = global.parseInt(process.env.SHORTCUT_INCIDENT_LABEL_ID ?? '0');
     if (this.shortcutIncidentLabelId === 0 || isNaN(this.shortcutIncidentLabelId))
       throw new ShortcutConfigurationError('SHORTCUT_INCIDENT_LABEL_ID');
@@ -34,6 +40,9 @@ export class ShortcutParser implements Parser {
     this.logger = MikroLog.start({ metadataConfig: metadataConfig });
   }
 
+  /**
+   * @description Fetch original shortcut story
+   */
   private async getStoryData(body: Record<string, any>): Promise<Record<string, any>> {
     const id: string = body?.['primary_id'];
     if (!id) throw new MissingIdError('Missing ID in getStoryData()!');
@@ -51,10 +60,9 @@ export class ShortcutParser implements Parser {
     return storyData;
   }
 
-  private hasIncidentLabel(webhookActions: Record<string, any>): boolean {
-    return this.hasLabelId('adds', this.shortcutIncidentLabelId, webhookActions);
-  }
-
+  /**
+   * @description Scan webhook for labels matching the specified id
+   */
   private hasLabelId(
     check: string,
     incidentLabelId: number,
@@ -87,8 +95,12 @@ export class ShortcutParser implements Parser {
     if (!webhookbody || Object.keys(webhookbody).length == 0)
       throw new MissingShortcutFieldsError();
 
-    if (this.hasIncidentLabel(webhookbody?.['actions'])) return 'incident';
-    return 'change';
+    const isIncident = this.hasLabelId(
+      'adds',
+      this.shortcutIncidentLabelId,
+      webhookbody?.['actions']
+    );
+    return isIncident ? 'incident' : 'change';
   }
 
   /**
@@ -105,20 +117,19 @@ export class ShortcutParser implements Parser {
       if (body?.['completed'] == true) return 'closed';
       if (body?.['archived'] == true) return 'closed';
 
-      if (
+      // Check if webhook is a 'create' event
+      const isCreate =
         webhookbody?.['actions'].filter(
           (action: Record<string, any>) => action?.['action'] == 'create'
-        ).length > 0
-      ) {
-        if (this.hasIncidentLabel(webhookbody?.['actions'])) return 'labeled';
-        return 'opened';
-      }
+        ).length > 0;
 
-      if (
+      // Check if webhook is an 'update' event
+      const isUpdate =
         webhookbody?.['actions'].filter(
           (action: Record<string, any>) => action?.['action'] == 'update'
-        ).length > 0
-      ) {
+        ).length > 0;
+
+      if (isCreate || isUpdate) {
         if (this.hasLabelId('adds', this.shortcutIncidentLabelId, webhookbody?.['actions']))
           return 'labeled';
         if (this.hasLabelId('removes', this.shortcutIncidentLabelId, webhookbody?.['actions']))
@@ -182,7 +193,6 @@ export class ShortcutParser implements Parser {
    */
   public async getRepoName(body: Record<string, any>): Promise<string> {
     console.log('getRepoName', body);
-    const repoName = 'eHawk';
-    return repoName;
+    return this.repoName;
   }
 }
