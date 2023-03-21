@@ -51,10 +51,9 @@ export class ShortcutParser implements Parser {
 
     await fetch('https://api.app.shortcut.com/api/v3/stories/' + id, {
       headers: { 'Shortcut-Token': this.shortcutToken }
-    })
-      .then(async (response: any) => {
-        storyData = await response.json();
-      })
+    }).then(async (response: any) => {
+      storyData = await response.json();
+    });
 
     if (!storyData || Object.keys(storyData).length == 0) throw new MissingShortcutFieldsError();
     return storyData;

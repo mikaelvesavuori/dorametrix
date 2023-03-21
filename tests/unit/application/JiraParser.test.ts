@@ -248,30 +248,29 @@ describe('Success cases', () => {
 
 describe('Failure cases', () => {
   describe('Payloads', () => {
-    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', async () => {
+    test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', () => {
       const parser = new JiraParser();
-      try {
-      await parser.getPayload({
-          headers: {},
-          body: {
-            issue_event_type_name: 'issue_created',
-            issue: {
-              id: '10004',
-              fields: {}
-            }
+      
+      expect.assertions(1);
+      expect(parser.getPayload({
+        headers: {},
+        body: {
+          issue_event_type_name: 'issue_created',
+          issue: {
+            id: '10004',
+            fields: {}
           }
-        })
-      } catch(e){
-        expect(e).toBeInstanceOf(MissingEventTimeError);
-      }
+        }
+      })).rejects.toThrowError(MissingEventTimeError);
     });
   });
 
-  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID',async () => {
+  test('It should throw a MissingIdError if "issue closed/unlabeled" event is missing an ID', () => {
     const parser = new JiraParser();
-    try {
-    await parser.getPayload({
-        headers: {},
+
+    expect.assertions(1);
+    expect(parser.getPayload({
+      headers: {},
         body: {
           issue_event_type_name: 'issue_created',
           issue: {
@@ -280,46 +279,43 @@ describe('Failure cases', () => {
             }
           }
         }
-      })
-    } catch(e){
-      expect(e).toBeInstanceOf(MissingIdError);
-    }
+    })).rejects.toThrowError(MissingIdError); 
   });
 
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp',async () => {
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp', () => {
     const parser = new JiraParser();
-    try {
-      await parser.getPayload({
-        headers: {},
-        body: {
-          issue_event_type_name: 'issue_generic',
-          issue: {
-            id: '10004',
-            fields: {
-              updated: '2022-02-03T20:05:45.243+0100',
-              summary: 'Test issue'
-            }
-          },
-          changelog: {
-            id: '10014',
-            items: [
-              {
-                field: 'resolution',
-                toString: 'Done'
-              }
-            ]
+
+    expect.assertions(1);
+    expect(parser.getPayload({
+      headers: {},
+      body: {
+        issue_event_type_name: 'issue_generic',
+        issue: {
+          id: '10004',
+          fields: {
+            updated: '2022-02-03T20:05:45.243+0100',
+            summary: 'Test issue'
           }
+        },
+        changelog: {
+          id: '10014',
+          items: [
+            {
+              field: 'resolution',
+              toString: 'Done'
+            }
+          ]
         }
-      })
-    } catch(e){
-      expect(e).toBeInstanceOf(MissingEventTimeError);
-    }
+      }
+    })).rejects.toThrowError(MissingEventTimeError); 
+
   });
 
-  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp',async () => {
+  test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp', () => {
     const parser = new JiraParser();
-    try {
-      await parser.getPayload({
+    
+    expect.assertions(1);
+    expect(parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_generic',
@@ -340,45 +336,33 @@ describe('Failure cases', () => {
             ]
           }
         }
-      })
-    } catch(e){
-      expect(e).toBeInstanceOf(MissingEventTimeError);
-    }
+      })).rejects.toThrowError(MissingEventTimeError); 
   });
 
-  test('It should throw a MissingJiraFieldsError if the "fields" object is missing',async () => {
+  test('It should throw a MissingJiraFieldsError if the "fields" object is missing', () => {
     const parser = new JiraParser();
 
-    try {
-      await parser.getRepoName({});
-    } catch(e){
-      expect(e).toBeInstanceOf(MissingJiraFieldsError);
-    }
+    expect.assertions(1);
+    expect(parser.getRepoName({})).rejects.toThrowError(MissingJiraFieldsError); 
   });
 
-  test('It should throw a MissingJiraFieldsError if the input is missing',async () => {
+  test('It should throw a MissingJiraFieldsError if the input is missing', () => {
     const parser = new JiraParser();
 
-    try {
-      // @ts-ignore
-      await parser.getRepoName();
-    } catch(e) {
-      expect(e).toBeInstanceOf(MissingJiraFieldsError);
-    }
+    expect.assertions(1);
+    // @ts-ignore
+    expect(parser.getRepoName()).rejects.toThrowError(MissingJiraFieldsError); 
   });
 
-  test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field',async () => {
+  test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field', () => {
     const parser = new JiraParser();
 
-    try{ 
-      await parser.getRepoName({
-        issue: {
-          fields: {}
-        }
-      });
-    } catch(e) {
-      expect(e).toBeInstanceOf(MissingJiraMatchedCustomFieldKeyError);
-    }
+    expect.assertions(1);
+    expect(parser.getRepoName({
+      issue: {
+        fields: {}
+      }
+    })).rejects.toThrowError(MissingJiraMatchedCustomFieldKeyError); 
   });
 });
  

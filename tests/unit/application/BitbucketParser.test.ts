@@ -217,10 +217,11 @@ describe('Failure cases', () => {
     });
   });
 
-  test('It should throw a MissingEventTimeError if a "repo:push" event does not include a timestamp', async () => {
+  test('It should throw a MissingEventTimeError if a "repo:push" event does not include a timestamp', () => {
     const parser = new BitbucketParser();
-    try {
-      await parser.getPayload({
+    
+    expect.assertions(1);
+    expect(parser.getPayload({
         headers: {
           'x-event-key': 'repo:push',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -242,17 +243,14 @@ describe('Failure cases', () => {
             ]
           }
         }
-      })
-    } catch(e) {
-      expect(e).toBeInstanceOf(MissingEventTimeError);
-    }
-
+      })).rejects.toThrowError(MissingEventTimeError); 
   });
 
-  test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "created_on" timestamp', async () => {
+  test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "created_on" timestamp', () => {
     const parser = new BitbucketParser();
-    try{
-    await parser.getPayload({
+
+    expect.assertions(1);
+    expect(parser.getPayload({
         headers: {
           'x-event-key': 'issue:updated',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -269,16 +267,14 @@ describe('Failure cases', () => {
             }
           }
         }
-      })
-    } catch(e) {
-      expect(e).toBeInstanceOf(MissingEventTimeError);
-    }
+      })).rejects.toThrowError(MissingEventTimeError); 
   });
 
-  test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "updated_on" timestamp', async () => {
+  test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "updated_on" timestamp', () => {
     const parser = new BitbucketParser();
-    try {
-      await parser.getPayload({
+
+    expect.assertions(1);
+    expect(parser.getPayload({
         headers: {
           'x-event-key': 'issue:updated',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -295,9 +291,6 @@ describe('Failure cases', () => {
             }
           }
         }
-      })
-    } catch(e) {
-      expect(e).toBeInstanceOf(MissingEventTimeError);
-    }
+      })).rejects.toThrowError(MissingEventTimeError); 
   });
 });

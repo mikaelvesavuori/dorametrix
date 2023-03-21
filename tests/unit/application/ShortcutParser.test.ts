@@ -591,58 +591,43 @@ describe('Failure cases', () => {
       process.env.SHORTCUT_TOKEN = '11111111';
     });
 
-    test('It should throw a MissingShortcutFieldsError if webhook data is empty', async () => {
+    test('It should throw a MissingShortcutFieldsError if webhook data is empty', () => {
       var storyData = genericStoryData;
       fetchMock.mockResponse(JSON.stringify(storyData));
 
       const parser = new ShortcutParser();
-      try {
-        await parser.getEventType({
+
+      expect.assertions(1);
+      expect(parser.getEventType({
           headers: {},
           body: {}
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
 
-    test('It should throw a MissingShortcutFieldsError if webhook data is undefined', async () => {
+    test('It should throw a MissingShortcutFieldsError if webhook data is undefined', () => {
       var storyData = genericStoryData;
       fetchMock.mockResponse(JSON.stringify(storyData));
 
       const parser = new ShortcutParser();
-      try {
-        await parser.getEventType({
+            
+      expect.assertions(1);
+      expect(parser.getEventType({
           headers: {},
           body: undefined
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
 
-    test('It should throw a MissingShortcutFieldsError if story data is empty', async () => {
+    test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
       var webhookData = webHookIncoming_labeled_16927;
       fetchMock.mockResponse(JSON.stringify({}));
 
       const parser = new ShortcutParser();
-      try {
-        await parser.getPayload({
+      
+      expect.assertions(1);
+      expect(parser.getPayload({
           headers: {},
           body: webhookData
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
   });
 
@@ -653,78 +638,55 @@ describe('Failure cases', () => {
       process.env.SHORTCUT_TOKEN = '11111111';
     });
 
-    test('It should throw a MissingIdError if event is missing an ID', async () => {
+    test('It should throw a MissingIdError if event is missing an ID', () => {
       const webHookIncoming = {
         id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
         changed_at: '2017-06-27T16:20:44Z',
         member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
         version: 'v1'
       };
-
       const parser = new ShortcutParser();
-      try {
-        await parser.getPayload({
+
+      expect.assertions(1);
+      expect(parser.getPayload({
           headers: {},
           body: webHookIncoming
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingIdError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingIdError); 
     });
 
-    test('It should throw a MissingShortcutFieldsError if webhook data is empty', async () => {
+    test('It should throw a MissingShortcutFieldsError if webhook data is empty', () => {
       const webHookIncoming = {};
-
       const parser = new ShortcutParser();
-      try {
-        await parser.getPayload({
+
+      expect.assertions(1);
+      expect(parser.getPayload({
           headers: {},
           body: webHookIncoming
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
 
-    test('It should throw a MissingShortcutFieldsError if webhook data is undefined', async () => {
+    test('It should throw a MissingShortcutFieldsError if webhook data is undefined', () => {
       const parser = new ShortcutParser();
-      try {
-        await parser.getPayload({
+
+      expect.assertions(1);
+      expect(parser.getPayload({
           headers: {},
           body: undefined
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
 
-    test('It should throw a MissingShortcutFieldsError if story data is empty', async () => {
+    test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
       var webhookData = webHookIncoming_labeled_16927;
 
       fetchMock.mockResponse(JSON.stringify({}));
 
       const parser = new ShortcutParser();
 
-      try {
-        await parser.getPayload({
+      expect.assertions(1);
+      expect(parser.getPayload({
           headers: {},
           body: webhookData
-        });
-      } catch (e) {
-        expect(e).toBeInstanceOf(MissingShortcutFieldsError);
-        return;
-      }
-
-      fail();
+        })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
   });
 });
