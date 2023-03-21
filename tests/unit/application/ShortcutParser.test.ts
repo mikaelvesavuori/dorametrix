@@ -3,10 +3,10 @@ import { ShortcutParser } from '../../../src/application/parsers/ShortcutParser'
 
 import { convertDateToUnixTimestamp } from 'chrono-utils';
 
-
 import {
   MissingIdError,
   MissingShortcutFieldsError,
+  ShortcutConfigurationError,
 } from '../../../src/application/errors/errors';
 
 
@@ -182,10 +182,12 @@ describe('Success cases', () => {
   describe('Event types', () => {
     beforeEach(() => {
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     afterEach(() => {
       process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
     });
 
     test('It should return "change" for event types', async () => {
@@ -273,26 +275,20 @@ describe('Success cases', () => {
       
       expect(eventType).toBe('change');
     });
-
-    test('It should use the environment shortcut incident label id should fallback on hardcoded 2805', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-
-      axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
-
-      process.env.SHORTCUT_INCIDENT_LABEL_ID = "This is not a number"
-
-      const parser = new ShortcutParser();
-      const eventType = await parser.getEventType({
-        headers: { },
-        body: webHookIncoming_create_with_labeled_16927
-      });
-      
-      expect(eventType).toBe('incident');
-    });
   });
 
 
   describe('Payloads', () => {
+    beforeEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
+    afterEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
     test('It should return the provided event if it is unknown together with the a correct object', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       axios.get = jest.fn(() => Promise.resolve<any>({ data: storyData }));
@@ -537,6 +533,8 @@ describe('Success cases', () => {
     });
 
     test('It should use the environment shortcut token', async () => {
+      process.env.SHORTCUT_TOKEN = "222222"
+
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       var webhookData = webHookIncoming_labeled_16927
       webhookData.primary_id = 123456;
@@ -556,11 +554,21 @@ describe('Success cases', () => {
 
    
       const argHeader = 1
-      expect(mockCallback.mock.calls[0][argHeader].headers["Shortcut-Token"]).toBe("7c874900-b038-4ac8-89d6-813d6daea148")
+      expect(mockCallback.mock.calls[0][argHeader].headers["Shortcut-Token"]).toBe("222222")
     });
   });
 
   describe('Repository name', () => {
+    beforeEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
+    afterEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
     test('It should take in a typical Jira event and return the GitHub repository name', async () => {
       var storyData = genericStoryData;
       axios.get = jest.fn(() => Promise.resolve<any>(storyData));
@@ -588,7 +596,62 @@ describe('Success cases', () => {
 
 
 describe('Failure cases', () => {
+  describe("Constructor", () => {
+    test('It should throw a ShortcutConfigurationError error if non-numeric shortcut label is provided', () => {
+      process.env.SHORTCUT_TOKEN = "ABC"
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "This is not a number"
+
+      try {
+        new ShortcutParser();
+      } catch(e) {
+        expect(e).toBeInstanceOf(ShortcutConfigurationError);
+        return;
+      }
+      
+      fail();
+    });
+
+    test('It should throw a ShortcutConfigurationError error if a shortcut auth token is empty', () => {
+      process.env.SHORTCUT_TOKEN = ""
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "1"
+
+      try {
+        new ShortcutParser();
+      } catch(e) {
+        expect(e).toBeInstanceOf(ShortcutConfigurationError);
+        return;
+      }
+      
+      fail();
+    });
+
+    test('It should throw a ShortcutConfigurationError error if a shortcut auth token is undefined', () => {
+      process.env.SHORTCUT_TOKEN = undefined
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "1"
+
+      try {
+        new ShortcutParser();
+      } catch(e) {
+        expect(e).toBeInstanceOf(ShortcutConfigurationError);
+        return;
+      }
+      
+      fail();
+    });
+  });
+
+
   describe('Event types', () => {
+    beforeEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
+    afterEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
     test('It should throw a MissingShortcutFieldsError if webhook data is empty', async () => {
       var storyData = genericStoryData;
       axios.get = jest.fn(() => Promise.resolve<any>(storyData));
@@ -647,6 +710,16 @@ describe('Failure cases', () => {
   });
 
   describe('Payloads', () => {
+    beforeEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
+    afterEach(() => {
+      process.env.SHORTCUT_INCIDENT_LABEL_ID = "2805";
+      process.env.SHORTCUT_TOKEN = "11111111"
+    });
+
     test('It should throw a MissingIdError if event is missing an ID',async () => {
       const webHookIncoming = {
         id: "595285dc-9c43-4b9c-a1e6-0cd9aff5b084",

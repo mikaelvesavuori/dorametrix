@@ -6,17 +6,16 @@ import { convertDateToUnixTimestamp } from 'chrono-utils';
 import { EventDto } from '../../interfaces/Event';
 import { EventTypeInput, Parser, PayloadInput } from '../../interfaces/Parser';
 
-
 import {
   MissingIdError,
   MissingShortcutFieldsError,
+  ShortcutConfigurationError
 } from '../errors/errors';
 
 /**
  * @description Parser adapted for Shortcut.
  */
 export class ShortcutParser implements Parser {
-
   storyData: Record<string, any> = {};
   shortcutIncidentLabelId: number;
   shortcutToken: string;
@@ -30,8 +29,11 @@ export class ShortcutParser implements Parser {
     }
 
     /* istanbul ignore next */
-    this.shortcutToken = process.env.SHORTCUT_TOKEN ?? "11111111-1111-1111-1111-111111111111"
-    this.shortcutIncidentLabelId = parseIntValue(process.env.SHORTCUT_INCIDENT_LABEL_ID, 2805);
+    this.shortcutToken = process.env.SHORTCUT_TOKEN ?? ""
+    if (this.shortcutToken === "" || this.shortcutToken === "undefined") throw new ShortcutConfigurationError("SHORTCUT_TOKEN");
+
+    this.shortcutIncidentLabelId = parseIntValue(process.env.SHORTCUT_INCIDENT_LABEL_ID, 0);
+    if (this.shortcutIncidentLabelId === 0) throw new ShortcutConfigurationError("SHORTCUT_INCIDENT_LABEL_ID");
 
     this.logger = MikroLog.start({ metadataConfig: metadataConfig });
   }
@@ -70,7 +72,7 @@ export class ShortcutParser implements Parser {
   }
 
   /**
-   * @description Shortcut only handles Incidents, so this simply returns a hard coded value for it.
+   * @description Shortcut utilizes labels to distinguish between changes and incidents
    */
   public async getEventType(eventTypeInput: EventTypeInput): Promise<string> {
     const webhookbody = eventTypeInput.body || {};

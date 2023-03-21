@@ -203,6 +203,22 @@ export class MissingShortcutFieldsError extends Error {
 }
 
 /**
+ * @description Used when the Shortcut parser if configuration is wrong.
+ */
+export class ShortcutConfigurationError extends Error {
+  constructor(msg: string) {
+    super();
+    this.name = 'ShortcutConfigurationError';
+    const message = 'Missing or incorrectly assigned shortcut configuration: ' + msg;
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 500
+    };
+  }
+}
+
+/**
  * @description Used when the Jira parser is missing the `fields` object.
  */
 export class MissingJiraFieldsError extends Error {
