@@ -12,164 +12,14 @@ import {
   ShortcutConfigurationError
 } from '../../../src/application/errors/errors';
 
-const webHookIncoming_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 16927,
-      entity_type: 'story',
-      action: 'update',
-      name: 'test story',
-      changes: {
-        started: {
-          new: true,
-          old: false
-        },
-        workflow_state_id: {
-          new: 1495,
-          old: 1493
-        },
-        owner_ids: {
-          adds: ['56d8a839-1c52-437f-b981-c3a15a11d6d4']
-        }
-      }
-    }
-  ]
-};
+import webHookIncoming_16927 from '../../../testdata/webhook-events/shortcut/update_started.json';
+import webHookIncoming_labeled_16927 from '../../../testdata/webhook-events/shortcut/update_with_labeled.json';
+import webHookIncoming_create_with_labeled_16927 from '../../../testdata/webhook-events/shortcut/create_with_labeled.json';
+import webHookIncoming_create_with_out_labeled_16927 from '../../../testdata/webhook-events/shortcut/create_without_labeled.json';
+import webHookIncoming_remove_labeled_16927 from '../../../testdata/webhook-events/shortcut/update_remove_label.json';
+import webHookIncoming_no_label_changes_16927 from '../../../testdata/webhook-events/shortcut/update_no_changes.json';
+import genericStoryData from '../../../testdata/webhook-events/shortcut/story_generic.json';
 
-const webHookIncoming_labeled_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'update',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507',
-      changes: {
-        label_ids: {
-          adds: [2805]
-        }
-      }
-    }
-  ]
-};
-
-const webHookIncoming_create_with_labeled_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'create',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507',
-      label_ids: [2805]
-    }
-  ]
-};
-
-const webHookIncoming_create_with_out_labeled_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'create',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507'
-    }
-  ]
-};
-
-const webHookIncoming_remove_labeled_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'update',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507',
-      changes: {
-        label_ids: {
-          removes: [2805]
-        }
-      }
-    },
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'update',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507',
-      changes: {
-        moved: {
-          new: true,
-          old: false
-        }
-      }
-    }
-  ]
-};
-
-const webHookIncoming_no_label_changes_16927 = {
-  id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
-  changed_at: '2017-06-27T16:20:44Z',
-  primary_id: 16927,
-  member_id: '56d8a839-1c52-437f-b981-c3a15a11d6d4',
-  version: 'v1',
-  actions: [
-    {
-      id: 2507,
-      entity_type: 'story',
-      action: 'update',
-      name: 'Deploy current product to np-usea1-3',
-      story_type: 'feature',
-      app_url: 'https://app.shortcut.com/ehawk/story/2507',
-      changes: {}
-    }
-  ]
-};
-
-const genericStoryData: Record<string, any> = {
-  archived: false,
-  completed: false,
-  //"completed_at": "2016-12-31T12:30:00Z",
-  //"completed_at_override": "2017-12-31T12:30:00Z",
-  created_at: '2016-12-31T12:30:00Z',
-  id: 123,
-  name: 'foo',
-  started: true,
-  started_at: '2016-12-31T12:30:00Z',
-  started_at_override: '2016-12-31T12:30:00Z',
-  description: 'foo desc'
-};
 
 describe('Success cases', () => {
   describe('Event types', () => {
@@ -413,7 +263,7 @@ describe('Success cases', () => {
 
     test('It should mark unlabeled events are closed when label change occurs at the end of the actions', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = webHookIncoming_remove_labeled_16927;
+      var webhookData = JSON.parse(JSON.stringify(webHookIncoming_remove_labeled_16927));
 
       webhookData.actions = [webhookData.actions[1], webhookData.actions[0]];
 
