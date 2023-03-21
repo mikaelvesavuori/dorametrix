@@ -23,7 +23,7 @@ class EventConcrete {
   date: string;
   eventType = '';
   id = '';
-  changes: Change[] = new Array<Change>(0);
+  changes: Change[] = [];
   eventTime = '';
   timeCreated = '';
   timeResolved = '';
