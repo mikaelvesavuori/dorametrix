@@ -114,6 +114,22 @@ Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?aut
 
 _If there is a need to support additional Git hosts, then please raise an Issue and explain what the authorative URL format is for your tool._
 
+#### Shortcut.com
+
+Create a webhook; [see this guide if you need instructions](https://help.shortcut.com/hc/en-us/articles/115005093963-Setting-up-Outgoing-Webhooks-).
+
+Add your Dorametrix endpoint URL ("add event" path; default `{API_URL}/event?authorization=API_KEY`
+
+Create [Shortcut API Token](https://help.shortcut.com/hc/en-us/articles/205701199-Shortcut-API-Tokens)
+
+Create an incident label:
+* [Creating Shortcut Labels](https://help.shortcut.com/hc/en-us/articles/205702619-Shortcut-Labels-and-the-Labels-Page-)
+* The [Shortcut Label Page](https://help.shortcut.com/hc/en-us/articles/115003637163-The-Individual-Label-Page) shows the label id in the url
+
+**Note**: You must pass the `shortcutApiToken` and `shortcutIncidentLabelId` options on your first deployment. Refer to [Deployment](/README.md#deployment) or update the `serverless.yaml` file options. Filing to set these option will result in a runtime error
+- `custom.shortcut.apiToken`: Shortcut API token to load story details
+- `custom.shortcut.incidentLabelId`: Label id to identify incidents over changes
+
 #### Note on security with webhook secrets
 
 The current version of Dorametrix does not have built-in support for GitHub webhook secrets, but if there is sufficient demand I might add such support.
@@ -135,6 +151,16 @@ Note that it will attempt to connect to a database, so deploy the application an
 ## Deployment
 
 First make sure that you have a fallback value for your AWS account number in `serverless.yml`, for example: `awsAccountNumber: ${opt:awsAccountNumber, '123412341234'}` or that you set the deployment script to use the flag, for example `npx sls deploy --awsAccountNumber 123412341234`.
+
+If using Shortcut for ticket managmenet you must pass additional options. [Refer to Shortcut Configuration section](./README.md#Shortcut.com). 
+
+* `--shortcutApiToken <guid>`
+* `--shortcutIncidentLabelId 1234`
+
+For example 
+```cmd
+npx sls deploy --awsAccountNumber 123412341234 --shortcutApiToken 1232-1234-1234 -shortcutIncidentLabelId 1234
+```
 
 Then you can deploy with `npm run deploy`.
 
@@ -225,6 +251,16 @@ See below for the tool-specific conventions.
 
 - **Open incident**: Create a Jira Issue with an `incident` label.
 - **Close incident**: Close the Issue or unlabel the `incident` label.
+
+
+#### Shortcut
+
+> Shortcut does not have a specific incident label and can be any label
+
+- **Open incident**: Create a Story or label with an `incident` label.
+- **Close incident**: Close a Story or unlabel the `incident` label.
+
+
 
 ---
 
