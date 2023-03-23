@@ -45,17 +45,15 @@ export class ShortcutParser implements Parser {
    * @description Fetch original shortcut story
    */
   private async fetchStory(storyId: string): Promise<Record<string, any>> {
-    let storyData: Record<string, any> = {};
     this.logger.info('fetching story ' + storyId);
 
-    await fetch('https://api.app.shortcut.com/api/v3/stories/' + storyId, {
+    return await fetch('https://api.app.shortcut.com/api/v3/stories/' + storyId, {
       headers: { 'Shortcut-Token': this.shortcutToken }
     }).then(async (response: any) => {
-      storyData = await response.json();
+      const storyData = await response.json();
+      if (!storyData || Object.keys(storyData).length == 0) throw new MissingShortcutFieldsError();
+      return storyData;
     });
-
-    if (!storyData || Object.keys(storyData).length == 0) throw new MissingShortcutFieldsError();
-    return storyData;
   }
 
   /**
