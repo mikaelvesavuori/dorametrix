@@ -44,7 +44,7 @@ export class ShortcutParser implements Parser {
   /**
    * @description Fetch original shortcut story
    */
-  private async fetchStory(storyId: string) : Promise<Record<string, any>> {
+  private async fetchStory(storyId: string): Promise<Record<string, any>> {
     let storyData: Record<string, any> = {};
     this.logger.info('fetching story ' + storyId);
 
@@ -106,69 +106,98 @@ export class ShortcutParser implements Parser {
    */
   public async getPayload(payloadInput: PayloadInput): Promise<EventDto> {
     const webhook = payloadInput.body || {};
-    if (!webhook || Object.keys(webhook).length == 0)
-      throw new MissingShortcutFieldsError();
+    if (!webhook || Object.keys(webhook).length == 0) throw new MissingShortcutFieldsError();
 
     // Some webhooks contain multiple actions, without the primay id we cannot determine which story to update
-    let storyId: string = webhook?.['primary_id'];
+    const storyId: string = webhook?.['primary_id'];
     if (!storyId) throw new MissingIdError('Missing ID in getStoryData()!');
 
-    console.log("storyId-webhook", storyId)
+    console.log('storyId-webhook', storyId);
     //The webhook can contain multiple story payloads, we only care about stories that match the primary id
-    const webhookActions : Record<string, any>[] = webhook?.['actions'].filter(
-      (action: Record<string, any>) => action?.['entity_type'] == 'story' && action?.['id'] == storyId
+    const webhookActions: Record<string, any>[] = webhook?.['actions'].filter(
+      (action: Record<string, any>) =>
+        action?.['entity_type'] == 'story' && action?.['id'] == storyId
     );
 
-    console.log("webhookActions", webhookActions);
+    console.log('webhookActions', webhookActions);
 
     const event = ((actions: Record<string, any>[]) => {
-    console.log("actions", actions);
-      if (actions.length == 0)
-        return "unknown"
+      console.log('actions', actions);
+      if (actions.length == 0) return 'unknown';
 
-      if (actions.filter((action: Record<string, any>) => action?.['action'] == 'delete').length > 0)
-        return "closed";
+      if (
+        actions.filter((action: Record<string, any>) => action?.['action'] == 'delete').length > 0
+      )
+        return 'closed';
 
       // Check if webhook is a 'create' event
-      const isCreate = actions.filter((action: Record<string, any>) => action?.['action'] == 'create').length > 0
+      const isCreate =
+        actions.filter((action: Record<string, any>) => action?.['action'] == 'create').length > 0;
 
       // Check if webhook is an 'update' event
-      const isUpdate = actions.filter((action: Record<string, any>) => action?.['action'] == 'update').length > 0
+      const isUpdate =
+        actions.filter((action: Record<string, any>) => action?.['action'] == 'update').length > 0;
 
       if (isCreate || isUpdate) {
-        console.log("archived", actions.filter((action: Record<string, any>) => action?.['changes']?.['archived']?.["new"] === true))
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['archived']?.["new"] === true).length > 0)
+        console.log(
+          'archived',
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['archived']?.['new'] === true
+          )
+        );
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['archived']?.['new'] === true
+          ).length > 0
+        )
           return 'closed';
-        
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['started']?.["new"] === false).length > 0)
+
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['started']?.['new'] === false
+          ).length > 0
+        )
           return 'closed';
 
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['completed']?.["new"] === true).length > 0)
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['completed']?.['new'] === true
+          ).length > 0
+        )
           return 'closed';
 
-        if (this.hasLabelId('adds', this.shortcutIncidentLabelId, actions))
-          return 'labeled';
+        if (this.hasLabelId('adds', this.shortcutIncidentLabelId, actions)) return 'labeled';
 
-        if (this.hasLabelId('removes', this.shortcutIncidentLabelId, actions))
-          return 'unlabeled';
+        if (this.hasLabelId('removes', this.shortcutIncidentLabelId, actions)) return 'unlabeled';
 
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['archived']?.["new"] === false).length > 0)
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['archived']?.['new'] === false
+          ).length > 0
+        )
           return 'opened';
 
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['started']?.["new"] === true).length > 0)
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['started']?.['new'] === true
+          ).length > 0
+        )
           return 'opened';
 
-        if (actions.filter((action: Record<string, any>) => action?.['changes']?.['completed']?.["new"] === false).length > 0)
+        if (
+          actions.filter(
+            (action: Record<string, any>) => action?.['changes']?.['completed']?.['new'] === false
+          ).length > 0
+        )
           return 'opened';
       }
 
-      if (isCreate)
-        return 'opened';
+      if (isCreate) return 'opened';
 
       return 'unknown';
     })(webhookActions);
 
-    console.log("event", storyId, event)
+    console.log('event', storyId, event);
 
     switch (event) {
       case 'opened':
@@ -192,7 +221,7 @@ export class ShortcutParser implements Parser {
   private async handleOpenedLabeled(webhook: Record<string, any>, storyId: string) {
     const body = await this.fetchStory(storyId);
 
-    console.log("handleOpenedLabeled")
+    console.log('handleOpenedLabeled');
 
     return {
       eventTime: webhook?.['changed_at'],
@@ -205,7 +234,7 @@ export class ShortcutParser implements Parser {
 
   private async handleClosedUnlabeled(webhook: Record<string, any>, storyId: string) {
     const body = await this.fetchStory(storyId);
-    console.log("handleClosedUnlabeled")
+    console.log('handleClosedUnlabeled');
 
     return {
       eventTime: webhook?.['changed_at'],
@@ -220,10 +249,10 @@ export class ShortcutParser implements Parser {
   private handleTimeResolved(body: Record<string, any>) {
     return body?.['completed'] || body?.['archived'] || body?.['deleted']
       ? convertDateToUnixTimestamp(
-        body?.['deleted_at']?.toString() || 
-        body?.['archived_at']?.toString() || 
-        body?.['completed_at_override']?.toString() || 
-        body?.['completed_at']?.toString()
+          body?.['deleted_at']?.toString() ||
+            body?.['archived_at']?.toString() ||
+            body?.['completed_at_override']?.toString() ||
+            body?.['completed_at']?.toString()
         )
       : Date.now().toString();
   }
