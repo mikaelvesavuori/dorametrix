@@ -11,12 +11,20 @@ import {
   ShortcutConfigurationError
 } from '../../../src/application/errors/errors';
 
-import webHookIncoming_16927 from '../../../testdata/webhook-events/shortcut/update_started.json';
-import webHookIncoming_labeled_16927 from '../../../testdata/webhook-events/shortcut/update_with_labeled.json';
-import webHookIncoming_create_with_labeled_16927 from '../../../testdata/webhook-events/shortcut/create_with_labeled.json';
-import webHookIncoming_create_with_out_labeled_16927 from '../../../testdata/webhook-events/shortcut/create_without_labeled.json';
-import webHookIncoming_remove_labeled_16927 from '../../../testdata/webhook-events/shortcut/update_remove_label.json';
-import webHookIncoming_no_label_changes_16927 from '../../../testdata/webhook-events/shortcut/update_no_changes.json';
+
+import webhook_push_event from '../../../testdata/webhook-events/shortcut/push_event.json';
+import webhook_story_create_with_label from '../../../testdata/webhook-events/shortcut/story_create_with_label.json';
+import webhook_story_create_without_label from '../../../testdata/webhook-events/shortcut/story_create.json';
+import webhook_story_delete from '../../../testdata/webhook-events/shortcut/story_delete.json';
+import webhook_story_bulk_update from '../../../testdata/webhook-events/shortcut/story_bulk_update.json';
+import webhook_story_update_archived from '../../../testdata/webhook-events/shortcut/story_update_archived.json';
+import webhook_story_update_completed from '../../../testdata/webhook-events/shortcut/story_update_completed.json';
+import webhook_story_update_label_added from '../../../testdata/webhook-events/shortcut/story_update_label_added.json';
+import webhook_story_update_label_removed from '../../../testdata/webhook-events/shortcut/story_update_label_removed.json';
+import webhook_story_update_started from '../../../testdata/webhook-events/shortcut/story_update_started.json';
+import webhook_story_update_stopped from '../../../testdata/webhook-events/shortcut/story_update_stopped.json';
+import webhook_story_update from '../../../testdata/webhook-events/shortcut/story_update.json';
+
 import genericStoryData from '../../../testdata/webhook-events/shortcut/story_generic.json';
 
 
@@ -37,7 +45,7 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
         headers: {},
-        body: webHookIncoming_16927
+        body: webhook_story_update_started
       });
 
       expect(eventType).toBe('change');
@@ -50,7 +58,7 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
         headers: {},
-        body: webHookIncoming_labeled_16927
+        body: webhook_story_update_label_added
       });
 
       expect(eventType).toBe('incident');
@@ -63,7 +71,7 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
         headers: {},
-        body: webHookIncoming_create_with_labeled_16927
+        body: webhook_story_create_with_label
       });
 
       expect(eventType).toBe('incident');
@@ -76,18 +84,17 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
         headers: {},
-        body: webHookIncoming_create_with_out_labeled_16927
+        body: webhook_story_create_without_label
       });
 
       expect(eventType).toBe('change');
     });
 
     test('It should use the environment shortcut incident label id', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = JSON.parse(JSON.stringify(webHookIncoming_create_with_labeled_16927));
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_create_with_label));
       webhookData.actions[0].label_ids = [1234];
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '1234';
 
@@ -109,7 +116,7 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
         headers: {},
-        body: webHookIncoming_create_with_labeled_16927
+        body: webhook_story_create_with_label
       });
 
       expect(eventType).toBe('change');
@@ -131,7 +138,7 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webHookIncoming_16927
+        body: webhook_story_update_started
       });
 
       expect(payload).toHaveProperty('eventTime');
@@ -143,28 +150,27 @@ describe('Success cases', () => {
     });
 
     test('It should return assigned properties on update', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webHookIncoming_labeled_16927
+        body: webhook_story_update_label_added
       });
 
-      expect(payload.eventTime).toBe('2017-06-27T16:20:44Z');
+      expect(payload.eventTime).toBe('2023-03-22T21:38:19.067Z');
       expect(payload.timeCreated).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
       expect(payload.timeResolved).toBe(undefined);
       expect(payload.id).toBe('123');
       expect(payload.title).toBe('foo');
-      expect(payload.message).toBe(JSON.stringify(storyData));
     });
+
 
     test('It should return assigned properties on create', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       fetchMock.mockResponse(JSON.stringify(storyData));
 
-      var webhookData = webHookIncoming_create_with_labeled_16927;
+      var webhookData = webhook_story_create_with_label;
       webhookData.actions[0].action = 'create';
 
       const parser = new ShortcutParser();
@@ -173,7 +179,7 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(payload.eventTime).toBe('2017-06-27T16:20:44Z');
+      expect(payload.eventTime).toBe('2023-03-22T21:39:21.838Z');
       expect(payload.timeCreated).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
       expect(payload.timeResolved).toBe(undefined);
       expect(payload.id).toBe('123');
@@ -185,7 +191,7 @@ describe('Success cases', () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       fetchMock.mockResponse(JSON.stringify(storyData));
 
-      var webhookData = webHookIncoming_create_with_out_labeled_16927;
+      var webhookData = webhook_story_create_without_label;
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -193,7 +199,7 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(payload.eventTime).toBe('2017-06-27T16:20:44Z');
+      expect(payload.eventTime).toBe('2023-03-22T21:39:21.838Z');
       expect(payload.timeCreated).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
       expect(payload.timeResolved).toBe(undefined);
       expect(payload.id).toBe('123');
@@ -203,20 +209,16 @@ describe('Success cases', () => {
 
     test('It should return assigned properties on completed with override', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      storyData.id = 876;
       storyData.completed = true;
       storyData.completed_at = '2016-12-31T12:30:00Z';
       storyData.completed_at_override = '2017-12-31T12:30:00Z';
-
-      var webhookData = webHookIncoming_labeled_16927;
-      webhookData.actions[0].action = 'updated';
 
       fetchMock.mockResponse(JSON.stringify(storyData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webhookData
+        body: webhook_story_update_completed
       });
 
       expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2017-12-31T12:30:00Z'));
@@ -224,64 +226,67 @@ describe('Success cases', () => {
 
     test('It should return assigned properties on completed', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      storyData.id = 876;
-      storyData.completed = true;
+      storyData.deleted = true;
       storyData.completed_at = '2016-12-31T12:30:00Z';
-
-      var webhookData = webHookIncoming_labeled_16927 || webHookIncoming_16927;
-      webhookData.actions[0].action = 'updated';
+      storyData.deleted_at = '2016-12-31T13:30:00Z';
 
       fetchMock.mockResponse(JSON.stringify(storyData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webhookData
+        body: webhook_story_delete
       });
 
-      expect(payload.eventTime).toBe('2017-06-27T16:20:44Z');
-      expect(payload.timeCreated).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
+      expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T13:30:00Z'));
+    });
+
+    test('It should return assigned properties on deleted', async () => {
+      var storyData = JSON.parse(JSON.stringify(genericStoryData));
+      storyData.deleted = true;
+      storyData.completed_at = '2016-12-31T12:30:00Z';
+
+      fetchMock.mockResponse(JSON.stringify(storyData));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhook_story_update_completed
+      });
+
       expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
-      expect(payload.id).toBe('876');
-      expect(payload.title).toBe('foo');
-      expect(payload.message).toBe(JSON.stringify(storyData));
     });
 
     test('It should mark unlabeled events are closed', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = webHookIncoming_remove_labeled_16927;
+      var webhookData = webhook_story_update_label_removed;
 
       Date.now = jest.fn(() => 1487076708000);
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
         body: webhookData
       });
+
       expect(payload.timeResolved).toBe(Date.now().toString());
     });
 
-    test('It should mark unlabeled events are closed when label change occurs at the end of the actions', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = JSON.parse(JSON.stringify(webHookIncoming_remove_labeled_16927));
-
-      webhookData.actions = [webhookData.actions[1], webhookData.actions[0]];
-
+    test('It should ignore push events', async () => {
       Date.now = jest.fn(() => 1487076708000);
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webhookData
+        body: webhook_push_event
       });
-      expect(payload.timeResolved).toBe(Date.now().toString());
+
+      expect(payload.timeResolved).toBe("UNKNOWN");
     });
 
     test('It should make updates with no labels as opened', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = webHookIncoming_no_label_changes_16927;
 
       Date.now = jest.fn(() => 1487076708000);
       fetchMock.mockResponse(JSON.stringify(storyData));
@@ -289,20 +294,58 @@ describe('Success cases', () => {
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
         headers: {},
-        body: webhookData
+        body: webhook_story_update
       });
-      expect(payload.timeResolved).toBe(undefined);
+
+      expect(payload.timeResolved).toBe("UNKNOWN");
+    });
+
+    test('It should return assigned properties on started', async () => {
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhook_story_update_started
+      });
+
+      expect(payload).not.toHaveProperty("timeResolved");
+    });
+
+    test('It should return assigned properties on stopped', async () => {
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhook_story_update_stopped
+      });
+
+      expect(payload).toHaveProperty("timeResolved");
     });
 
     test('It should return assigned properties on archived', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      storyData.id = 876;
       storyData.archived = true;
       storyData.completed_at = '2016-12-31T12:30:00Z';
 
-      var webhookData = webHookIncoming_labeled_16927;
-
       fetchMock.mockResponse(JSON.stringify(storyData));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhook_story_update_archived
+      });
+
+      expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
+    });
+
+    test('It should return assigned properties on when removed from archive', async () => {
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_update_archived));
+      webhookData.actions[0].changes.archived.new = false;
+      webhookData.actions[0].changes.archived.old = true;
+
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -310,15 +353,31 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
+      expect(payload).not.toHaveProperty("timeResolved");
+    });
+
+    test('It should return assigned properties on when moved from completed', async () => {
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_update_completed));
+      webhookData.actions[0].changes.completed.new = false;
+      webhookData.actions[0].changes.completed.old = true;
+
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+
+      const parser = new ShortcutParser();
+      const payload = await parser.getPayload({
+        headers: {},
+        body: webhookData
+      });
+
+      expect(payload).not.toHaveProperty("timeResolved");
     });
 
     test('It should parse the story id from the webhook payload', async () => {
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = webHookIncoming_labeled_16927;
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_update_label_added));
       webhookData.primary_id = 123456;
+      webhookData.actions[0].id = 123456;
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -331,14 +390,11 @@ describe('Success cases', () => {
       });
     });
 
-    test('It should use the environment shortcut token', async () => {
-      process.env.SHORTCUT_TOKEN = '222222';
+    test('It should parse the story id from the webhook payload and ignore all none matching actions', async () => {
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_update_label_added));
+      webhookData.primary_id = 456;
 
-      var storyData = JSON.parse(JSON.stringify(genericStoryData));
-      var webhookData = webHookIncoming_labeled_16927;
-      webhookData.primary_id = 123456;
-
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -346,7 +402,27 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(fetchMock).toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/123456', {
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/456', {
+        headers: { 'Shortcut-Token': '11111111' }
+      });
+    });
+
+    test('It should use the environment shortcut token', async () => {
+      process.env.SHORTCUT_TOKEN = '222222';
+      
+      var webhookData = JSON.parse(JSON.stringify(webhook_story_update_label_added));
+      const storyId = webhookData.primary_id;
+
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+
+      const parser = new ShortcutParser();
+      await parser.getPayload({
+        headers: {},
+        body: webhookData
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith("https://api.app.shortcut.com/api/v3/stories/" + storyId, {
         headers: { 'Shortcut-Token': '222222' }
       });
     });
@@ -495,7 +571,7 @@ describe('Failure cases', () => {
     });
 
     test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
-      var webhookData = webHookIncoming_labeled_16927;
+      var webhookData = webhook_story_update_label_added;
       fetchMock.mockResponse(JSON.stringify({}));
 
       const parser = new ShortcutParser();
@@ -506,6 +582,16 @@ describe('Failure cases', () => {
           body: webhookData
         })).rejects.toThrowError(MissingShortcutFieldsError); 
     });
+
+    test('It should throw a MissingIdError on bulk updated', () => {
+      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+
+      const parser = new ShortcutParser();
+      expect(parser.getPayload({
+        headers: {},
+        body: webhook_story_bulk_update
+      })).rejects.toThrowError(MissingIdError); 
+    });
   });
 
   describe('Payloads', () => {
@@ -515,7 +601,6 @@ describe('Failure cases', () => {
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
     });
-
     test('It should throw a MissingIdError if event is missing an ID', () => {
       const webHookIncoming = {
         id: '595285dc-9c43-4b9c-a1e6-0cd9aff5b084',
@@ -554,7 +639,7 @@ describe('Failure cases', () => {
     });
 
     test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
-      var webhookData = webHookIncoming_labeled_16927;
+      var webhookData = webhook_story_update_label_added;
 
       fetchMock.mockResponse(JSON.stringify({}));
 
