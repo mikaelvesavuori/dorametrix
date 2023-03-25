@@ -190,8 +190,6 @@ export class ShortcutParser implements Parser {
           return 'opened';
       }
 
-      if (isCreate) return 'opened';
-
       return 'unknown';
     })(webhookActions);
 

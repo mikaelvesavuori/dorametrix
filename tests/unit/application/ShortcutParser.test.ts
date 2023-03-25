@@ -187,7 +187,7 @@ describe('Success cases', () => {
       expect(payload.message).toBe(JSON.stringify(storyData));
     });
 
-    test('It should return assigned properties on create without incident label', async () => {
+    test('It should return an unknown event for a create without an label', async () => {
       var storyData = JSON.parse(JSON.stringify(genericStoryData));
       fetchMock.mockResponse(JSON.stringify(storyData));
 
@@ -199,12 +199,7 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(payload.eventTime).toBe('2023-03-22T21:39:21.838Z');
-      expect(payload.timeCreated).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
-      expect(payload.timeResolved).toBe(undefined);
-      expect(payload.id).toBe('123');
-      expect(payload.title).toBe('foo');
-      expect(payload.message).toBe(JSON.stringify(storyData));
+      expect(payload.eventTime).toBe('UNKNOWN');
     });
 
     test('It should return assigned properties on completed with override', async () => {
