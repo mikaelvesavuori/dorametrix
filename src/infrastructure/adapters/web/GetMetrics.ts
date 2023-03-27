@@ -9,6 +9,8 @@ import { createNewDynamoDbRepository } from '../../repositories/DynamoDbReposito
 import { getRequestDTO } from '../../../application/getRequestDTO';
 import { createQueryStringParamsObjectFromString } from '../../../application/createQueryStringParamsObjectFromString';
 
+import { end } from '../../frameworks/end';
+
 import { metadataConfig } from '../../../config/metadata';
 
 /**
@@ -33,18 +35,12 @@ export async function handler(
     const repo = createNewDynamoDbRepository();
     const metrics = await getMetrics(repo, queryParams);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(metrics)
-    };
+    return end(200, metrics);
   } catch (error: any) {
     const statusCode: number = error?.['cause']?.['statusCode'] || 400;
     const message: string = error.message;
     logger.error(error);
 
-    return {
-      statusCode,
-      body: JSON.stringify(message)
-    };
+    return end(statusCode, message);
   }
 }
