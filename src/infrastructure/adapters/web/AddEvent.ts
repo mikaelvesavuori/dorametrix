@@ -10,6 +10,8 @@ import { createEvent } from '../../../usecases/createEvent';
 
 import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
+import { end } from '../../frameworks/end';
+
 import { metadataConfig } from '../../../config/metadata';
 
 /**
@@ -37,18 +39,12 @@ export async function handler(
 
     await createEvent(repo, metricEvent);
 
-    return {
-      statusCode: 204,
-      body: ''
-    };
+    return end(204);
   } catch (error: any) {
     const statusCode: number = error?.['cause']?.['statusCode'] || 400;
     const message: string = error.message;
     logger.error(error);
 
-    return {
-      statusCode,
-      body: JSON.stringify(message)
-    };
+    return end(statusCode, message);
   }
 }
