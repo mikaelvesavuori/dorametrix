@@ -1,0 +1,44 @@
+{
+  "id": "641b7589-34ac-499f-99b0-35193031cf59",
+  "changed_at": "2023-03-22T21:39:21.838Z",
+  "version": "v1",
+  "primary_id": 16927,
+  "member_id": "63bd860e-2ef0-4972-bd98-29e1b10935da",
+  "actions": [
+    {
+      "id": 16927,
+      "entity_type": "story",
+      "action": "create",
+      "app_url": "https://app.shortcut.com/ehawk/story/16927",
+      "description": "",
+      "story_type": "feature",
+      "name": "epic story 2",
+      "epic_id": 3350,
+      "requested_by_id": "63bd860e-2ef0-4972-bd98-29e1b10935da",
+      "group_id": "62574652-da47-4a2c-9ded-f5ce18194432",
+      "workflow_state_id": 500000580,
+      "follower_ids": ["63bd860e-2ef0-4972-bd98-29e1b10935da"],
+      "position": 2172772352,
+      "label_ids": [2805]
+    }
+  ],
+  "references": [
+    {
+      "id": 3350,
+      "entity_type": "epic",
+      "name": "Epic create test",
+      "app_url": "https://app.shortcut.com/ehawk/epic/3350"
+    },
+    {
+      "id": 500000580,
+      "entity_type": "workflow-state",
+      "name": "Backlog",
+      "type": "backlog"
+    },
+    {
+      "id": "62574652-da47-4a2c-9ded-f5ce18194432",
+      "entity_type": "group",
+      "name": "eHawk"
+    }
+  ]
+}

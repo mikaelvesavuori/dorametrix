@@ -54,6 +54,10 @@ custom:
     maxDateRange: ${opt:maxDateRange, '30'}
     maxLifeInDays: ${opt:maxLifeInDays, '90'}
     tableName: ${self:service}-${self:provider.stage}
+    shortcut:
+      shortcutApiToken: ${opt:shortcutApiToken, ''} # Set this to your value if you want to use a fallback value
+      shortcutIncidentLabelId: ${opt:shortcutIncidentLabelId, '0'} # Set this to your value if you want to use a fallback value
+      shortcutRepoName: ${opt:shortcutRepoName, 'unknown'}
   aws:
     databaseArn: arn:aws:dynamodb:${aws:region}:${self:custom.config.awsAccountNumber}:table/${self:custom.config.tableName}
     apiGatewayCachingTtl:
@@ -96,6 +100,9 @@ functions:
       TABLE_NAME: ${self:custom.config.tableName}
       MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
       MAX_LIFE_IN_DAYS: ${self:custom.config.maxLifeInDays}
+      SHORTCUT_TOKEN: ${self:custom.config.shortcut.shortcutApiToken}
+      SHORTCUT_INCIDENT_LABEL_ID: ${self:custom.config.shortcut.shortcutIncidentLabelId}
+      SHORTCUT_REPONAME: ${self:custom.config.shortcut.shortcutRepoName}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetrics.handler
     description: Get DORA metrics

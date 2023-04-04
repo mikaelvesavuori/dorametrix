@@ -18,7 +18,7 @@ export class GitHubParser implements Parser {
    * supported types: `change`, `deployment`, or `incident`.
    */
   // @ts-ignore
-  public getEventType(eventTypeInput: EventTypeInput): string {
+  public async getEventType(eventTypeInput: EventTypeInput): Promise<string> {
     const { headers } = eventTypeInput;
     const eventType = headers?.['X-GitHub-Event'] || headers?.['x-github-event'];
 
@@ -31,7 +31,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Get payload fields from the right places.
    */
-  public getPayload(payloadInput: PayloadInput): EventDto {
+  public async getPayload(payloadInput: PayloadInput): Promise<EventDto> {
     const { headers } = payloadInput;
     const body = payloadInput.body || {};
 

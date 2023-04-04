@@ -1,0 +1,21 @@
+{
+  "id": "641b759c-17ee-4756-9e82-420bce7250b2",
+  "changed_at": "2023-03-22T21:39:40.950Z",
+  "version": "v1",
+  "primary_id": 3352,
+  "member_id": "63bd860e-2ef0-4972-bd98-29e1b10935da",
+  "actions": [
+    {
+      "id": 3352,
+      "entity_type": "story",
+      "action": "delete",
+      "story_type": "feature",
+      "name": "test epic story"
+    },
+    {
+      "id": 3353,
+      "entity_type": "story-comment",
+      "action": "delete"
+    }
+  ]
+}

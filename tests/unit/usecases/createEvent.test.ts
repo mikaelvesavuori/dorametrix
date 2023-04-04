@@ -23,7 +23,7 @@ describe('Success cases', () => {
     const repo = createNewLocalRepository();
 
     test('It should create a change', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,
@@ -36,7 +36,7 @@ describe('Success cases', () => {
     });
 
     test('It should create a deployment', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,
@@ -49,7 +49,7 @@ describe('Success cases', () => {
     });
 
     test('It should create an incident', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,
@@ -67,7 +67,7 @@ describe('Success cases', () => {
     const repo = createNewDynamoDbRepository();
 
     test('It should create a change', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,
@@ -80,7 +80,7 @@ describe('Success cases', () => {
     });
 
     test('It should create a deployment', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,
@@ -93,7 +93,7 @@ describe('Success cases', () => {
     });
 
     test('It should create an incident', async () => {
-      const metricEvent = makeEvent(
+      const metricEvent = await makeEvent(
         parser,
         {
           ...input,

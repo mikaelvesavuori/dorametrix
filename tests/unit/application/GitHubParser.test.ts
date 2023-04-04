@@ -9,9 +9,9 @@ import {
 
 describe('Success cases', () => {
   describe('Event types', () => {
-    test('Given a lower-case "push" event header, it should return "change"', () => {
+    test('Given a lower-case "push" event header, it should return "change"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'x-github-event': 'push'
         }
@@ -19,9 +19,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('change');
     });
 
-    test('It should take in a "push" event and return "change"', () => {
+    test('It should take in a "push" event and return "change"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'push'
         }
@@ -29,9 +29,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('change');
     });
 
-    test('It should take in a "opened" event and return "incident"', () => {
+    test('It should take in a "opened" event and return "incident"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -42,9 +42,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "closed" event and return "incident"', () => {
+    test('It should take in a "closed" event and return "incident"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -55,9 +55,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "deleted" event and return "incident"', () => {
+    test('It should take in a "deleted" event and return "incident"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -68,9 +68,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "labeled" event and return "incident"', () => {
+    test('It should take in a "labeled" event and return "incident"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -81,9 +81,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "unlabeled" event and return "incident"', () => {
+    test('It should take in a "unlabeled" event and return "incident"', async () => {
       const parser = new GitHubParser();
-      const eventType = parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -96,9 +96,9 @@ describe('Success cases', () => {
   });
 
   describe('Payloads', () => {
-    test('It should take in a typical GitHub "push" event and return time created and ID', () => {
+    test('It should take in a typical GitHub "push" event and return time created and ID', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'push'
         },
@@ -115,9 +115,9 @@ describe('Success cases', () => {
       });
     });
 
-    test('Given incident label(s) and a typical GitHub "opened" event, it should return time created and ID', () => {
+    test('Given incident label(s) and a typical GitHub "opened" event, it should return time created and ID', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -147,9 +147,9 @@ describe('Success cases', () => {
       });
     });
 
-    test('Given no incident label(s) and a typical GitHub "opened" event, it should return empty for id and timeCreated', () => {
+    test('Given no incident label(s) and a typical GitHub "opened" event, it should return empty for id and timeCreated', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -168,9 +168,9 @@ describe('Success cases', () => {
       });
     });
 
-    test('It should take in a typical GitHub "unlabeled" event and return time created and ID', () => {
+    test('It should take in a typical GitHub "unlabeled" event and return time created and ID', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -189,9 +189,9 @@ describe('Success cases', () => {
       });
     });
 
-    test('It should take in a typical GitHub "closed" event and return time created and ID', () => {
+    test('It should take in a typical GitHub "closed" event and return time created and ID', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -210,9 +210,9 @@ describe('Success cases', () => {
       });
     });
 
-    test('It should handle unknown events', () => {
+    test('It should handle unknown events', async () => {
       const parser = new GitHubParser();
-      const payload = parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'something_that_does_not_exist'
         },
@@ -232,7 +232,7 @@ describe('Success cases', () => {
   });
 
   describe('Repository name', () => {
-    test('It should take in a typical GitHub event and return the repository name', () => {
+    test('It should take in a typical GitHub event and return the repository name', async () => {
       const parser = new GitHubParser();
       const repoName = parser.getRepoName({
         repository: {
@@ -242,13 +242,13 @@ describe('Success cases', () => {
       expect(repoName).toBe('SOMEORG/SOMEREPO');
     });
 
-    test('It should take in a typical GitHub event and return an empty string if it is missing', () => {
+    test('It should take in a typical GitHub event and return an empty string if it is missing', async () => {
       const parser = new GitHubParser();
       const repoName = parser.getRepoName({});
       expect(repoName).toBe('');
     });
 
-    test('It should take in a typical GitHub event and return an empty string even if no input is provided', () => {
+    test('It should take in a typical GitHub event and return an empty string even if no input is provided', async () => {
       const parser = new GitHubParser();
       // @ts-ignore
       const repoName = parser.getRepoName();
@@ -259,20 +259,24 @@ describe('Success cases', () => {
 
 describe('Failure cases', () => {
   describe('General', () => {
-    test('It should throw an UnknownEventTypeError if event type is unknown', async () => {
+    test('It should throw an UnknownEventTypeError if event type is unknown', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getEventType({
           headers: {
             'X-GitHub-Event': '12345'
           }
         })
-      ).toThrowError(UnknownEventTypeError);
+      ).rejects.toThrowError(UnknownEventTypeError);
     });
 
     test('It should throw a MissingEventError if no event is detected in headers', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           body: {
             head_commit: {
@@ -283,12 +287,14 @@ describe('Failure cases', () => {
             asdf: '1234'
           }
         })
-      ).toThrowError(MissingEventError);
+      ).rejects.toThrowError(MissingEventError);
     });
 
     test('It should throw a MissingIdError if event ID is missing', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           body: {
             head_commit: {
@@ -299,14 +305,15 @@ describe('Failure cases', () => {
             'X-GitHub-Event': 'push'
           }
         })
-      ).toThrowError(MissingIdError);
+      ).rejects.toThrowError(MissingIdError);
     });
   });
-
   describe('Payloads', () => {
     test('It should throw a MissingEventTimeError if a GitHub "push" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'push'
@@ -317,12 +324,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "push" event is missing an ID', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'push'
@@ -333,12 +342,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingIdError);
+      ).rejects.toThrowError(MissingIdError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "labeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -350,12 +361,13 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
-
     test('It should throw a MissingEventTimeError if a GitHub "closed" event is missing a "closed_at" timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -367,12 +379,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "unlabeled" event is missing a "closed_at" timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -384,12 +398,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "labeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -401,12 +417,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingIdError);
+      ).rejects.toThrowError(MissingIdError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "unlabeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -418,12 +436,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "unlabeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -436,12 +456,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingIdError);
+      ).rejects.toThrowError(MissingIdError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "closed" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -453,12 +475,14 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingEventTimeError);
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "closed" event is missing a timestamp', () => {
       const parser = new GitHubParser();
-      expect(() =>
+
+      expect.assertions(1);
+      expect(
         parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
@@ -471,7 +495,7 @@ describe('Failure cases', () => {
             }
           }
         })
-      ).toThrowError(MissingIdError);
+      ).rejects.toThrowError(MissingIdError);
     });
   });
 });
