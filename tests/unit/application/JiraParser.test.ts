@@ -12,7 +12,7 @@ describe('Success cases', () => {
     test('It should return "incident" for event types', async () => {
       const parser = new JiraParser();
       const eventType = await parser.getEventType();
-      
+
       expect(eventType).toBe('incident');
     });
   });
@@ -191,7 +191,7 @@ describe('Success cases', () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = await parser.getRepoName({
+      const repoName = parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -210,7 +210,7 @@ describe('Success cases', () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = await parser.getRepoName({
+      const repoName = parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -229,7 +229,7 @@ describe('Success cases', () => {
       const expected = 'SOMEORG/SOMEREPO';
 
       const parser = new JiraParser();
-      const repoName = await parser.getRepoName({
+      const repoName = parser.getRepoName({
         user: {
           self: 'https://something.atlassian.net/rest/api/2/user?accountId=12345-123asd-12ab12-1234567-abcdefg'
         },
@@ -250,18 +250,20 @@ describe('Failure cases', () => {
   describe('Payloads', () => {
     test('It should throw a MissingEventTimeError if "issue created" event is missing a timestamp', () => {
       const parser = new JiraParser();
-      
+
       expect.assertions(1);
-      expect(parser.getPayload({
-        headers: {},
-        body: {
-          issue_event_type_name: 'issue_created',
-          issue: {
-            id: '10004',
-            fields: {}
+      expect(
+        parser.getPayload({
+          headers: {},
+          body: {
+            issue_event_type_name: 'issue_created',
+            issue: {
+              id: '10004',
+              fields: {}
+            }
           }
-        }
-      })).rejects.toThrowError(MissingEventTimeError);
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
   });
 
@@ -269,8 +271,9 @@ describe('Failure cases', () => {
     const parser = new JiraParser();
 
     expect.assertions(1);
-    expect(parser.getPayload({
-      headers: {},
+    expect(
+      parser.getPayload({
+        headers: {},
         body: {
           issue_event_type_name: 'issue_created',
           issue: {
@@ -279,43 +282,46 @@ describe('Failure cases', () => {
             }
           }
         }
-    })).rejects.toThrowError(MissingIdError); 
+      })
+    ).rejects.toThrowError(MissingIdError);
   });
 
   test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing a creation timestamp', () => {
     const parser = new JiraParser();
 
     expect.assertions(1);
-    expect(parser.getPayload({
-      headers: {},
-      body: {
-        issue_event_type_name: 'issue_generic',
-        issue: {
-          id: '10004',
-          fields: {
-            updated: '2022-02-03T20:05:45.243+0100',
-            summary: 'Test issue'
-          }
-        },
-        changelog: {
-          id: '10014',
-          items: [
-            {
-              field: 'resolution',
-              toString: 'Done'
+    expect(
+      parser.getPayload({
+        headers: {},
+        body: {
+          issue_event_type_name: 'issue_generic',
+          issue: {
+            id: '10004',
+            fields: {
+              updated: '2022-02-03T20:05:45.243+0100',
+              summary: 'Test issue'
             }
-          ]
+          },
+          changelog: {
+            id: '10014',
+            items: [
+              {
+                field: 'resolution',
+                toString: 'Done'
+              }
+            ]
+          }
         }
-      }
-    })).rejects.toThrowError(MissingEventTimeError); 
-
+      })
+    ).rejects.toThrowError(MissingEventTimeError);
   });
 
   test('It should throw a MissingEventTimeError if "issue updated (resolved)" event is missing an updated timestamp', () => {
     const parser = new JiraParser();
-    
+
     expect.assertions(1);
-    expect(parser.getPayload({
+    expect(
+      parser.getPayload({
         headers: {},
         body: {
           issue_event_type_name: 'issue_generic',
@@ -336,33 +342,32 @@ describe('Failure cases', () => {
             ]
           }
         }
-      })).rejects.toThrowError(MissingEventTimeError); 
+      })
+    ).rejects.toThrowError(MissingEventTimeError);
   });
 
   test('It should throw a MissingJiraFieldsError if the "fields" object is missing', () => {
     const parser = new JiraParser();
 
-    expect.assertions(1);
-    expect(parser.getRepoName({})).rejects.toThrowError(MissingJiraFieldsError); 
+    expect(() => parser.getRepoName({})).toThrow(MissingJiraFieldsError);
   });
 
   test('It should throw a MissingJiraFieldsError if the input is missing', () => {
     const parser = new JiraParser();
 
-    expect.assertions(1);
     // @ts-ignore
-    expect(parser.getRepoName()).rejects.toThrowError(MissingJiraFieldsError); 
+    expect(() => parser.getRepoName()).toThrow(MissingJiraFieldsError);
   });
 
   test('It should throw a MissingJiraMatchedCustomFieldKeyError if there is no repository URL in a custom field', () => {
     const parser = new JiraParser();
 
-    expect.assertions(1);
-    expect(parser.getRepoName({
-      issue: {
-        fields: {}
-      }
-    })).rejects.toThrowError(MissingJiraMatchedCustomFieldKeyError); 
+    expect(() =>
+      parser.getRepoName({
+        issue: {
+          fields: {}
+        }
+      })
+    ).toThrow(MissingJiraMatchedCustomFieldKeyError);
   });
 });
- 

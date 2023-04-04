@@ -10,9 +10,8 @@ describe('Failure cases', () => {
         body: {
           asdf: '1234'
         }
-      })
-    }
-    catch(e) {
+      });
+    } catch (e) {
       expect(e).toBeInstanceOf(UnknownEventTypeError);
     }
   });
@@ -31,7 +30,7 @@ describe('Success cases', () => {
     });
   });
 
-  describe('Payloads',  () => {
+  describe('Payloads', () => {
     test('It should take in a typical "direct call" event and return time created and ID', async () => {
       const parser = new DirectParser();
       const payload = await parser.getPayload();
@@ -43,7 +42,7 @@ describe('Success cases', () => {
   describe('Repository name', () => {
     test('It should take in a typical "direct call" event and return the repository name', async () => {
       const parser = new DirectParser();
-      const repoName = await parser.getRepoName({
+      const repoName = parser.getRepoName({
         repo: 'SOMEORG/SOMEREPO'
       });
       expect(repoName).toBe('SOMEORG/SOMEREPO');
@@ -51,14 +50,14 @@ describe('Success cases', () => {
 
     test('It should take in a typical "direct call" event and return an empty string if it is missing', async () => {
       const parser = new DirectParser();
-      const repoName = await parser.getRepoName({});
+      const repoName = parser.getRepoName({});
       expect(repoName).toBe('');
     });
 
     test('It should take in a typical "direct call" event and return an empty string even if no input is provided', async () => {
       const parser = new DirectParser();
       // @ts-ignore
-      const repoName = await parser.getRepoName();
+      const repoName = parser.getRepoName();
       expect(repoName).toBe('');
     });
   });

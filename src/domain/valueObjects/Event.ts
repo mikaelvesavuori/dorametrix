@@ -43,7 +43,7 @@ class EventConcrete {
   ): Promise<EventConcrete> {
     const eventType = await parser.getEventType({ body, headers });
 
-    const repo = await parser.getRepoName(body);
+    const repo = parser.getRepoName(body);
 
     event.repo = repo;
     event.date = getCurrentDate(true);

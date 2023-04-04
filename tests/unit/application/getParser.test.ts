@@ -27,14 +27,14 @@ describe('Success cases', () => {
     expect(parser).toBeInstanceOf(BitbucketParser);
   });
 
-  test('It should get the direct parser',async () => {
+  test('It should get the direct parser', async () => {
     const parser = await getParser({
       'User-Agent': 'something_else'
     });
     expect(parser).toBeInstanceOf(DirectParser);
   });
 
-  test('It should get the direct parser with lower-case user-agent headers', async  () => {
+  test('It should get the direct parser with lower-case user-agent headers', async () => {
     const parser = await getParser({
       'user-agent': 'something_else'
     });
@@ -48,9 +48,9 @@ describe('Success cases', () => {
   });
 
   test('It should get the Shortcut parser', async () => {
-    process.env.SHORTCUT_TOKEN = "A"
-    process.env.SHORTCUT_REPONAME = "A"
-    process.env.SHORTCUT_INCIDENT_LABEL_ID = "1"
+    process.env.SHORTCUT_TOKEN = 'A';
+    process.env.SHORTCUT_REPONAME = 'A';
+    process.env.SHORTCUT_INCIDENT_LABEL_ID = '1';
 
     const parser = await getParser({
       'User-Agent': 'Apache-HttpClient',

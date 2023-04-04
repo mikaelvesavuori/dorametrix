@@ -153,7 +153,7 @@ export class GitHubParser implements Parser {
   /**
    * @description Get the repository name.
    */
-  public async getRepoName(body: Record<string, any>): Promise<string> {
+  public getRepoName(body: Record<string, any>): string {
     return (body && body?.['repository']?.['full_name']) || '';
   }
 }

@@ -19,9 +19,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('change');
     });
 
-    test('It should take in a "push" event and return "change"',async  () => {
+    test('It should take in a "push" event and return "change"', async () => {
       const parser = new GitHubParser();
-      const eventType = await  parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'X-GitHub-Event': 'push'
         }
@@ -55,7 +55,7 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "deleted" event and return "incident"',async () => {
+    test('It should take in a "deleted" event and return "incident"', async () => {
       const parser = new GitHubParser();
       const eventType = await parser.getEventType({
         headers: {
@@ -81,7 +81,7 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "unlabeled" event and return "incident"', async ()=> {
+    test('It should take in a "unlabeled" event and return "incident"', async () => {
       const parser = new GitHubParser();
       const eventType = await parser.getEventType({
         headers: {
@@ -191,7 +191,7 @@ describe('Success cases', () => {
 
     test('It should take in a typical GitHub "closed" event and return time created and ID', async () => {
       const parser = new GitHubParser();
-      const payload =await parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'X-GitHub-Event': 'issues'
         },
@@ -234,7 +234,7 @@ describe('Success cases', () => {
   describe('Repository name', () => {
     test('It should take in a typical GitHub event and return the repository name', async () => {
       const parser = new GitHubParser();
-      const repoName = await parser.getRepoName({
+      const repoName = parser.getRepoName({
         repository: {
           full_name: 'SOMEORG/SOMEREPO'
         }
@@ -244,14 +244,14 @@ describe('Success cases', () => {
 
     test('It should take in a typical GitHub event and return an empty string if it is missing', async () => {
       const parser = new GitHubParser();
-      const repoName =  await parser.getRepoName({});
+      const repoName = parser.getRepoName({});
       expect(repoName).toBe('');
     });
 
     test('It should take in a typical GitHub event and return an empty string even if no input is provided', async () => {
       const parser = new GitHubParser();
       // @ts-ignore
-      const repoName = await parser.getRepoName();
+      const repoName = parser.getRepoName();
       expect(repoName).toBe('');
     });
   });
@@ -263,18 +263,21 @@ describe('Failure cases', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getEventType({
-        headers: {
-          'X-GitHub-Event': '12345'
-        }
-      })).rejects.toThrowError(UnknownEventTypeError); 
+      expect(
+        parser.getEventType({
+          headers: {
+            'X-GitHub-Event': '12345'
+          }
+        })
+      ).rejects.toThrowError(UnknownEventTypeError);
     });
 
     test('It should throw a MissingEventError if no event is detected in headers', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           body: {
             head_commit: {
               asdf: '1234'
@@ -283,14 +286,16 @@ describe('Failure cases', () => {
           headers: {
             asdf: '1234'
           }
-        })).rejects.toThrowError(MissingEventError); 
+        })
+      ).rejects.toThrowError(MissingEventError);
     });
 
     test('It should throw a MissingIdError if event ID is missing', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           body: {
             head_commit: {
               timestamp: '1234'
@@ -299,7 +304,8 @@ describe('Failure cases', () => {
           headers: {
             'X-GitHub-Event': 'push'
           }
-        })).rejects.toThrowError(MissingIdError); 
+        })
+      ).rejects.toThrowError(MissingIdError);
     });
   });
   describe('Payloads', () => {
@@ -307,7 +313,8 @@ describe('Failure cases', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'push'
           },
@@ -316,15 +323,16 @@ describe('Failure cases', () => {
               id: '1234-asdf-8080-PING'
             }
           }
-        })).rejects.toThrowError(MissingEventTimeError); 
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
-
 
     test('It should throw a MissingIdError if a GitHub "push" event is missing an ID', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'push'
           },
@@ -333,15 +341,16 @@ describe('Failure cases', () => {
               timestamp: '2021-12-31T10:01:37Z'
             }
           }
-        })).rejects.toThrowError(MissingIdError)
+        })
+      ).rejects.toThrowError(MissingIdError);
     });
 
-
-    test('It should throw a MissingEventTimeError if a GitHub "labeled" event is missing a timestamp',  () => {
+    test('It should throw a MissingEventTimeError if a GitHub "labeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -351,31 +360,34 @@ describe('Failure cases', () => {
               id: '1234-asdf-8080-PING'
             }
           }
-        })).rejects.toThrowError(MissingEventTimeError); 
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
     test('It should throw a MissingEventTimeError if a GitHub "closed" event is missing a "closed_at" timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
-        headers: {
-          'X-GitHub-Event': 'issues'
-        },
-        body: {
-          action: 'closed',
-          issue: {
-            created_at: '2021-12-31T10:01:37Z'
+      expect(
+        parser.getPayload({
+          headers: {
+            'X-GitHub-Event': 'issues'
+          },
+          body: {
+            action: 'closed',
+            issue: {
+              created_at: '2021-12-31T10:01:37Z'
+            }
           }
-        }
-      })).rejects.toThrowError(MissingEventTimeError); 
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
-
 
     test('It should throw a MissingEventTimeError if a GitHub "unlabeled" event is missing a "closed_at" timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -385,14 +397,16 @@ describe('Failure cases', () => {
               created_at: '2021-12-31T10:01:37Z'
             }
           }
-        })).rejects.toThrowError(MissingEventTimeError); 
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "labeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -402,14 +416,16 @@ describe('Failure cases', () => {
               created_at: '2021-12-31T10:01:37Z'
             }
           }
-        })).rejects.toThrowError(MissingIdError);
+        })
+      ).rejects.toThrowError(MissingIdError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "unlabeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -419,14 +435,16 @@ describe('Failure cases', () => {
               id: '1234-asdf-8080-PING'
             }
           }
-        })).rejects.toThrowError(MissingEventTimeError);
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "unlabeled" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -437,14 +455,16 @@ describe('Failure cases', () => {
               updated_at: '2021-12-31T10:01:37Z'
             }
           }
-        })).rejects.toThrowError(MissingIdError);
+        })
+      ).rejects.toThrowError(MissingIdError);
     });
 
     test('It should throw a MissingEventTimeError if a GitHub "closed" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -454,14 +474,16 @@ describe('Failure cases', () => {
               id: '1234-asdf-8080-PING'
             }
           }
-        })).rejects.toThrowError(MissingEventTimeError);
+        })
+      ).rejects.toThrowError(MissingEventTimeError);
     });
 
     test('It should throw a MissingIdError if a GitHub "closed" event is missing a timestamp', () => {
       const parser = new GitHubParser();
 
       expect.assertions(1);
-      expect(parser.getPayload({
+      expect(
+        parser.getPayload({
           headers: {
             'X-GitHub-Event': 'issues'
           },
@@ -472,7 +494,8 @@ describe('Failure cases', () => {
               closed_at: '2021-12-31T10:02:37Z'
             }
           }
-        })).rejects.toThrowError(MissingIdError);
+        })
+      ).rejects.toThrowError(MissingIdError);
     });
   });
 });

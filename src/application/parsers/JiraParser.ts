@@ -125,7 +125,7 @@ export class JiraParser implements Parser {
    * @example `https://bitbucket.org/SOMEORG/SOMEREPO/`
    * @example `https://github.com/SOMEORG/SOMEREPO`
    */
-  public async getRepoName(body: Record<string, any>): Promise<string> {
+  public getRepoName(body: Record<string, any>): string {
     const fields: Record<string, any> = body?.issue?.fields;
     if (!fields) throw new MissingJiraFieldsError();
 

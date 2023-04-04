@@ -7,7 +7,7 @@ import {
 
 describe('Success cases', () => {
   describe('Event types', () => {
-    test('It should take in a "repo:push" event and return "change"',  async () => {
+    test('It should take in a "repo:push" event and return "change"', async () => {
       const parser = new BitbucketParser();
       const eventType = await parser.getEventType({
         headers: {
@@ -17,7 +17,7 @@ describe('Success cases', () => {
       expect(eventType).toBe('change');
     });
 
-    test('It should take in a "issue:created" event and return "incident"', async  () => {
+    test('It should take in a "issue:created" event and return "incident"', async () => {
       const parser = new BitbucketParser();
       const eventType = await parser.getEventType({
         headers: {
@@ -27,9 +27,9 @@ describe('Success cases', () => {
       expect(eventType).toBe('incident');
     });
 
-    test('It should take in a "issue:updated" event and return "incident"',  async () => {
+    test('It should take in a "issue:updated" event and return "incident"', async () => {
       const parser = new BitbucketParser();
-      const eventType = await  parser.getEventType({
+      const eventType = await parser.getEventType({
         headers: {
           'x-event-key': 'issue:updated'
         }
@@ -71,9 +71,9 @@ describe('Success cases', () => {
       expect(payload).toHaveProperty('timeCreated');
     });
 
-    test('It should take in a typical Bitbucket "issue:updated" (status is "resolved") event and return time created and ID',  async () => {
+    test('It should take in a typical Bitbucket "issue:updated" (status is "resolved") event and return time created and ID', async () => {
       const parser = new BitbucketParser();
-      const payload =  await parser.getPayload({
+      const payload = await parser.getPayload({
         headers: {
           'x-event-key': 'issue:updated'
         },
@@ -146,7 +146,7 @@ describe('Success cases', () => {
   describe('Repository name', () => {
     test('It should take in a typical Bitbucket event and return the repository name', async () => {
       const parser = new BitbucketParser();
-      const repoName =  await parser.getRepoName({
+      const repoName = parser.getRepoName({
         repository: {
           full_name: 'SOMEORG/SOMEREPO'
         }
@@ -156,14 +156,14 @@ describe('Success cases', () => {
 
     test('It should take in a typical Bitbucket event and return an empty string if it is missing', async () => {
       const parser = new BitbucketParser();
-      const repoName = await parser.getRepoName({});
+      const repoName = parser.getRepoName({});
       expect(repoName).toBe('');
     });
 
     test('It should take in a typical Bitbucket event and return an empty string even if no input is provided', async () => {
       const parser = new BitbucketParser();
       // @ts-ignore
-      const repoName = await parser.getRepoName();
+      const repoName = parser.getRepoName();
       expect(repoName).toBe('');
     });
   });
@@ -178,8 +178,8 @@ describe('Failure cases', () => {
           headers: {
             asdf: '12345'
           }
-        })
-      } catch(e) {
+        });
+      } catch (e) {
         expect(e).toBeInstanceOf(UnknownEventTypeError);
       }
     });
@@ -194,11 +194,10 @@ describe('Failure cases', () => {
             'x-event-key': 'issue:created',
             'x-hook-uuid': '1234-asdf-8080-PING'
           }
-        })
-      } catch(e) {
+        });
+      } catch (e) {
         expect(e).toBeInstanceOf(MissingEventTimeError);
       }
-
     });
 
     test('It should return the default case if payload is unknown', async () => {
@@ -219,9 +218,10 @@ describe('Failure cases', () => {
 
   test('It should throw a MissingEventTimeError if a "repo:push" event does not include a timestamp', () => {
     const parser = new BitbucketParser();
-    
+
     expect.assertions(1);
-    expect(parser.getPayload({
+    expect(
+      parser.getPayload({
         headers: {
           'x-event-key': 'repo:push',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -243,14 +243,16 @@ describe('Failure cases', () => {
             ]
           }
         }
-      })).rejects.toThrowError(MissingEventTimeError); 
+      })
+    ).rejects.toThrowError(MissingEventTimeError);
   });
 
   test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "created_on" timestamp', () => {
     const parser = new BitbucketParser();
 
     expect.assertions(1);
-    expect(parser.getPayload({
+    expect(
+      parser.getPayload({
         headers: {
           'x-event-key': 'issue:updated',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -267,14 +269,16 @@ describe('Failure cases', () => {
             }
           }
         }
-      })).rejects.toThrowError(MissingEventTimeError); 
+      })
+    ).rejects.toThrowError(MissingEventTimeError);
   });
 
   test('It should throw a MissingEventTimeError if a "issue:updated" event does not include a "updated_on" timestamp', () => {
     const parser = new BitbucketParser();
 
     expect.assertions(1);
-    expect(parser.getPayload({
+    expect(
+      parser.getPayload({
         headers: {
           'x-event-key': 'issue:updated',
           'x-event-time': '2021-12-31T10:01:37Z',
@@ -291,6 +295,7 @@ describe('Failure cases', () => {
             }
           }
         }
-      })).rejects.toThrowError(MissingEventTimeError); 
+      })
+    ).rejects.toThrowError(MissingEventTimeError);
   });
 });
