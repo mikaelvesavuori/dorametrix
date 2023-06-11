@@ -6,14 +6,9 @@ export type Deployment = {
   repo: string;
   timeCreated: string;
   id: string;
-  changes: DeploymentChange[];
+  /**
+   * Refers to the commit SHA that led to this deployment.
+   */
+  changeSha: string;
   date: string;
-};
-
-/**
- * @description Representation of a change inside the Deployment.
- */
-export type DeploymentChange = {
-  id: string;
-  timeCreated: string;
 };

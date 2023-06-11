@@ -1,6 +1,6 @@
 import { getCurrentDate } from 'chrono-utils';
 
-import { Deployment, DeploymentChange } from '../../interfaces/Deployment';
+import { Deployment } from '../../interfaces/Deployment';
 import { Event } from '../../interfaces/Event';
 
 import {
@@ -22,11 +22,11 @@ class DeploymentConcrete {
   date: string;
   eventType: string;
   id: string;
-  changes: DeploymentChange[];
+  changeSha: string;
   timeCreated: string;
 
   constructor(deploymentEvent: Event) {
-    const { repo, id, eventType, timeCreated, changes } = deploymentEvent;
+    const { repo, id, eventType, timeCreated, changeSha } = deploymentEvent;
 
     if (!repo)
       throw new MissingRepoNameError(
@@ -45,7 +45,7 @@ class DeploymentConcrete {
     this.date = getCurrentDate(true);
     this.eventType = eventType;
     this.id = id;
-    this.changes = changes || [];
+    this.changeSha = changeSha || '';
     this.timeCreated = timeCreated.toString();
   }
 
@@ -55,7 +55,7 @@ class DeploymentConcrete {
       date: this.date,
       eventType: this.eventType,
       id: this.id,
-      changes: this.changes,
+      changeSha: this.changeSha,
       timeCreated: this.timeCreated
     });
   }

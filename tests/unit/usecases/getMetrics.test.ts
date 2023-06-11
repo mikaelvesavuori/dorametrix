@@ -30,13 +30,13 @@ describe('Success cases', () => {
           to: '20221231'
         },
         total: {
-          deploymentCount: 1,
+          deploymentCount: 2,
           incidentCount: 1
         },
         metrics: {
-          changeFailureRate: '1.00',
-          deploymentFrequency: '1.00',
-          leadTimeForChanges: '00:01:25:00',
+          changeFailureRate: '0.50',
+          deploymentFrequency: '2.00',
+          leadTimeForChanges: '00:00:00:10',
           timeToRestoreServices: '01:03:05:10'
         }
       };
@@ -72,7 +72,7 @@ describe('Success cases', () => {
         metrics: {
           changeFailureRate: '1.00',
           deploymentFrequency: '1.00',
-          leadTimeForChanges: '00:00:04:04',
+          leadTimeForChanges: '00:01:25:00',
           timeToRestoreServices: '11:13:46:40'
         }
       };

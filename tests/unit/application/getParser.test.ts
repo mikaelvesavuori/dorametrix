@@ -7,35 +7,35 @@ import { JiraParser } from '../../../src/application/parsers/JiraParser';
 
 describe('Success cases', () => {
   test('It should get the GitHub parser', async () => {
-    const parser = await getParser({
+    const parser = getParser({
       'User-Agent': 'GitHub'
     });
     expect(parser).toBeInstanceOf(GitHubParser);
   });
 
   test('It should get the Jira parser', async () => {
-    const parser = await getParser({
+    const parser = getParser({
       'User-Agent': 'Atlassian'
     });
     expect(parser).toBeInstanceOf(JiraParser);
   });
 
   test('It should get the Bitbucket parser', async () => {
-    const parser = await getParser({
+    const parser = getParser({
       'User-Agent': 'Bitbucket'
     });
     expect(parser).toBeInstanceOf(BitbucketParser);
   });
 
   test('It should get the direct parser', async () => {
-    const parser = await getParser({
+    const parser = getParser({
       'User-Agent': 'something_else'
     });
     expect(parser).toBeInstanceOf(DirectParser);
   });
 
   test('It should get the direct parser with lower-case user-agent headers', async () => {
-    const parser = await getParser({
+    const parser = getParser({
       'user-agent': 'something_else'
     });
     expect(parser).toBeInstanceOf(DirectParser);
@@ -43,7 +43,7 @@ describe('Success cases', () => {
 
   test('It should get the direct parser if missing User-Agent headers', async () => {
     // @ts-ignore
-    const parser = await getParser();
+    const parser = getParser();
     expect(parser).toBeInstanceOf(DirectParser);
   });
 
@@ -52,7 +52,7 @@ describe('Success cases', () => {
     process.env.SHORTCUT_REPONAME = 'A';
     process.env.SHORTCUT_INCIDENT_LABEL_ID = '1';
 
-    const parser = await getParser({
+    const parser = getParser({
       'User-Agent': 'Apache-HttpClient',
       'Shortcut-Signature': '---'
     });

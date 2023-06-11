@@ -199,7 +199,7 @@ As seen above, the required inputs are:
 
 1. The endpoint
 2. The API key
-3. The product name
+3. The repo name (proxy for the "product")
 
 #### GitHub Actions action
 
@@ -213,7 +213,7 @@ steps:
       fetch-depth: 0
 
   - name: Dorametrix
-    uses: mikaelvesavuori/dorametrix-action@v1.0.0
+    uses: mikaelvesavuori/dorametrix-action@v3
     with:
       endpoint: ${{ secrets.DORAMETRIX_ENDPOINT }}
       api-key: ${{ secrets.DORAMETRIX_API_KEY }}
@@ -224,6 +224,8 @@ A full example is available at [https://github.com/mikaelvesavuori/demo-dorametr
 The specific action, `mikaelvesavuori/dorametrix-action@v1.0.0`, is available for use.
 
 #### Bitbucket Pipelines pipe
+
+_Note that the version below assumes Dorametrix version 1/2._
 
 An example using two user-provided secrets and setting the product with a known variable representing the repo name:
 
@@ -389,7 +391,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "change",
-  "product": "demo"
+  "repo": "demo"
 }
 ```
 
@@ -406,21 +408,8 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "deployment",
-  "product": "demo",
-  "changes": [
-    {
-      "id": "356a192b7913b04c54574d18c28d46e6395428ab",
-      "timeCreated": "1642879177"
-    },
-    {
-      "id": "da4b9237bacccdf19c0760cab7aec4a8359010b0",
-      "timeCreated": "1642874964"
-    },
-    {
-      "id": "77de68daecd823babbb58edb1c8e14d7106e83bb",
-      "timeCreated": "1642873353"
-    }
-  ]
+  "repo": "demo",
+  "changeSha": "356a192b7913b04c54574d18c28d46e6395428ab"
 }
 ```
 
@@ -437,7 +426,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "incident",
-  "product": "demo"
+  "repo": "demo"
 }
 ```
 

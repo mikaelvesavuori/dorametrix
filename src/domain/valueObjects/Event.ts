@@ -1,7 +1,6 @@
 import { getCurrentDate } from 'chrono-utils';
 
 import { Event, EventType } from '../../interfaces/Event';
-import { Change } from '../../interfaces/Change';
 import { Parser } from '../../interfaces/Parser';
 
 /**
@@ -13,17 +12,17 @@ export async function makeEvent(
   body: Record<string, any>,
   headers: Record<string, any>
 ): Promise<Event> {
-  const eventConcrete = new EventConcrete(parser, body, headers);
-  await EventConcrete.populate(eventConcrete, parser, body, headers);
+  const eventConcrete = new DorametrixEvent(parser, body, headers);
+  await DorametrixEvent.populate(eventConcrete, parser, body, headers);
   return eventConcrete.getDTO();
 }
 
-class EventConcrete {
+class DorametrixEvent {
   repo = '';
   date: string;
   eventType = '';
   id = '';
-  changes: Change[] = [];
+  changeSha = '';
   eventTime = '';
   timeCreated = '';
   timeResolved = '';
@@ -32,15 +31,15 @@ class EventConcrete {
 
   constructor(parser: Parser, body: Record<string, any>, headers: Record<string, any>) {
     this.date = getCurrentDate(true);
-    EventConcrete.populate(this, parser, body, headers);
+    DorametrixEvent.populate(this, parser, body, headers);
   }
 
   static async populate(
-    event: EventConcrete,
+    event: DorametrixEvent,
     parser: Parser,
     body: Record<string, any>,
     headers: Record<string, any>
-  ): Promise<EventConcrete> {
+  ): Promise<DorametrixEvent> {
     const eventType = await parser.getEventType({ body, headers });
 
     const repo = parser.getRepoName(body);
@@ -48,7 +47,7 @@ class EventConcrete {
     event.repo = repo;
     event.date = getCurrentDate(true);
     event.eventType = eventType;
-    event.changes = body.changes || [];
+    event.changeSha = body.changeSha || ''; // TODO: Needed? Is same as some other ID...?
 
     const { id, eventTime, timeCreated, timeResolved, title, message } = await parser.getPayload({
       body,
@@ -69,9 +68,9 @@ class EventConcrete {
     parser: Parser,
     body: Record<string, any>,
     headers: Record<string, any>
-  ): Promise<EventConcrete> {
-    const event = new EventConcrete(parser, body, headers);
-    return EventConcrete.populate(event, parser, body, headers);
+  ): Promise<DorametrixEvent> {
+    const event = new DorametrixEvent(parser, body, headers);
+    return DorametrixEvent.populate(event, parser, body, headers);
   }
 
   public getDTO(): Event {
@@ -80,7 +79,7 @@ class EventConcrete {
       date: this.date,
       eventType: this.eventType as EventType,
       id: this.id,
-      changes: this.changes,
+      changeSha: this.changeSha,
       eventTime: this.eventTime,
       timeCreated: this.timeCreated,
       timeResolved: this.timeResolved,

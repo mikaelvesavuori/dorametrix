@@ -1,37 +1,37 @@
 /**
  * @description Change items as stored in DynamoDB.
  */
-export const testChangeItem = {
+export const testChangeItems = {
   Items: [
     {
-      timeCreated: { S: '1673104450286' },
-      sk: { S: '1672104450286' },
+      timeCreated: { S: '1641034800000' },
+      sk: { S: '1641034800000' },
       pk: { S: 'CHANGE_SOMEORG/SOMEREPO' },
-      id: { S: 'bdc284af8b859959457b0ac2d82f5547f96345bb' }
+      id: { S: '73ea2c4b72ed28ebf7f00e785fc4fc1c7365139e' }
     },
     {
-      timeCreated: { S: '1673104450455' },
-      sk: { S: '1672104450455' },
+      timeCreated: { S: '1640784652540' },
+      sk: { S: '1640784652540' },
       pk: { S: 'CHANGE_SOMEORG/SOMEREPO' },
-      id: { S: 'a11f3ccab218e1218e04b69a70e7f351bfd104f7' }
+      id: { S: 'df211ccdd94a63e0bcb9e6ae427a249484a49d60' }
     },
     {
-      timeCreated: { S: '1673104450201' },
-      sk: { S: '1673104450201' },
+      timeCreated: { S: '1641038400000' },
+      sk: { S: '1641038400000' },
       pk: { S: 'CHANGE_SOMEORG/SOMEREPO' },
-      id: { S: '2a7bd974a431b994732d7b0295878fb2bd3e821b' }
+      id: { S: '94b98567fa5abfe9c003fbb9cb541f1735cefff0' }
     },
     {
-      timeCreated: { S: '1673104450412' },
-      sk: { S: '1673104450412' },
+      timeCreated: { S: '1640784652530' },
+      sk: { S: '1640784652530' },
       pk: { S: 'CHANGE_SOMEORG/SOMEREPO' },
-      id: { S: 'f14af16a77ac735d441ea6c96a30c2ad3f17d6a8' }
+      id: { S: '2eebe17407138ae15d7cbfff2a79a051d3770a64' }
     },
     {
-      timeCreated: { S: '1673104450591' },
-      sk: { S: '1673104450591' },
+      timeCreated: { S: '1641039310000' },
+      sk: { S: '1641039310000' },
       pk: { S: 'CHANGE_SOMEORG/SOMEREPO' },
-      id: { S: '650996873306355e22bdb13ff8e035e3748a7956' }
+      id: { S: '5a8c1b761edc95512a0083f35454915304cc9498' }
     }
   ]
 };
@@ -39,16 +39,14 @@ export const testChangeItem = {
 /**
  * @description Deployment item as stored in DynamoDB.
  */
-export const testDeploymentItem = {
+export const testDeploymentItems = {
   Items: [
     {
-      timeCreated: { S: '1673104694874' },
-      sk: { S: '1673104694874' },
+      timeCreated: { S: '1641039900000' },
+      sk: { S: '1641039900000' },
       pk: { S: 'DEPLOYMENT_SOMEORG/SOMEREPO' },
       id: { S: '4e594023e1642a161820951d25970301c38b3728' },
-      changes: {
-        S: '[{"id":"2a7bd974a431b994732d7b0295878fb2bd3e821b","timeCreated":"1673020000"},{"id":"a8fa8e40-122d-4741-a9f1-b70f813b7e1b","timeCreated":"1642879177"},{"id":"6b2467d5-0d91-4945-af6b-483aaf762f56","timeCreated":"1642874964"},{"id":"eb6dad65-9e9c-44c8-ad6a-da0ca4ba9e98","timeCreated":"1642873353"}]'
-      }
+      changeSha: { S: '73ea2c4b72ed28ebf7f00e785fc4fc1c7365139e' }
     }
   ]
 };
@@ -56,14 +54,14 @@ export const testDeploymentItem = {
 /**
  * @description Incident item as stored in DynamoDB.
  */
-export const testIncidentItem = {
+export const testIncidentItems = {
   Items: [
     {
       timeResolved: { S: '1671945000000' },
       timeCreated: { S: '1670945000000' },
       sk: { S: '1670945000000' },
       pk: { S: 'INCIDENT_SOMEORG/SOMEREPO' },
-      id: { S: '1091505287' },
+      id: { S: 'e4ea294c062c525643df036a35ca579b905fa400' },
       title: { S: 'some test issue' }
     }
   ]
@@ -112,9 +110,9 @@ export function getCachedTestData(key: string, fromDate: string, toDate: string)
 export function getTestData(key: string) {
   const fixedKey = key.toUpperCase();
 
-  if (fixedKey.startsWith('CHANGE_')) return testChangeItem;
-  if (fixedKey.startsWith('DEPLOYMENT_')) return testDeploymentItem;
-  if (fixedKey.startsWith('INCIDENT_')) return testIncidentItem;
+  if (fixedKey.startsWith('CHANGE_')) return testChangeItems;
+  if (fixedKey.startsWith('DEPLOYMENT_')) return testDeploymentItems;
+  if (fixedKey.startsWith('INCIDENT_')) return testIncidentItems;
 
   return { Items: [] };
 }

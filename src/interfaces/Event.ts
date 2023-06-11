@@ -1,5 +1,3 @@
-import { Change } from './Change';
-
 /**
  * @description The Event is the primitive, raw event type.
  */
@@ -25,11 +23,11 @@ export interface Event {
   id: string;
 
   /**
-   * @description Array of changes. Applicable if
-   * `eventType` is `deployment`. Will stay empty otherwise.
+   * @description SHA of commit that led to this deployment.
+   * Applicable only if `eventType` is `deployment`, will stay empty otherwise.
    * @note Only for deployments.
    */
-  changes: Change[];
+  changeSha: string;
 
   /**
    * @description Unix timestamp of event time.

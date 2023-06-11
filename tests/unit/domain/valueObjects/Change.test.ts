@@ -24,7 +24,7 @@ describe('Failure cases', () => {
       makeChange({
         eventType: 'deployment',
         id: 'something',
-        changes: [],
+        changeSha: '',
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -41,7 +41,7 @@ describe('Failure cases', () => {
       makeChange({
         repo: 'something',
         id: 'something',
-        changes: [],
+        changeSha: '',
         eventTime: '',
         timeCreated: '',
         timeResolved: '',
@@ -58,7 +58,7 @@ describe('Failure cases', () => {
       makeChange({
         repo: 'something',
         eventType: 'deployment',
-        changes: [],
+        changeSha: '',
         eventTime: '',
         timeCreated: '',
         timeResolved: '',

@@ -2,7 +2,7 @@ import { getDiffInSeconds, prettifyTime } from 'chrono-utils';
 
 import { Dorametrix } from '../../interfaces/Dorametrix';
 import { Change } from '../../interfaces/Change';
-import { Deployment, DeploymentChange } from '../../interfaces/Deployment';
+import { Deployment } from '../../interfaces/Deployment';
 import { Incident } from '../../interfaces/Incident';
 import { DeploymentResponse } from '../../interfaces/DeploymentResponse';
 
@@ -27,32 +27,12 @@ class DorametrixConcrete implements Dorametrix {
    * @description Get the commit ID for the last deployment to production.
    */
   public getLastDeployment(lastDeployment: Deployment): DeploymentResponse {
-    if (lastDeployment?.changes) {
-      const changes: DeploymentChange[] = lastDeployment?.changes;
-
-      // Get latest deployment
-      const deploymentTimes = changes
-        .map((change) => change.timeCreated)
-        .sort()
-        .reverse();
-      const latestTime = deploymentTimes[0];
-
-      // Get the ID of the latest deployment
-      const matchingChange = changes.filter(
-        (change: DeploymentChange) => change.timeCreated === latestTime
-      );
-
-      if (matchingChange && matchingChange.length > 0) {
-        const { id } = matchingChange[0];
-
-        // If the timestamp uses a 10-digit format, add zeroes to be in line with how JavaScript does it
-        const timeCreated = latestTime.length === 10 ? latestTime + '000' : latestTime;
-
-        return {
-          id,
-          timeCreated
-        };
-      }
+    if (lastDeployment?.id && lastDeployment?.timeCreated) {
+      const { id, timeCreated } = lastDeployment;
+      return {
+        id,
+        timeCreated
+      };
     }
 
     return {
@@ -84,51 +64,42 @@ class DorametrixConcrete implements Dorametrix {
   }
 
   /**
-   * @description Get the averaged lead time for a change getting into production (deployment).
+   * @description Get the median lead time for a change getting into production (deployment).
    */
   public getLeadTimeForChanges(changes: Change[], deployments: Deployment[]): string {
     if (deployments.length === 0) return '00:00:00:00';
 
-    let accumulatedTime = 0;
-    deployments.forEach(
-      (deployment: Deployment) => (accumulatedTime += this.calculateLeadTime(deployment, changes))
-    );
+    const accumulatedTimes = deployments
+      .map((deployment: Deployment) => this.calculateLeadTime(deployment, changes))
+      .sort();
 
-    return prettifyTime(accumulatedTime / deployments.length);
+    const medianPoint =
+      accumulatedTimes.length < 2 ? 0 : Math.floor(accumulatedTimes.length / 2) - 1;
+    const medianValue = accumulatedTimes[medianPoint] || 0;
+
+    return prettifyTime(medianValue);
   }
 
   /**
    * @description Calculate the lead time of a change for an individual deployment.
    */
-  private calculateLeadTime(deployment: Deployment, allChanges: Change[]): number {
-    const { changes, timeCreated } = deployment;
+  private calculateLeadTime(deployment: Deployment, changes: Change[]): number {
+    const { changeSha, timeCreated } = deployment;
 
-    /**
-     * Each change might lead to one or more deployments, so go and get each one.
-     */
-    const changeIds = changes.map((change: DeploymentChange) => change.id);
-    const matches = allChanges
-      .filter((change: DeploymentChange) => changeIds.includes(change.id))
-      .map((change: DeploymentChange) => change.timeCreated)
-      .sort((a: any, b: any) => a.timeCreated - b.timeCreated);
+    const commitTimeCreated = changes
+      .filter((change: Change) => change.id === changeSha)
+      .map((change: Change) => change.timeCreated)[0];
 
-    /**
-     * Calculate diff between earliest commit timestamp (`firstMatch`) and deployment timestamp (`timeCreated`).
-     */
-    if (matches?.length > 0) {
-      const firstMatch = matches[0];
+    if (!commitTimeCreated) return 0;
 
-      if (firstMatch && timeCreated && firstMatch > timeCreated) {
-        console.warn(
-          `Unexpected deployment data: firstMatch field is later than timeCreated...Skipping it.\n--> timeCreated: ${firstMatch} firstMatch: ${firstMatch}`
-        );
-        return 0;
-      }
-
-      return getDiffInSeconds(firstMatch, timeCreated);
+    if (commitTimeCreated > timeCreated) {
+      console.warn(
+        `Unexpected deployment data: Commit timeCreated is later than deployment timeCreated...Skipping it.\n--> Deployment: ${timeCreated} Commit: ${commitTimeCreated}`
+      );
+      return 0;
     }
 
-    return 0;
+    return getDiffInSeconds(commitTimeCreated, timeCreated);
   }
 
   /**

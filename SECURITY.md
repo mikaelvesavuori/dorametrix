@@ -6,7 +6,7 @@ These versions of `dorametrix` are currently being supported with security updat
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
+| 3.x.x   | :white_check_mark: |
 | 0.x.x   | :x:                |
 
 ## Reporting a Vulnerability

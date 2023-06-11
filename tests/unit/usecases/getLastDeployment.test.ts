@@ -10,8 +10,8 @@ describe('Success cases', () => {
     const result = await getLastDeployment(repo, input);
 
     expect(result).toMatchObject({
-      id: '5a8c1b761edc95512a0083f35454915304cc9498',
-      timeCreated: '1641039310000'
+      id: '3705e751cf44780483a2c3df5327dd61777ef697',
+      timeCreated: '1641039900000'
     });
   });
 

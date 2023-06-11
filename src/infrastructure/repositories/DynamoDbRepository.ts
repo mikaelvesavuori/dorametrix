@@ -169,7 +169,7 @@ class DynamoRepository implements Repository {
    * @description Handle (create/update) a Deployment in the repository.
    */
   public async addDeployment(deployment: Deployment): Promise<void> {
-    const { repo, id, changes, timeCreated } = deployment;
+    const { repo, id, changeSha, timeCreated } = deployment;
 
     const command = {
       TableName: this.tableName,
@@ -178,7 +178,7 @@ class DynamoRepository implements Repository {
         sk: { S: timeCreated },
         expiresAt: { S: getExpiryTime() },
         timeCreated: { S: timeCreated },
-        changes: { S: JSON.stringify(changes) },
+        changeSha: { S: JSON.stringify(changeSha) },
         id: { S: id }
       }
     };
