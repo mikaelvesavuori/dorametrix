@@ -391,7 +391,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "change",
-  "repo": "demo"
+  "repo": "myorg/myrepo"
 }
 ```
 
@@ -408,7 +408,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "deployment",
-  "repo": "demo",
+  "repo": "myorg/myrepo",
   "changeSha": "356a192b7913b04c54574d18c28d46e6395428ab"
 }
 ```
@@ -426,7 +426,7 @@ All of the below demonstrates "directly calling" the API; since webhook events f
 ```json
 {
   "eventType": "incident",
-  "repo": "demo"
+  "repo": "myorg/myrepo"
 }
 ```
 

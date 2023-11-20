@@ -2,11 +2,11 @@ service: dorametrix
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   architecture: arm64
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'prod'}
   region:  ${opt:region, 'eu-north-1'}
-  memorySize: ${opt:memory, 512}
+  memorySize: ${opt:memory, 1024}
   timeout: ${opt:timeout, 10}
   logRetentionInDays: ${opt:logRetentionInDays, 7}
   versionFunctions: false

@@ -2,6 +2,8 @@ import { getDateFromTimestamp } from 'chrono-utils';
 
 import { createNewDorametrix } from '../domain/services/Dorametrix';
 
+import { addCustomMetric } from '../infrastructure/frameworks/addCustomMetric';
+
 import { Metrics } from '../interfaces/Metrics';
 import { RequestDTO } from '../interfaces/Input';
 import { Repository } from '../interfaces/Repository';
@@ -14,13 +16,17 @@ import { Incident } from '../interfaces/Incident';
  */
 export async function getMetrics(repository: Repository, input: RequestDTO): Promise<Metrics> {
   const cachedMetrics = await getCachedMetricsFromDatabase(input, repository);
-  if (cachedMetrics) return cachedMetrics;
+
+  if (cachedMetrics) {
+    addCustomMetric('cached');
+    return cachedMetrics;
+  }
 
   const metricsData = await getMetricsFromDatabase(input, repository);
   const metrics = compileResultMetrics(input, metricsData);
-
   await cacheMetrics(input, repository, metrics);
 
+  addCustomMetric('uncached');
   return metrics;
 }
 

@@ -12,7 +12,6 @@ import { Metrics } from '../../interfaces/Metrics';
 
 import { getExpiryTime } from '../../application/getExpiryTime';
 
-import { addCustomMetric } from '../frameworks/addCustomMetric';
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 
 import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/errors';
@@ -53,16 +52,7 @@ class DynamoRepository implements Repository {
    * @description Get metrics (changes/deployments/incidents) for a given repository and a period of time.
    */
   public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
-    const cachedData = await this.getItem(dataRequest);
-    const items = cachedData?.Items || [];
-
-    if (cachedData.length > 0) {
-      addCustomMetric('cached');
-      return getCleanedItems(cachedData);
-    }
-
-    addCustomMetric('uncached');
-    return getCleanedItems(items);
+    return await this.getItem(dataRequest);
   }
 
   /**
@@ -227,7 +217,7 @@ class DynamoRepository implements Repository {
 
     const command = {
       TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk = :sk',
+      KeyConditionExpression: 'pk = :pk AND sk >= :sk',
       ExpressionAttributeValues: {
         ':pk': { S: key },
         ':sk': {
@@ -236,8 +226,15 @@ class DynamoRepository implements Repository {
       }
     };
 
-    return process.env.NODE_ENV !== 'test'
-      ? await this.dynamoDb.send(new QueryCommand(command))
-      : getTestData(key);
+    const data: any =
+      process.env.NODE_ENV !== 'test'
+        ? await this.dynamoDb.send(new QueryCommand(command))
+        : getTestData(key);
+
+    // Unless we really want the last deployed commit, let's filter it out
+    return getCleanedItems(data?.Items || []).filter((item) => {
+      if (getLastDeployedCommit) return item;
+      else if (item.timeCreated !== 'LastDeployedCommit') return item;
+    });
   }
 }
