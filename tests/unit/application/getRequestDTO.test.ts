@@ -15,11 +15,11 @@ const getRandomInteger = () => Math.floor(Math.random() * 15) + 1;
 describe('Success cases', () => {
   describe('Static set period', () => {
     test('It should create a request DTO for a set period', () => {
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669852800', to: '1672531199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1701388800', to: '1701734399' };
 
       const result = getRequestDTO({
-        from: '20221201',
-        to: '20221231',
+        from: '20231201',
+        to: '20231204',
         repo: 'SOMEORG/SOMEREPO'
       });
 
@@ -27,11 +27,11 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a set period with a negative offset', () => {
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669834800', to: '1672513199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1698778800', to: '1701370799' };
 
       const result = getRequestDTO({
-        from: '20221201',
-        to: '20221231',
+        from: '20231101',
+        to: '20231130',
         offset: '-5',
         repo: 'SOMEORG/SOMEREPO'
       });
@@ -40,11 +40,11 @@ describe('Success cases', () => {
     });
 
     test('It should create a request DTO for a set period with a positive offset', () => {
-      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1669870800', to: '1672549199' };
+      const expected = { repo: 'SOMEORG/SOMEREPO', from: '1700456400', to: '1701406799' };
 
       const result = getRequestDTO({
-        from: '20221201',
-        to: '20221231',
+        from: '20231120',
+        to: '20231130',
         offset: '5',
         repo: 'SOMEORG/SOMEREPO'
       });
@@ -103,8 +103,8 @@ describe('Failure cases', () => {
   test('It should throw a MissingRepoNameError error if no repo name is present', () => {
     expect(() =>
       getRequestDTO({
-        from: '20221201',
-        to: '20221231'
+        from: '20231201',
+        to: '20231231'
       })
     ).toThrowError(MissingRepoNameError);
   });
@@ -113,7 +113,7 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        from: '20221201'
+        from: '20231201'
       })
     ).toThrowError(MissingRequiredInputParamsError);
   });
@@ -122,7 +122,7 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        to: '20221201'
+        to: '20231201'
       })
     ).toThrowError(MissingRequiredInputParamsError);
   });
@@ -131,7 +131,7 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        from: '20221201',
+        from: '20231201',
         to: '20991231'
       })
     ).toThrowError(OutOfRangeQueryError);
@@ -141,8 +141,8 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        from: '20221201',
-        to: '20221231',
+        from: '20231201',
+        to: '20231231',
         last: '7'
       })
     ).toThrowError(TooManyInputParamsError);
@@ -152,8 +152,8 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        from: '20221201',
-        to: '20221231',
+        from: '20231201',
+        to: '20231231',
         offset: -13
       })
     ).toThrowError(InvalidOffsetError);
@@ -163,8 +163,8 @@ describe('Failure cases', () => {
     expect(() =>
       getRequestDTO({
         repo: 'SOMEORG/SOMEREPO',
-        from: '20221201',
-        to: '20221231',
+        from: '20231201',
+        to: '20231231',
         offset: 13
       })
     ).toThrowError(InvalidOffsetError);

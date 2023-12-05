@@ -158,17 +158,17 @@ Note that it will attempt to connect to a database, so deploy the application an
 
 ## Deployment
 
-First make sure that you have a fallback value for your AWS account number in `serverless.yml`, for example: `awsAccountNumber: ${opt:awsAccountNumber, '123412341234'}` or that you set the deployment script to use the flag, for example `npx sls deploy --awsAccountNumber 123412341234`.
+First make sure that you have a fallback value for your AWS account number in `serverless.yml`, for example: `awsAccountNumber: ${param:awsAccountNumber, '123412341234'}` or that you set the deployment script to use the flag, for example `npx sls deploy --param="awsAccountNumber=123412341234"`.
 
 If using Shortcut for ticket managmenet you must pass additional options. [Refer to the Shortcut Configuration section](./README.md#Shortcut.com).
 
-- `--shortcutApiToken <guid>`
-- `--shortcutIncidentLabelId 1234`
+- `--param="shortcutApiToken=<guid>"`
+- `--param="shortcutIncidentLabelId=1234"`
 
 For example:
 
 ```cmd
-npx sls deploy --awsAccountNumber 123412341234 --shortcutApiToken 1232-1234-1234 --shortcutIncidentLabelId 1234
+npx sls deploy --param="awsAccountNumber=123412341234" --param="shortcutApiToken=1232-1234-1234" --param="shortcutIncidentLabelId=1234"
 ```
 
 Then you can deploy with `npm run deploy`.
