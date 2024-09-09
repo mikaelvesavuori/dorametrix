@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { GitHubParser } from '../../../src/application/parsers/GitHubParser';
 
 import {

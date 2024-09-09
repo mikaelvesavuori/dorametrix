@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { DirectParser } from '../../../src/application/parsers/DirectParser';
 
 import { UnknownEventTypeError } from '../../../src/application/errors/errors';

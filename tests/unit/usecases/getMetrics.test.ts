@@ -1,3 +1,5 @@
+import { describe, test, expect, afterAll, beforeEach, vi } from 'vitest';
+
 import { clearEnv, setEnv } from '../../testUtils';
 
 import { getMetrics } from '../../../src/usecases/getMetrics';
@@ -17,7 +19,8 @@ const basicInput = {
 describe('Success cases', () => {
   // Setup for checking warning messages
   const warn = console.warn;
-  beforeEach(() => (console.warn = jest.fn()));
+  beforeEach(() => (console.warn = vi.fn()));
+  // @ts-ignore
   afterAll(() => (console.warn = warn));
 
   describe('Get metrics', () => {

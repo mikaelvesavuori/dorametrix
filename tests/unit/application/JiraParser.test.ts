@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { JiraParser } from '../../../src/application/parsers/JiraParser';
 
 import {

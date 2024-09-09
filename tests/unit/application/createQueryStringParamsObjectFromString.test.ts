@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { createQueryStringParamsObjectFromString } from '../../../src/application/createQueryStringParamsObjectFromString';
 
 describe('Success cases', () => {

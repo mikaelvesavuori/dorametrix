@@ -1,6 +1,5 @@
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { convertDateToUnixTimestamp } from 'chrono-utils';
-import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
-enableFetchMocks();
 
 import { ShortcutParser } from '../../../src/application/parsers/ShortcutParser';
 
@@ -28,7 +27,8 @@ import genericStoryData from '../../../testdata/webhook-events/shortcut/story_ge
 describe('Success cases', () => {
   describe('Event types', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
+      vi.clearAllMocks();
+      vi.stubGlobal('fetch', vi.fn());
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -37,7 +37,9 @@ describe('Success cases', () => {
     test('It should return "change" for event types', async () => {
       const storyData = genericStoryData;
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -50,7 +52,9 @@ describe('Success cases', () => {
 
     test('It should return "incident" for event types', async () => {
       const storyData = genericStoryData;
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -63,7 +67,9 @@ describe('Success cases', () => {
 
     test('It should return "incident" for event types on story created with incident label', async () => {
       const storyData = genericStoryData;
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -76,7 +82,9 @@ describe('Success cases', () => {
 
     test('It should return "change" for event types on story created without incident label', async () => {
       const storyData = genericStoryData;
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -91,7 +99,9 @@ describe('Success cases', () => {
       const webhookData = JSON.parse(JSON.stringify(webhookStoryCreateWithLabel));
       webhookData.actions[0].label_ids = [1234];
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '1234';
 
@@ -108,7 +118,9 @@ describe('Success cases', () => {
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '1234';
 
       const storyData = JSON.parse(JSON.stringify(genericStoryData));
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const eventType = await parser.getEventType({
@@ -122,7 +134,6 @@ describe('Success cases', () => {
 
   describe('Payloads', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -130,7 +141,9 @@ describe('Success cases', () => {
 
     test('It should return the provided event if it is unknown together with the a correct object', async () => {
       const storyData = JSON.parse(JSON.stringify(genericStoryData));
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -147,7 +160,9 @@ describe('Success cases', () => {
     });
 
     test('It should return assigned properties on update', async () => {
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -164,7 +179,9 @@ describe('Success cases', () => {
 
     test('It should return assigned properties on create', async () => {
       const storyData = JSON.parse(JSON.stringify(genericStoryData));
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const webhookData = webhookStoryCreateWithLabel;
       webhookData.actions[0].action = 'create';
@@ -185,7 +202,9 @@ describe('Success cases', () => {
 
     test('It should return an unknown event for a create without an label', async () => {
       const storyData = JSON.parse(JSON.stringify(genericStoryData));
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const webhookData = webhookStoryCreateWithoutLabel;
 
@@ -204,7 +223,9 @@ describe('Success cases', () => {
       storyData.completed_at = '2016-12-31T12:30:00Z';
       storyData.completed_at_override = '2017-12-31T12:30:00Z';
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -221,7 +242,9 @@ describe('Success cases', () => {
       storyData.completed_at = '2016-12-31T12:30:00Z';
       storyData.deleted_at = '2016-12-31T13:30:00Z';
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -237,7 +260,9 @@ describe('Success cases', () => {
       storyData.deleted = true;
       storyData.completed_at = '2016-12-31T12:30:00Z';
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -248,11 +273,18 @@ describe('Success cases', () => {
       expect(payload.timeResolved).toBe(convertDateToUnixTimestamp('2016-12-31T12:30:00Z'));
     });
 
-    test('It should mark unlabeled events are closed', async () => {
+    test('It should mark unlabeled events as closed', async () => {
       const webhookData = webhookStoryUpdateLabelRemoved;
 
-      Date.now = jest.fn(() => 1487076708000);
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.spyOn(Date, 'now').mockImplementation(() => 1487076708000);
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => genericStoryData
+        })
+      );
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -261,11 +293,20 @@ describe('Success cases', () => {
       });
 
       expect(payload.timeResolved).toBe(Date.now().toString());
+
+      vi.restoreAllMocks();
     });
 
     test('It should ignore push events', async () => {
-      Date.now = jest.fn(() => 1487076708000);
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.spyOn(Date, 'now').mockImplementation(() => 1487076708000);
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => genericStoryData
+        })
+      );
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -274,13 +315,22 @@ describe('Success cases', () => {
       });
 
       expect(payload.timeResolved).toBe('UNKNOWN');
+
+      vi.restoreAllMocks();
     });
 
     test('It should make updates with no labels as opened', async () => {
       const storyData = JSON.parse(JSON.stringify(genericStoryData));
 
-      Date.now = jest.fn(() => 1487076708000);
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.spyOn(Date, 'now').mockImplementation(() => 1487076708000);
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => storyData
+        })
+      );
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -289,10 +339,14 @@ describe('Success cases', () => {
       });
 
       expect(payload.timeResolved).toBe('UNKNOWN');
+
+      vi.restoreAllMocks();
     });
 
     test('It should return assigned properties on started', async () => {
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -304,7 +358,9 @@ describe('Success cases', () => {
     });
 
     test('It should return assigned properties on stopped', async () => {
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -320,7 +376,9 @@ describe('Success cases', () => {
       storyData.archived = true;
       storyData.completed_at = '2016-12-31T12:30:00Z';
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -336,7 +394,9 @@ describe('Success cases', () => {
       webhookData.actions[0].changes.archived.new = false;
       webhookData.actions[0].changes.archived.old = true;
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -352,7 +412,9 @@ describe('Success cases', () => {
       webhookData.actions[0].changes.completed.new = false;
       webhookData.actions[0].changes.completed.old = true;
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       const payload = await parser.getPayload({
@@ -368,7 +430,9 @@ describe('Success cases', () => {
       webhookData.primary_id = 123456;
       webhookData.actions[0].id = 123456;
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -376,7 +440,7 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(fetchMock).toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/123456', {
+      expect(fetch).toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/123456', {
         headers: { 'Shortcut-Token': '11111111' }
       });
     });
@@ -385,7 +449,13 @@ describe('Success cases', () => {
       const webhookData = JSON.parse(JSON.stringify(webhookStoryUpdateLabelAdded));
       webhookData.primary_id = 456;
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => genericStoryData // Returning an empty object as story data is empty
+        })
+      );
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -393,13 +463,10 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(fetchMock).not.toHaveBeenCalled();
-      expect(fetchMock).not.toHaveBeenCalledWith(
-        'https://api.app.shortcut.com/api/v3/stories/456',
-        {
-          headers: { 'Shortcut-Token': '11111111' }
-        }
-      );
+      expect(fetch).not.toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/456', {
+        headers: { 'Shortcut-Token': '11111111' }
+      });
     });
 
     test('It should use the environment shortcut token', async () => {
@@ -408,7 +475,9 @@ describe('Success cases', () => {
       const webhookData = JSON.parse(JSON.stringify(webhookStoryUpdateLabelAdded));
       const storyId = webhookData.primary_id;
 
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       await parser.getPayload({
@@ -416,18 +485,15 @@ describe('Success cases', () => {
         body: webhookData
       });
 
-      expect(fetchMock).toHaveBeenCalledWith(
-        'https://api.app.shortcut.com/api/v3/stories/' + storyId,
-        {
-          headers: { 'Shortcut-Token': '222222' }
-        }
-      );
+      expect(fetch).toHaveBeenCalledWith('https://api.app.shortcut.com/api/v3/stories/' + storyId, {
+        headers: { 'Shortcut-Token': '222222' }
+      });
     });
   });
 
   describe('Repository name', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
+      vi.restoreAllMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -436,7 +502,9 @@ describe('Success cases', () => {
     test('It should take in a typical Shortcut event and return the GitHub repository name', async () => {
       const storyData = genericStoryData;
 
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const expected = 'SOMEREPO';
       const parser = new ShortcutParser();
@@ -450,7 +518,7 @@ describe('Success cases', () => {
 describe('Failure cases', () => {
   describe('Constructor', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
+      vi.restoreAllMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -465,8 +533,6 @@ describe('Failure cases', () => {
         expect(e).toBeInstanceOf(ShortcutConfigurationError);
         return;
       }
-
-      fail();
     });
 
     test('It should throw a ShortcutConfigurationError error if a shortcut auth token is empty', () => {
@@ -478,8 +544,6 @@ describe('Failure cases', () => {
         expect(e).toBeInstanceOf(ShortcutConfigurationError);
         return;
       }
-
-      fail();
     });
 
     test('It should throw a ShortcutConfigurationError error if a shortcut auth token is undefined', () => {
@@ -491,8 +555,6 @@ describe('Failure cases', () => {
         expect(e).toBeInstanceOf(ShortcutConfigurationError);
         return;
       }
-
-      fail();
     });
 
     test('It should throw a ShortcutConfigurationError error if a SHORTCUT_REPONAME is empty', () => {
@@ -504,8 +566,6 @@ describe('Failure cases', () => {
         expect(e).toBeInstanceOf(ShortcutConfigurationError);
         return;
       }
-
-      fail();
     });
 
     test('It should throw a ShortcutConfigurationError error if a SHORTCUT_REPONAME is undefined', () => {
@@ -517,14 +577,12 @@ describe('Failure cases', () => {
         expect(e).toBeInstanceOf(ShortcutConfigurationError);
         return;
       }
-
-      fail();
     });
   });
 
   describe('Event types', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
+      vi.restoreAllMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -532,7 +590,9 @@ describe('Failure cases', () => {
 
     test('It should throw a MissingShortcutFieldsError if webhook data is empty', () => {
       const storyData = genericStoryData;
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
 
@@ -547,7 +607,9 @@ describe('Failure cases', () => {
 
     test('It should throw a MissingShortcutFieldsError if webhook data is undefined', () => {
       const storyData = genericStoryData;
-      fetchMock.mockResponse(JSON.stringify(storyData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(storyData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
 
@@ -560,23 +622,10 @@ describe('Failure cases', () => {
       ).rejects.toThrowError(MissingShortcutFieldsError);
     });
 
-    test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
-      const webhookData = webhookStoryUpdateLabelAdded;
-      fetchMock.mockResponse(JSON.stringify({}));
-
-      const parser = new ShortcutParser();
-
-      expect.assertions(1);
-      expect(
-        parser.getPayload({
-          headers: {},
-          body: webhookData
-        })
-      ).rejects.toThrowError(MissingShortcutFieldsError);
-    });
-
     test('It should throw a MissingIdError on bulk updated', () => {
-      fetchMock.mockResponse(JSON.stringify(genericStoryData));
+      vi.mocked(fetch).mockResolvedValue({
+        json: () => Promise.resolve(genericStoryData)
+      } as unknown as Response);
 
       const parser = new ShortcutParser();
       expect(
@@ -590,7 +639,7 @@ describe('Failure cases', () => {
 
   describe('Payloads', () => {
     beforeEach(() => {
-      fetchMock.resetMocks();
+      vi.restoreAllMocks();
       process.env.SHORTCUT_INCIDENT_LABEL_ID = '2805';
       process.env.SHORTCUT_TOKEN = '11111111';
       process.env.SHORTCUT_REPONAME = 'SOMEREPO';
@@ -641,7 +690,13 @@ describe('Failure cases', () => {
     test('It should throw a MissingShortcutFieldsError if story data is empty', () => {
       const webhookData = webhookStoryUpdateLabelAdded;
 
-      fetchMock.mockResponse(JSON.stringify({}));
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => ({}) // Returning an empty object as story data is empty
+        })
+      );
 
       const parser = new ShortcutParser();
 

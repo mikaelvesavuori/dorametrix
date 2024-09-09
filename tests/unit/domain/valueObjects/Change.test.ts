@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { makeChange } from '../../../../src/domain/valueObjects/Change';
 import { makeEvent } from '../../../../src/domain/valueObjects/Event';
 

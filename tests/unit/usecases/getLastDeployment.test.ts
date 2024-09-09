@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { getLastDeployment } from '../../../src/usecases/getLastDeployment';
 
 import { createNewLocalRepository } from '../../../src/infrastructure/repositories/LocalRepository';

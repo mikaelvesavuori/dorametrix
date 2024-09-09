@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { BitbucketParser } from '../../../src/application/parsers/BitbucketParser';
 
 import {

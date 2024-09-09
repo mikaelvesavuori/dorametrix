@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { makeEvent } from '../../../src/domain/valueObjects/Event';
 
 import { DirectParser } from '../../../src/application/parsers/DirectParser';

@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { makeDeployment } from '../../../../src/domain/valueObjects/Deployment';
 import { makeEvent } from '../../../../src/domain/valueObjects/Event';
 

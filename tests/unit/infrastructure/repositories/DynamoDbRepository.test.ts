@@ -1,3 +1,5 @@
+import { describe, test, expect } from 'vitest';
+
 import { createNewDynamoDbRepository } from '../../../../src/infrastructure/repositories/DynamoDbRepository';
 
 import { MissingEnvironmentVariablesDynamoError } from '../../../../src/application/errors/errors';
