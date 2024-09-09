@@ -1,3 +1,4 @@
+import { MissingRepoNameError } from '../application/errors/errors';
 import { createNewDorametrix } from '../domain/services/Dorametrix';
 import { Deployment } from '../interfaces/Deployment';
 
@@ -13,6 +14,8 @@ export async function getLastDeployment(
   input: RequestDTO
 ): Promise<DeploymentResponse> {
   const { repo } = input;
+
+  if (!repo) throw new MissingRepoNameError('Missing repo query parameter!');
 
   const lastDeploymentMetric = await repository.getMetrics({
     from: '0',

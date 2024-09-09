@@ -213,18 +213,28 @@ class DynamoRepository implements Repository {
    * @description Get data from DynamoDB.
    */
   private async getItem(dataRequest: DataRequest): Promise<any> {
-    const { key, from, getLastDeployedCommit } = dataRequest;
+    const { key, from, to, getLastDeployedCommit } = dataRequest;
 
-    const command = {
-      TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk >= :sk',
-      ExpressionAttributeValues: {
-        ':pk': { S: key },
-        ':sk': {
-          S: getLastDeployedCommit ? 'LastDeployedCommit' : from
+    const command: any = (() => {
+      if (getLastDeployedCommit)
+        return {
+          TableName: this.tableName,
+          KeyConditionExpression: 'pk = :pk AND sk = :sk',
+          ExpressionAttributeValues: {
+            ':pk': { S: key },
+            ':sk': { S: 'LastDeployedCommit' }
+          }
+        };
+      return {
+        TableName: this.tableName,
+        KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :to',
+        ExpressionAttributeValues: {
+          ':pk': { S: key },
+          ':sk': { S: from },
+          ':to': { S: to }
         }
-      }
-    };
+      };
+    })();
 
     const data: any =
       process.env.NODE_ENV !== 'test'

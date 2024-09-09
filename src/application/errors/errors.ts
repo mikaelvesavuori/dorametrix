@@ -155,7 +155,7 @@ export class MissingIdValueError extends Error {
 }
 
 /**
- * @description Used when a value object is missing the `repoName` property/value.
+ * @description Used when a missing the `repoName` property/value.
  */
 export class MissingRepoNameError extends Error {
   constructor(message: string) {

@@ -6,7 +6,8 @@
 export function createQueryStringParamsObjectFromString(event: Record<string, any>) {
   const queryStringParameters: Record<string, any> = {};
 
-  const parts = event?.rawQueryString?.split('&');
+  const parts = event?.rawQueryString?.split('&').filter((part: string) => part);
+
   if (parts && parts.length > 0)
     parts.forEach((part: string) => {
       const [key, value] = part.split('=');

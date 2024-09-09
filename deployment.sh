@@ -32,6 +32,6 @@ CURRENT_GIT_SHA=$(git log --pretty=format:'%H' -n 1)
 echo "ℹ️ CURRENT_GIT_SHA --> $CURRENT_GIT_SHA"
 
 # Call Dorametrix and create deployment event with Git changes
-curl -X POST $ENDPOINT/event?authorization="$API_KEY" -d '{ "eventType": "deployment", "repo": "'$REPO_NAME'", "changeSha": '"$CURRENT_GIT_SHA"' }' -H "Content-Type: application/json"
+curl -X POST "$ENDPOINT/event?authorization=$API_KEY" -d '{ "eventType": "deployment", "repo": "'$REPO'", "changeSha": "'$CURRENT_GIT_SHA'" }' -H "Content-Type: application/json"
 
 echo -e "\n✅ Dorametrix deployment script has finished successfully!"

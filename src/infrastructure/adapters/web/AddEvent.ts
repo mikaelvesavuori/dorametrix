@@ -10,6 +10,7 @@ import { createEvent } from '../../../usecases/createEvent';
 
 import { createNewDynamoDbRepository } from '../../repositories/DynamoDbRepository';
 
+import { parseEventBody } from '../../frameworks/parseEventBody';
 import { end } from '../../frameworks/end';
 
 import { metadataConfig } from '../../../config/metadata';
@@ -30,7 +31,7 @@ export async function handler(
   });
 
   try {
-    const body = event.body && typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+    const body = parseEventBody(event);
     const headers = event.headers;
 
     const repo = createNewDynamoDbRepository();

@@ -1,15 +1,15 @@
 import { getDateFromTimestamp } from 'chrono-utils';
 
-import { createNewDorametrix } from '../domain/services/Dorametrix';
-
-import { addCustomMetric } from '../infrastructure/frameworks/addCustomMetric';
-
 import { Metrics } from '../interfaces/Metrics';
 import { RequestDTO } from '../interfaces/Input';
 import { Repository } from '../interfaces/Repository';
 import { Change } from '../interfaces/Change';
 import { Deployment } from '../interfaces/Deployment';
 import { Incident } from '../interfaces/Incident';
+
+import { createNewDorametrix } from '../domain/services/Dorametrix';
+
+import { addCustomMetric } from '../infrastructure/frameworks/addCustomMetric';
 
 /**
  * @description The use-case for getting our DORA metrics, using interactors for each sub-case.
