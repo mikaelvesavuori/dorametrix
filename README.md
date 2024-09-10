@@ -250,8 +250,8 @@ See below for the tool-specific conventions.
 
 #### GitHub
 
-- **Open incident**: Create a GitHub Issue with an `incident` label.
-- **Close incident**: Close the Issue or unlabel the `incident` label.
+- **Open incident**: Create a GitHub Issue with the default `bug` or (custom) `incident` label.
+- **Close incident**: Close the Issue or unlabel the default `bug` or (custom) `incident` label.
 
 #### Bitbucket
 

@@ -97,7 +97,7 @@ export class GitHubParser implements Parser {
     const labels = body?.['issue']?.['labels'];
     if (labels && labels.length > 0) {
       const incidentLabels = labels.filter(
-        (label: Record<string, any>) => label.name === 'incident'
+        (label: Record<string, any>) => label.name === 'incident' || label.name === 'bug'
       );
       if (incidentLabels.length > 0)
         return {
@@ -110,7 +110,7 @@ export class GitHubParser implements Parser {
         };
     }
 
-    // If we don't have any incident labels it's time to eject
+    // If we don't have any bug/incident labels it's time to eject
     return {
       eventTime: '',
       timeCreated: '',
